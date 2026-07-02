@@ -1,0 +1,539 @@
+{
+  "version": 1,
+  "shapes": {
+    "unary": {
+      "payload": "whole",
+      "history": "none",
+      "initiation": "pull",
+      "writers": "single",
+      "events": [
+        "value"
+      ],
+      "delivery": "once"
+    },
+    "atom": {
+      "payload": "whole-state",
+      "history": "latest",
+      "initiation": "pull|push",
+      "writers": "single",
+      "events": [
+        "replace"
+      ],
+      "delivery": "stream"
+    },
+    "log": {
+      "payload": "whole",
+      "history": "append-only",
+      "initiation": "pull|push",
+      "writers": "source",
+      "events": [
+        "append"
+      ],
+      "delivery": "stream"
+    },
+    "stream": {
+      "payload": "whole-or-delta",
+      "history": "none",
+      "initiation": "push",
+      "writers": "source",
+      "events": [
+        "event"
+      ],
+      "delivery": "stream"
+    },
+    "swmr": {
+      "payload": "delta",
+      "history": "reconstructible",
+      "initiation": "push",
+      "writers": "single",
+      "events": [
+        "delta",
+        "reset",
+        "snapshot"
+      ],
+      "delivery": "stream"
+    },
+    "snapshot_delta": {
+      "payload": "delta",
+      "history": "reconstructible",
+      "initiation": "push",
+      "writers": "single",
+      "events": [
+        "delta",
+        "snapshot"
+      ],
+      "delivery": "stream"
+    },
+    "crdt": {
+      "payload": "ops",
+      "history": "reconstructible",
+      "initiation": "push-bidi",
+      "writers": "multi-merge",
+      "events": [
+        "op",
+        "sync"
+      ],
+      "delivery": "stream"
+    }
+  },
+  "enums": [
+    {
+      "name": "LogMsgType",
+      "members": {
+        "push": 0,
+        "seal": 1,
+        "close": 2,
+        "read": 3,
+        "end_stream": 4,
+        "timer_expired": 5,
+        "evict": 6,
+        "read_response": 7,
+        "set_timer": 8,
+        "cancel_timer": 9,
+        "producer_stop": 10
+      }
+    },
+    {
+      "name": "LogState",
+      "members": {
+        "data": 0,
+        "would_block": 1,
+        "eof": 2,
+        "closed": 3,
+        "failed": 4,
+        "expired": 5
+      }
+    },
+    {
+      "name": "LogErrorCode",
+      "members": {
+        "unknown_log": 0,
+        "producer_error": 1,
+        "internal": 2
+      }
+    },
+    {
+      "name": "LogStopReason",
+      "members": {
+        "last_reader_gone": 0,
+        "closed": 1,
+        "failed": 2
+      }
+    }
+  ],
+  "messages": [
+    {
+      "name": "LogCursor",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "seq",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "LogRecord",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "seq",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "payload",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "bytes"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "LogError",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "code",
+          "tag": 1,
+          "type": {
+            "k": "enum",
+            "name": "LogErrorCode"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "message",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "LogPush",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "payload",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "bytes"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "LogSeal",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": []
+    },
+    {
+      "name": "LogClose",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "error",
+          "tag": 1,
+          "type": {
+            "k": "msg",
+            "name": "LogError"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "LogReadRequest",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "log_id",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "stream_id",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "cursor",
+          "tag": 3,
+          "type": {
+            "k": "msg",
+            "name": "LogCursor"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "max_records",
+          "tag": 4,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "max_bytes",
+          "tag": 5,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "timeout_ms",
+          "tag": 6,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "LogEndStream",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "log_id",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "stream_id",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "LogTimerExpired",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "token",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "LogEvict",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "up_to_seq",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "LogReadResponse",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "log_id",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "stream_id",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "records",
+          "tag": 3,
+          "type": {
+            "k": "list",
+            "elem": {
+              "k": "msg",
+              "name": "LogRecord"
+            }
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "next_cursor",
+          "tag": 4,
+          "type": {
+            "k": "msg",
+            "name": "LogCursor"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "state",
+          "tag": 5,
+          "type": {
+            "k": "enum",
+            "name": "LogState"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "error",
+          "tag": 6,
+          "type": {
+            "k": "msg",
+            "name": "LogError"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "LogSetTimer",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "token",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "ms",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "LogCancelTimer",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "token",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "LogProducerStop",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "reason",
+          "tag": 1,
+          "type": {
+            "k": "enum",
+            "name": "LogStopReason"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    }
+  ],
+  "services": [],
+  "extensions": []
+}
