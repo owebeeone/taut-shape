@@ -175,6 +175,10 @@ Semantics (summary; oracle-pinned via D-numbers in the impl plan):
   on the last-stream-ended transition per the `stop_when` knob (D6). The shell
   routes it to the producer (pager-quit / broken-pipe / disconnect ⇒ the render
   halts and releases state).
+- **Diagnostics** — an output message (`LogDiagnostic{severity, code}`): a
+  sans-io engine cannot log, so warnings ride this output and the shell routes
+  them to the host's logging facility. Code-only, no free text (D18); v0's one
+  case is a `Push` after `Seal`/`Close`, dropped and warned (D19).
 
 ## 5. Production backing
 
@@ -284,9 +288,19 @@ become consumers of the same runtime, retiring gwz-py's bespoke `wait_events`.
 
 ## 9. Scope & non-goals
 
-- **`log` first** (the real demand). `stream` is the trivial sibling.
-  `swmr`/`snapshot_delta`/`crdt` deferred until a second consumer needs them —
-  `taut-shape` is their home, but do not speculatively fill it.
+- **`log` first** (the live demand: gwz `diff.output`, `events.subscribe`).
+- **The full shape registry is committed roadmap, not speculation**: **gryth**
+  (the glade-based node + browser-client stack) will need *all* of them —
+  `atom`, `stream`, `swmr`/`snapshot_delta`, and `crdt` (at which point glade's
+  fold/op machinery is extracted here and glade/gryth become consumers).
+  Sequencing stays demand-ordered — each shape lands as a sibling schema
+  (`shape_<name>.taut.py`), corpus (`<name>.v0.json`), and per-language engine
+  module riding the same generic machinery (mailbox pattern, store-core/
+  session-table split, oracle harness, tool framing, bump procedure).
+- Consequence for the generic layer: it must be validated against the hardest
+  shapes *before* it hardens further — `crdt` makes clients writers
+  (stream-addressed op inputs, fan-out outputs) and `swmr`/`snapshot_delta` are
+  multi-slot (`snapshot`/`delta`/`reset`) — see `TautShapeRoadmap.md`.
 - Pure Python; per-language packages published per ecosystem
   (`taut-shape` crate / wheel / npm, or explicit `taut-shape-<lang>`). Local-only
   repos until publication is decided.

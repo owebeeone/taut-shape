@@ -103,6 +103,12 @@ Conventions:
   the jsoncodec), never raw JSON text — so absent == null by construction.
 - The conformance comparison is **whole-output equality** on the observed step
   transcript — never per-field assertions (the house golden style).
+- **Diagnostics are code-only** (`LogDiagnostic{severity, code}` — D18): the
+  vectors carry the machine-readable `code`, never free text. This is what keeps
+  the oracle byte-stable across languages — because comparison is whole-output
+  equality, any prose companion would freeze byte-identical strings into the
+  oracle and every shell would have to reproduce them verbatim. Shells localize
+  the code to human text at their logging edge; the oracle pins only the code.
 
 ## 4. Vector catalog (log v0)
 
@@ -146,6 +152,13 @@ Each pinned rule (D-number) gets at least one vector. The initial set:
     retained tail.
 16. `beyond_head_expired` — cursor past head → `expired` with
     `next_cursor = head`.
+24. `evict_beyond_head_clamps` — `evict{up_to_seq}` far past head clamps to
+    `head` (D20: `floor ≤ head + 1` invariant), so evicting past head cannot
+    manufacture positions that never existed. After the clamp `floor = head + 1`,
+    hence `floor − 1 == head`: a below-floor read → `expired` with
+    `next_cursor = {floor − 1} = {head}`, and a read **at** head then
+    holds/probes normally (`would_block` on a `timeout_ms=0` probe,
+    `next_cursor = head`) — D20, D9, D14.
 
 **Multi-stream (D3–D6 — the backing-store / response-handler split)**
 17. `two_streams_two_positions` — s1 and s2 read the same log at different
@@ -159,6 +172,17 @@ Each pinned rule (D-number) gets at least one vector. The initial set:
     with a never-read log emits nothing (D6).
 21. `stop_when_explicit_only` — same script, knob off → no `ProducerStop` until
     `close`.
+
+**Diagnostics (D18/D19 — `push_after_terminal`)**
+22. `push_after_seal_warns` — `seal`, then a `push`: the record is dropped
+    (nothing appended, head unchanged), the step emits exactly one
+    `LogDiagnostic{warn, push_after_terminal}`, and a subsequent read still sees
+    only the pre-seal records (the late push left no trace). N late pushes emit N
+    diagnostics, one per push (D18/D19).
+23. `push_after_close_warns` — `close{}` (or `close{error}`), then a `push`:
+    same shape as 22 — dropped, one `LogDiagnostic{warn, push_after_terminal}`
+    per late push, head unchanged, subsequent reads unaffected (the terminal
+    state and any error stay as `close` set them — D18/D19).
 
 ## 5. Generation
 

@@ -1,0 +1,13 @@
+{
+  "name": "two_streams_two_positions",
+  "comment": "s1 and s2 read the same log at different cursors; each gets its own addressed responses (D3-D6)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "push", "payload": "cmVjMQ==" } },
+    { "in": { "type": "push", "payload": "cmVjMg==" } },
+    { "in": { "type": "push", "payload": "cmVjMw==" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "0" }, "max_records": "1", "timeout_ms": "0" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s2", "cursor": { "seq": "2" }, "timeout_ms": "0" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "1" }, "timeout_ms": "0" } }
+  ]
+}

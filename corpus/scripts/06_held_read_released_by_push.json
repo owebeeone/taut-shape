@@ -1,0 +1,9 @@
+{
+  "name": "held_read_released_by_push",
+  "comment": "read with no timeout_ms on a caught-up log holds (emits nothing); a later push releases it with data (D1, D14)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "0" } } },
+    { "in": { "type": "push", "payload": "aGVsbG8=" } }
+  ]
+}

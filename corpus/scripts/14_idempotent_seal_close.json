@@ -1,0 +1,11 @@
+{
+  "name": "idempotent_seal_close",
+  "comment": "repeated seal/close emit nothing new. ProducerStop fires on the TRANSITION into a terminal state (D6): the Sealed->Closed close emits ProducerStop{closed}; a repeated close on the already-terminal log is outputs-idempotent and emits nothing, symmetric with the repeated seal no-op.",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "seal" } },
+    { "in": { "type": "seal" } },
+    { "in": { "type": "close" } },
+    { "in": { "type": "close" } }
+  ]
+}

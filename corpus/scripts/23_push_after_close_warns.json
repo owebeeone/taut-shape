@@ -1,0 +1,12 @@
+{
+  "name": "push_after_close_warns",
+  "comment": "close{} then push: dropped, one LogDiagnostic{warn, push_after_terminal} per late push, head unchanged; the terminal state stays closed and reads are unaffected (D18/D19). ProducerStop{closed} fires on the close itself.",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "push", "payload": "cmVjMQ==" } },
+    { "in": { "type": "close" } },
+    { "in": { "type": "push", "payload": "bGF0ZQ==" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "0" }, "timeout_ms": "0" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "1" }, "timeout_ms": "0" } }
+  ]
+}

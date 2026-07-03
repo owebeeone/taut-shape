@@ -1,0 +1,9 @@
+{
+  "name": "close_failed",
+  "comment": "close{error} answers held reads failed with the error attached and emits ProducerStop{failed} (D12, D6)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "0" } } },
+    { "in": { "type": "close", "error": { "code": "producer_error", "message": "boom" } } }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "last_stream_producer_stop",
+  "comment": "stop_when=last_reader: s1 and s2 end; ProducerStop{last_reader_gone} fires exactly on the >=1->0 reader transition, not before (D6)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "0" }, "timeout_ms": "0" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s2", "cursor": { "seq": "0" }, "timeout_ms": "0" } },
+    { "in": { "type": "end_stream", "log_id": "log-A", "stream_id": "s1" } },
+    { "in": { "type": "end_stream", "log_id": "log-A", "stream_id": "s2" } }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "evict_then_expired",
+  "comment": "evict{up_to_seq=2} raises floor to 3; a read below the floor -> expired with next_cursor=floor-1=2; continuing from there yields the retained tail (D7, D9)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "push", "payload": "cmVjMQ==" } },
+    { "in": { "type": "push", "payload": "cmVjMg==" } },
+    { "in": { "type": "push", "payload": "cmVjMw==" } },
+    { "in": { "type": "evict", "up_to_seq": "2" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "0" }, "timeout_ms": "0" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "2" }, "timeout_ms": "0" } }
+  ]
+}

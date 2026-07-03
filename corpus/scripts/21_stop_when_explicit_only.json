@@ -1,0 +1,12 @@
+{
+  "name": "stop_when_explicit_only",
+  "comment": "same script as #20 but stop_when=explicit: reader loss emits no ProducerStop; only close does (D6)",
+  "node": { "stop_when": "explicit" },
+  "steps": [
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "0" }, "timeout_ms": "0" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s2", "cursor": { "seq": "0" }, "timeout_ms": "0" } },
+    { "in": { "type": "end_stream", "log_id": "log-A", "stream_id": "s1" } },
+    { "in": { "type": "end_stream", "log_id": "log-A", "stream_id": "s2" } },
+    { "in": { "type": "close" } }
+  ]
+}

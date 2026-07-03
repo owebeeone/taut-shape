@@ -1,0 +1,9 @@
+{
+  "name": "beyond_head_expired",
+  "comment": "a cursor past head -> expired with next_cursor=head; the position never existed (D9)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "push", "payload": "cmVjMQ==" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "5" }, "timeout_ms": "0" } }
+  ]
+}

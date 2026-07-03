@@ -1,0 +1,9 @@
+{
+  "name": "held_read_timer",
+  "comment": "read timeout_ms=50 emits SetTimer{token=1,ms=50}; timer_expired{1} answers would_block at the held cursor (D14, D16)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "0" }, "timeout_ms": "50" } },
+    { "in": { "type": "timer_expired", "token": "1" } }
+  ]
+}

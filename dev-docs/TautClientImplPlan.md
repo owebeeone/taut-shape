@@ -73,8 +73,13 @@ handle(input: InMsg) -> [OutMsg]     # or an equivalent send()/poll() pair
 ```
 
 Many stream instances read one backing at different positions (backed-up
-readers). The split is the shape-generic architecture: for `crdt`/`swmr` the
-session entry grows richer (per-peer sync state); the store core stays shared.
+readers). The split is the shape-generic architecture — but precisely: what
+generalizes is the **boundary** (a store core with no stream concepts; a
+session table with no byte/retention concepts), not shared core code. For
+`crdt`/`swmr` the session entry grows richer (per-peer sync state) **and the
+store core is a different machine per shape** (append-window here;
+snapshot+delta+compaction for swmr; merge/fold for crdt) — same role, per-shape
+implementation. See `TautShapeRoadmap.md` (the multi-shape stress test).
 
 v0 keeps the record window **inside** the engine (D2); the external-store
 extension is §9.
@@ -119,11 +124,15 @@ the shell.
 
 Producer-side (node-local, unaddressed):
 - `Push { payload }` — assign `seq := head+1` (first record `seq = 1`, D8),
-  append to the window, answer any held reads.
+  append to the window, answer any held reads. A `Push` arriving after
+  `Seal`/`Close` is **dropped** (nothing appended, head unchanged) and emits
+  `LogDiagnostic{warn, push_after_terminal}` (D18/D19): a late in-flight push
+  is an expected race with `ProducerStop`, made visible, never silent or fatal.
 - `Seal {}` — finite log complete; held reads answered `eof`. Idempotent.
 - `Close { error? }` — teardown. Held reads answered `closed` (no error) or
-  `failed` (error attached, D12); their timers canceled; `ProducerStop` emitted.
-  Idempotent.
+  `failed` (error attached, D12); their timers canceled; `ProducerStop` emitted
+  on the transition into the terminal state. Idempotent including outputs: a
+  `Close` on an already-terminal log emits nothing (D6).
 
 Stream-side (addressed):
 - `Read { stream_id, cursor?, max_records?, max_bytes?, timeout_ms? }` —
@@ -138,7 +147,9 @@ Environment:
 - `TimerExpired { token }` — if the token maps to a held read, answer it
   `would_block`; otherwise ignore (late/canceled timers are no-ops).
 - `Evict { up_to_seq }` — drop records with `seq ≤ up_to_seq`, raising the
-  floor (retention is consumer-driven in v0, D7).
+  floor (retention is consumer-driven in v0, D7). `up_to_seq` is clamped to
+  `head`, so `floor ≤ head + 1` always holds (D20) — evicting past head cannot
+  manufacture positions that never existed.
 
 ### 3.3 Outputs
 
@@ -146,6 +157,10 @@ Environment:
   `next_cursor` ALWAYS present.
 - `SetTimer { token, ms }` / `CancelTimer { token }` — tokens allocated
   monotonically from 1 (D16).
+- `Diagnostic { severity, code }` — engine warnings delegated to the caller: a
+  sans-io engine cannot log, so the shell routes these to the host's logging
+  facility. **Code only, no free text** — prose would freeze byte-identical
+  strings into the cross-language oracle; shells localize (D18).
 - `ProducerStop { reason ∈ {last_reader_gone, closed, failed} }` — emitted on
   `Close`, and on the reader-count **≥1 → 0 transition** when the node was
   constructed with `stop_when = last_reader` (D6). A log never read does not
@@ -195,7 +210,7 @@ in v0 (the producer lives with the node). «SPECIALIZE: service form»
 | D3 | Identity = client (adapter-only) / stream instance (engine) / request; responses addressed by `stream_id` |
 | D4 | Streams: implicit create on first `Read`; explicit `EndStream` (adapter injects on transport death) |
 | D5 | ≤1 outstanding `Read` per stream; a new `Read` supersedes (held read dropped unanswered, timer canceled) |
-| D6 | `ProducerStop`: construction knob `stop_when ∈ {last_reader, explicit_only}`; fires on ≥1→0 reader transition and on `Close` |
+| D6 | `ProducerStop`: construction knob `stop_when ∈ {last_reader, explicit_only}`; fires on the ≥1→0 reader transition and on the **transition into** a terminal state via `Close`. A repeated `Close` on an already-terminal log emits nothing — outputs-idempotent, symmetric with `Seal` |
 | D7 | Retention consumer-driven in v0 (`Evict`); engine tracks per-stream watermarks, exposes min via accessor |
 | D8 | First record `seq = 1`; `START = {seq: 0}`; absent cursor ⇒ START; empty log `head = 0` |
 | D9 | `expired` is a **state**, never an error; response carries earliest-resumable `next_cursor`; beyond-head cursors are also `expired` |
@@ -207,6 +222,12 @@ in v0 (the producer lives with the node). «SPECIALIZE: service form»
 | D15 | Engine is unsynchronized; the shell owns serialization (lock/loop around `handle`) |
 | D16 | Determinism: timer tokens monotonic from 1; multi-response emission in stream-creation order |
 | D17 | Message types are **taut-generated** from a self-contained, payload-agnostic schema (`taut-shape/ir/shape_log.taut.py`; messages + codecs, no service). `LogRecord.payload = BYTES` carries the method's append-type message already taut-encoded (glade `Op.payload` pattern). Hand-written per language: only In/Out unions, engine, shell. Corpus JSON = taut jsoncodec form |
+| D18 | Diagnostics are an output message — `LogDiagnostic{severity, code}`, routed by the shell to host logging (the engine cannot log). Code-only, no free text, so the behavioral oracle stays byte-stable across languages |
+| D19 | `Push` after `Seal`/`Close` (any terminal state) is dropped — nothing appended, head unchanged — and emits `LogDiagnostic{warn, push_after_terminal}`. Never silent, never fatal |
+| D20 | `Evict{up_to_seq}` clamps to `head`: `floor ≤ head + 1` invariant. Discovered as a clean-room divergence (an unpinned behavior); pinned so `expired` resume cursors can never point past real positions |
+| D21 | Per-shape message registries: each shape is a self-contained sibling schema (`shape_<name>.taut.py`, own `<Shape>MsgType` registry). No shared/base message schema across shapes |
+| D22 | Naming: `<Shape>*` message prefix per schema (`Log*`, `Atom*`, …); per-shape corpus file `<name>.v0.json`, version `<name>.oracle/v0` |
+| D23 | Engines namespace per shape (a `log/` module) in every language **before shape 2 lands** — py already complies; rs/ts owe the move |
 
 ## 5. Conformance obligations (shared)
 

@@ -55,7 +55,7 @@ SCHEMA = schema(
          read=3, end_stream=4,
          timer_expired=5, evict=6,
          read_response=7, set_timer=8, cancel_timer=9,
-         producer_stop=10),
+         producer_stop=10, diagnostic=11),
     # The six read outcomes (D12/D13). `expired` is a state, never an error
     # (D9). Terminal states describe the LOG, not the stream: a re-read below
     # head still returns data while retained.
@@ -71,6 +71,13 @@ SCHEMA = schema(
     # stop_when=last_reader), or the log was torn down.
     Enum("LogStopReason",
          last_reader_gone=0, closed=1, failed=2),
+    # Severity of an engine diagnostic (D18). v0 emits only `warn`.
+    Enum("LogSeverity", warn=0, error=1),
+    # Machine-readable diagnostic codes (D18); open for growth. Deliberately no
+    # free-text companion: the behavioral oracle compares whole outputs, so any
+    # prose would freeze byte-identical strings across every language. Shells
+    # map codes to text.
+    Enum("LogDiagCode", push_after_terminal=0),
 
     # ---- core types ----------------------------------------------------------
     # An ordered position in one single-origin log: records strictly after
@@ -159,4 +166,12 @@ SCHEMA = schema(
     # design; shells that initiated the close ignore it (D6).
     Msg("LogProducerStop",
         F("reason", 1, Ref("LogStopReason"))),
+    # Engine diagnostics, delegated to the caller (D18): a sans-io engine
+    # cannot log, so conditions worth a warning ride this output and the shell
+    # routes them to the host's logging facility. First use: a Push after
+    # Seal/Close is dropped and warns (D19) — late in-flight pushes are an
+    # expected race, made visible instead of silent or fatal.
+    Msg("LogDiagnostic",
+        F("severity", 1, Ref("LogSeverity")),
+        F("code", 2, Ref("LogDiagCode"))),
 )

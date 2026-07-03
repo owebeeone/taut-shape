@@ -1,0 +1,1648 @@
+{
+  "shape": "log",
+  "vectors": [
+    {
+      "comment": "append then catch-up read; first record seq=1 (D8), next_cursor advances to head",
+      "name": "push_then_read_data",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "aGVsbG8=",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "max_records": "10",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "1"
+              },
+              "records": [
+                {
+                  "payload": "aGVsbG8=",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "timeout_ms=0 probe on an empty log -> would_block, next_cursor=0 (D8, D14)",
+      "name": "read_empty_probe",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "read half with max_records, resume from next_cursor; records 1..N appear exactly once (D8, D11)",
+      "name": "resume_no_dup_no_skip",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "cmVjMQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "cmVjMg==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "cmVjMw==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "max_records": "2",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "2"
+              },
+              "records": [
+                {
+                  "payload": "cmVjMQ==",
+                  "seq": "1"
+                },
+                {
+                  "payload": "cmVjMg==",
+                  "seq": "2"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "2"
+            },
+            "log_id": "log-A",
+            "max_records": "2",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "3"
+              },
+              "records": [
+                {
+                  "payload": "cmVjMw==",
+                  "seq": "3"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "max_records and max_bytes boundaries; max_bytes counts raw payload bytes only (D10). payloads a=1,bb=2,ccc=3 bytes",
+      "name": "batch_bounds",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "YQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "YmI=",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "Y2Nj",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "max_records": "2",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "2"
+              },
+              "records": [
+                {
+                  "payload": "YQ==",
+                  "seq": "1"
+                },
+                {
+                  "payload": "YmI=",
+                  "seq": "2"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "max_bytes": "3",
+            "stream_id": "s2",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "2"
+              },
+              "records": [
+                {
+                  "payload": "YQ==",
+                  "seq": "1"
+                },
+                {
+                  "payload": "YmI=",
+                  "seq": "2"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s2",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "a single record larger than max_bytes is still returned alone (D10 forward-progress). payload is 19 bytes, max_bytes=3",
+      "name": "forward_progress",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "YmlnLXBheWxvYWQtZXhjZWVkcw==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "max_bytes": "3",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "1"
+              },
+              "records": [
+                {
+                  "payload": "YmlnLXBheWxvYWQtZXhjZWVkcw==",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "read with no timeout_ms on a caught-up log holds (emits nothing); a later push releases it with data (D1, D14)",
+      "name": "held_read_released_by_push",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "aGVsbG8=",
+            "type": "push"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "1"
+              },
+              "records": [
+                {
+                  "payload": "aGVsbG8=",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "read timeout_ms=50 emits SetTimer{token=1,ms=50}; timer_expired{1} answers would_block at the held cursor (D14, D16)",
+      "name": "held_read_timer",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "token": "1",
+            "type": "timer_expired"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "timer_expired for an already-answered token is a no-op (emits nothing). token 1 is answered by the first timer_expired; the second is late (D14)",
+      "name": "late_timer_ignored",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "token": "1",
+            "type": "timer_expired"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "token": "1",
+            "type": "timer_expired"
+          },
+          "out": []
+        }
+      ]
+    },
+    {
+      "comment": "a second read on the same stream drops the held first (unanswered) and cancels its timer; the new hold gets a fresh monotonic token (D5, D16)",
+      "name": "supersede",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "token": "1",
+              "type": "cancel_timer"
+            },
+            {
+              "ms": "50",
+              "token": "2",
+              "type": "set_timer"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "records then seal; a held caught-up read is answered eof by seal itself; a fresh drained reader also gets eof (D12)",
+      "name": "seal_then_drain_eof",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "cmVjMQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "1"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "1"
+              },
+              "records": [],
+              "state": "eof",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "1"
+            },
+            "log_id": "log-A",
+            "stream_id": "s2",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "1"
+              },
+              "records": [],
+              "state": "eof",
+              "stream_id": "s2",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "close{} answers held reads closed and emits ProducerStop{closed}; responses precede ProducerStop (D12, D6)",
+      "name": "close_clean",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "close"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "closed",
+              "stream_id": "s1",
+              "type": "read_response"
+            },
+            {
+              "reason": "closed",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "close{error} answers held reads failed with the error attached and emits ProducerStop{failed} (D12, D6)",
+      "name": "close_failed",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "error": {
+              "code": "producer_error",
+              "message": "boom"
+            },
+            "type": "close"
+          },
+          "out": [
+            {
+              "error": {
+                "code": "producer_error",
+                "message": "boom"
+              },
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "failed",
+              "stream_id": "s1",
+              "type": "read_response"
+            },
+            {
+              "reason": "failed",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "after seal, a fresh cursor below head still reads data before eof; terminal describes the log, not the stream (D12 rule 4)",
+      "name": "terminal_still_readable",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "cmVjMQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "cmVjMg==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "2"
+              },
+              "records": [
+                {
+                  "payload": "cmVjMQ==",
+                  "seq": "1"
+                },
+                {
+                  "payload": "cmVjMg==",
+                  "seq": "2"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "2"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "2"
+              },
+              "records": [],
+              "state": "eof",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "repeated seal/close emit nothing new. ProducerStop fires on the TRANSITION into a terminal state (D6): the Sealed->Closed close emits ProducerStop{closed}; a repeated close on the already-terminal log is outputs-idempotent and emits nothing, symmetric with the repeated seal no-op.",
+      "name": "idempotent_seal_close",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "close"
+          },
+          "out": [
+            {
+              "reason": "closed",
+              "type": "producer_stop"
+            }
+          ]
+        },
+        {
+          "in": {
+            "type": "close"
+          },
+          "out": []
+        }
+      ]
+    },
+    {
+      "comment": "evict{up_to_seq=2} raises floor to 3; a read below the floor -> expired with next_cursor=floor-1=2; continuing from there yields the retained tail (D7, D9)",
+      "name": "evict_then_expired",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "cmVjMQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "cmVjMg==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "cmVjMw==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "evict",
+            "up_to_seq": "2"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "2"
+              },
+              "records": [],
+              "state": "expired",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "2"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "3"
+              },
+              "records": [
+                {
+                  "payload": "cmVjMw==",
+                  "seq": "3"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "a cursor past head -> expired with next_cursor=head; the position never existed (D9)",
+      "name": "beyond_head_expired",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "cmVjMQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "5"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "1"
+              },
+              "records": [],
+              "state": "expired",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "s1 and s2 read the same log at different cursors; each gets its own addressed responses (D3-D6)",
+      "name": "two_streams_two_positions",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "cmVjMQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "cmVjMg==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "cmVjMw==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "max_records": "1",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "1"
+              },
+              "records": [
+                {
+                  "payload": "cmVjMQ==",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "2"
+            },
+            "log_id": "log-A",
+            "stream_id": "s2",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "3"
+              },
+              "records": [
+                {
+                  "payload": "cmVjMw==",
+                  "seq": "3"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s2",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "1"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "3"
+              },
+              "records": [
+                {
+                  "payload": "cmVjMg==",
+                  "seq": "2"
+                },
+                {
+                  "payload": "cmVjMw==",
+                  "seq": "3"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "s1 and s2 both held; one push emits two responses in stream-creation order (D16)",
+      "name": "one_push_wakes_two",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s2",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "aGVsbG8=",
+            "type": "push"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "1"
+              },
+              "records": [
+                {
+                  "payload": "aGVsbG8=",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            },
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "1"
+              },
+              "records": [
+                {
+                  "payload": "aGVsbG8=",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s2",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "end_stream{s1} drops s1's held read (no response), cancels its timer; s2 is untouched and still released by a later push (D4)",
+      "name": "end_stream_mid_hold",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s2",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "type": "end_stream"
+          },
+          "out": [
+            {
+              "token": "1",
+              "type": "cancel_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "aGVsbG8=",
+            "type": "push"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "1"
+              },
+              "records": [
+                {
+                  "payload": "aGVsbG8=",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s2",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "stop_when=last_reader: s1 and s2 end; ProducerStop{last_reader_gone} fires exactly on the >=1->0 reader transition, not before (D6)",
+      "name": "last_stream_producer_stop",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s2",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s2",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "type": "end_stream"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "log_id": "log-A",
+            "stream_id": "s2",
+            "type": "end_stream"
+          },
+          "out": [
+            {
+              "reason": "last_reader_gone",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "the never-read variant of #20: a log with no streams ever created never spuriously stops its producer; end_stream on an unknown stream is a no-op (D6)",
+      "name": "never_read_no_stop",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "log_id": "log-A",
+            "stream_id": "ghost",
+            "type": "end_stream"
+          },
+          "out": []
+        }
+      ]
+    },
+    {
+      "comment": "same script as #20 but stop_when=explicit: reader loss emits no ProducerStop; only close does (D6)",
+      "name": "stop_when_explicit_only",
+      "node": {
+        "stop_when": "explicit"
+      },
+      "steps": [
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s2",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s2",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "type": "end_stream"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "log_id": "log-A",
+            "stream_id": "s2",
+            "type": "end_stream"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "close"
+          },
+          "out": [
+            {
+              "reason": "closed",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "seal then push: the record is dropped (head unchanged), each late push emits exactly one LogDiagnostic{warn, push_after_terminal}; a later read still sees only the pre-seal records (D18/D19)",
+      "name": "push_after_seal_warns",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "cmVjMQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "bGF0ZQ==",
+            "type": "push"
+          },
+          "out": [
+            {
+              "code": "push_after_terminal",
+              "severity": "warn",
+              "type": "diagnostic"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "bGF0ZQ==",
+            "type": "push"
+          },
+          "out": [
+            {
+              "code": "push_after_terminal",
+              "severity": "warn",
+              "type": "diagnostic"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "1"
+              },
+              "records": [
+                {
+                  "payload": "cmVjMQ==",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "1"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "1"
+              },
+              "records": [],
+              "state": "eof",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "close{} then push: dropped, one LogDiagnostic{warn, push_after_terminal} per late push, head unchanged; the terminal state stays closed and reads are unaffected (D18/D19). ProducerStop{closed} fires on the close itself.",
+      "name": "push_after_close_warns",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "cmVjMQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "close"
+          },
+          "out": [
+            {
+              "reason": "closed",
+              "type": "producer_stop"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "bGF0ZQ==",
+            "type": "push"
+          },
+          "out": [
+            {
+              "code": "push_after_terminal",
+              "severity": "warn",
+              "type": "diagnostic"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "1"
+              },
+              "records": [
+                {
+                  "payload": "cmVjMQ==",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "1"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "1"
+              },
+              "records": [],
+              "state": "closed",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "evict{up_to_seq=100} clamps to head=2 (D20: floor <= head+1), raising floor to 3; a read below the floor -> expired with next_cursor=floor-1=2 (== head, since the clamp cannot manufacture positions past head); a read at head -> would_block probe with next_cursor=head=2 (D20, D9, D14)",
+      "name": "evict_beyond_head_clamps",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "YQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "Yg==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "evict",
+            "up_to_seq": "100"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "0"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "2"
+              },
+              "records": [],
+              "state": "expired",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "seq": "2"
+            },
+            "log_id": "log-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "log_id": "log-A",
+              "next_cursor": {
+                "seq": "2"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "version": "log.oracle/v0"
+}

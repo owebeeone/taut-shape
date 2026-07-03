@@ -1,0 +1,9 @@
+{
+  "name": "push_then_read_data",
+  "comment": "append then catch-up read; first record seq=1 (D8), next_cursor advances to head",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "push", "payload": "aGVsbG8=" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "0" }, "max_records": "10", "timeout_ms": "0" } }
+  ]
+}

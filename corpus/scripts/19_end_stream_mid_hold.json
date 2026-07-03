@@ -1,0 +1,11 @@
+{
+  "name": "end_stream_mid_hold",
+  "comment": "end_stream{s1} drops s1's held read (no response), cancels its timer; s2 is untouched and still released by a later push (D4)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "0" }, "timeout_ms": "50" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s2", "cursor": { "seq": "0" } } },
+    { "in": { "type": "end_stream", "log_id": "log-A", "stream_id": "s1" } },
+    { "in": { "type": "push", "payload": "aGVsbG8=" } }
+  ]
+}

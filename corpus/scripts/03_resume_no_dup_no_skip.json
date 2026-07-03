@@ -1,0 +1,12 @@
+{
+  "name": "resume_no_dup_no_skip",
+  "comment": "read half with max_records, resume from next_cursor; records 1..N appear exactly once (D8, D11)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "push", "payload": "cmVjMQ==" } },
+    { "in": { "type": "push", "payload": "cmVjMg==" } },
+    { "in": { "type": "push", "payload": "cmVjMw==" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "0" }, "max_records": "2", "timeout_ms": "0" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "2" }, "max_records": "2", "timeout_ms": "0" } }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "push_after_seal_warns",
+  "comment": "seal then push: the record is dropped (head unchanged), each late push emits exactly one LogDiagnostic{warn, push_after_terminal}; a later read still sees only the pre-seal records (D18/D19)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "push", "payload": "cmVjMQ==" } },
+    { "in": { "type": "seal" } },
+    { "in": { "type": "push", "payload": "bGF0ZQ==" } },
+    { "in": { "type": "push", "payload": "bGF0ZQ==" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "0" }, "timeout_ms": "0" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "1" }, "timeout_ms": "0" } }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "close_clean",
+  "comment": "close{} answers held reads closed and emits ProducerStop{closed}; responses precede ProducerStop (D12, D6)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "0" } } },
+    { "in": { "type": "close" } }
+  ]
+}

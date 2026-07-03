@@ -1,0 +1,12 @@
+{
+  "name": "terminal_still_readable",
+  "comment": "after seal, a fresh cursor below head still reads data before eof; terminal describes the log, not the stream (D12 rule 4)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "push", "payload": "cmVjMQ==" } },
+    { "in": { "type": "push", "payload": "cmVjMg==" } },
+    { "in": { "type": "seal" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "0" }, "timeout_ms": "0" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "2" }, "timeout_ms": "0" } }
+  ]
+}

@@ -90,7 +90,8 @@
         "read_response": 7,
         "set_timer": 8,
         "cancel_timer": 9,
-        "producer_stop": 10
+        "producer_stop": 10,
+        "diagnostic": 11
       }
     },
     {
@@ -118,6 +119,19 @@
         "last_reader_gone": 0,
         "closed": 1,
         "failed": 2
+      }
+    },
+    {
+      "name": "LogSeverity",
+      "members": {
+        "warn": 0,
+        "error": 1
+      }
+    },
+    {
+      "name": "LogDiagCode",
+      "members": {
+        "push_after_terminal": 0
       }
     }
   ],
@@ -526,6 +540,36 @@
           "type": {
             "k": "enum",
             "name": "LogStopReason"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "LogDiagnostic",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "severity",
+          "tag": 1,
+          "type": {
+            "k": "enum",
+            "name": "LogSeverity"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "code",
+          "tag": 2,
+          "type": {
+            "k": "enum",
+            "name": "LogDiagCode"
           },
           "optional": false,
           "transient": false,

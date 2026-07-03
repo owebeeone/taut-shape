@@ -1,0 +1,9 @@
+{
+  "name": "forward_progress",
+  "comment": "a single record larger than max_bytes is still returned alone (D10 forward-progress). payload is 19 bytes, max_bytes=3",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "push", "payload": "YmlnLXBheWxvYWQtZXhjZWVkcw==" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "0" }, "max_bytes": "3", "timeout_ms": "0" } }
+  ]
+}

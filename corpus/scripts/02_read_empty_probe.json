@@ -1,0 +1,8 @@
+{
+  "name": "read_empty_probe",
+  "comment": "timeout_ms=0 probe on an empty log -> would_block, next_cursor=0 (D8, D14)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "0" }, "timeout_ms": "0" } }
+  ]
+}

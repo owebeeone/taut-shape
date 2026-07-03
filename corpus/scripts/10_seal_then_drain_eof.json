@@ -1,0 +1,11 @@
+{
+  "name": "seal_then_drain_eof",
+  "comment": "records then seal; a held caught-up read is answered eof by seal itself; a fresh drained reader also gets eof (D12)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "push", "payload": "cmVjMQ==" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s1", "cursor": { "seq": "1" } } },
+    { "in": { "type": "seal" } },
+    { "in": { "type": "read", "log_id": "log-A", "stream_id": "s2", "cursor": { "seq": "1" }, "timeout_ms": "0" } }
+  ]
+}
