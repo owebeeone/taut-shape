@@ -1,0 +1,9 @@
+{
+  "comment": "Live tail: client holds a read on an empty log; a push after frame 1 releases it with the new record (D8) -> data next=1; a seal after frame 2 releases the next held read as eof (D12).",
+  "read_args": { "stream_id": "s1", "from": 0 },
+  "responses": [
+    { "state": "data", "next_seq": 1, "records": [ { "seq": 1, "payload": "aGVsbG8=" } ], "error": null },
+    { "state": "eof", "next_seq": 1, "records": [], "error": null }
+  ],
+  "final": "eof"
+}

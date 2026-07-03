@@ -12,8 +12,17 @@ engines against *each other*, live, over the real wire framing. See
 - `scenarios/` — deterministic node/client interop scenarios (the `--scenario`
   file scripting the producer: push/seal/close interleaved against read counts).
 
-Channels: **data** = `u32-LE length + CBOR` frames of the taut companion
-messages (the wire under test); **control/result** = OOB JSONL on stderr (each
+**Client termination.** The reading cursor loop treats `eof`/`closed`/`failed`
+as the ONLY terminal states — it emits the final `state` and exits. `expired` is
+NOT terminal: per D9 the response's `next_cursor` is the earliest resumable
+position, so the client advances the cursor to `next_cursor` and re-reads (an
+evict mid-stream is survivable). All three client tools (rs/ts/py) implement this
+identically — see `scenarios/evict_expired_resume`.
+
+Channels: **data** = `u32-LE length + 1 tag byte + CBOR` frames of the taut
+companion messages (the wire under test; the `length` counts the tag byte plus
+the CBOR body, min 1, and the tag byte is the `LogMsgType` wire value 0..=11 —
+see Oracle §7); **control/result** = OOB JSONL on stderr (each
 tool emits its observed transcript). Interop scenarios avoid `timeout_ms > 0`
 (real clocks are nondeterministic across processes) — timer behavior is
 corpus-only, where `TimerExpired` is a scripted input.

@@ -1,0 +1,9 @@
+{
+  "comment": "Catch-up read: two records pre-pushed (D8, seq 1..2), a from=0 held read drains both -> data next=2; the after-frame-1 seal leaves the caught-up reader at head, and its next read is answered eof (D12).",
+  "read_args": { "stream_id": "s1", "from": 0 },
+  "responses": [
+    { "state": "data", "next_seq": 2, "records": [ { "seq": 1, "payload": "cmVjMQ==" }, { "seq": 2, "payload": "cmVjMg==" } ], "error": null },
+    { "state": "eof", "next_seq": 2, "records": [], "error": null }
+  ],
+  "final": "eof"
+}

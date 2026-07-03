@@ -1,0 +1,4 @@
+[
+  { "after_frames": 0, "inputs": [ { "type": "push", "payload": "cmVjMQ==" }, { "type": "push", "payload": "cmVjMg==" } ] },
+  { "after_frames": 1, "inputs": [ { "type": "seal" } ] }
+]

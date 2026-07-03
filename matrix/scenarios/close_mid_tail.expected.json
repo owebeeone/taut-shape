@@ -1,0 +1,9 @@
+{
+  "comment": "Close mid-tail: a push after frame 1 releases the held read with one record -> data next=1; a clean close after frame 2 releases the next held read as closed (D12) and emits ProducerStop{closed} (D6) which the reader ignores.",
+  "read_args": { "stream_id": "s1", "from": 0 },
+  "responses": [
+    { "state": "data", "next_seq": 1, "records": [ { "seq": 1, "payload": "YQ==" } ], "error": null },
+    { "state": "closed", "next_seq": 1, "records": [], "error": null }
+  ],
+  "final": "closed"
+}

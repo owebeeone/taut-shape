@@ -218,13 +218,33 @@ for X in {rs, ts, py}:            # the node side
     node(X)  <== pipes ==>  client(Y)
 ```
 
-- **Data channel** (the wire under test): `u32-LE length + CBOR` frames of the
-  taut companion messages (`LogReadRequest`/`LogEndStream` toward the node,
-  `LogReadResponse` back) — client's stdout → node's stdin and vice versa,
-  crossed pipes, drained concurrently by the driver.
+- **Data channel** (the wire under test): `u32-LE length + 1 tag byte + CBOR`
+  frames of the taut companion messages (`LogReadRequest`/`LogEndStream` toward
+  the node, `LogReadResponse` back) — client's stdout → node's stdin and vice
+  versa, crossed pipes, drained concurrently by the driver. The `length` prefix
+  counts the tag byte **plus** the CBOR body (min 1); the tag byte is the
+  `LogMsgType` wire value (0..=11). This is the framing every `taut-shape-<lang>`
+  tool implements (the `taut-shape-rs` node mode is the reference).
 - **Control/result channel**: OOB JSONL on stderr — each tool emits its observed
-  transcript (and the node consumes a `--scenario` file scripting the producer:
-  push/seal/close interleaved against read counts, so runs are deterministic).
+  transcript (and the node consumes a `--script` file scripting the producer:
+  push/seal/close interleaved against read counts, so runs are deterministic). The
+  script is a JSON array of `{ "after_frames": k, "inputs": [<producer messages in
+  taut jsoncodec form>] }` — after the *k*-th client frame is processed, `inputs`
+  is injected in order and its outputs written too (`after_frames: 0` fires before
+  any client frame). A `{ "steps": [ … ] }` object wrapper is also accepted so a
+  script file can carry a `comment`. All three tools accept `--script` identically:
+  in `node` mode the injected messages feed the local engine; in `client` mode they
+  are written as frames toward the peer node (client-side producer injection).
+- **Client transcript shape**: the `client` cursor loop logs one jsoncodec
+  `read_response` object per received response, then a terminal
+  `{ "type": "client_final", "state": <state> }` line on exit. It sends **held**
+  `LogReadRequest`s (`timeout_ms` omitted) from `--from`, advancing to
+  `next_cursor` on `data`/`would_block`/`expired` and terminating on
+  `eof`/`closed`/`failed`. Because the node writes *every* engine output as a
+  frame, the client tolerates control frames on the response channel: a
+  `producer_stop` frame is terminal (`state: "producer_stop"`), while
+  `set_timer`/`cancel_timer`/`diagnostic` frames are informational and skipped
+  (no re-send). A clean EOF before any terminal answer is treated as `eof`, exit 0.
 - The driver compares both transcripts against the scenario's expectation —
   whole-output golden, spawned subprocess-style per `test_kotlin.py`.
 

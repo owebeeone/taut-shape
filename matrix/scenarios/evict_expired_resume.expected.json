@@ -1,0 +1,10 @@
+{
+  "comment": "Evict + expired resume: three records pushed, then evict{up_to_seq=2} raises the floor to 3 (D7). A from=0 read is below the floor -> expired with next_cursor=floor-1=2 (D9); a spec-correct reader RESUMES from next_cursor and reads the retained tail rec3 -> data next=3; a seal after frame 3 then answers the head read eof (D12). All three clients (rs/ts/py) resume past expired per D9 (terminal states are eof/closed/failed ONLY); expired advances the cursor to next_cursor and re-reads.",
+  "read_args": { "stream_id": "s1", "from": 0 },
+  "responses": [
+    { "state": "expired", "next_seq": 2, "records": [], "error": null },
+    { "state": "data", "next_seq": 3, "records": [ { "seq": 3, "payload": "cmVjMw==" } ], "error": null },
+    { "state": "eof", "next_seq": 3, "records": [], "error": null }
+  ],
+  "final": "eof"
+}
