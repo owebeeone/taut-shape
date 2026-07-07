@@ -1,0 +1,13 @@
+{
+  "name": "read_empty",
+  "comment": "read before any set folds the empty set -> state=empty, no value/winner",
+  "steps": [
+    {
+      "in": {
+        "type": "read",
+        "value_id": "v-A",
+        "stream_id": "s1"
+      }
+    }
+  ]
+}

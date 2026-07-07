@@ -1,0 +1,31 @@
+{
+  "name": "concurrent_lamport",
+  "comment": "two concurrent writers; higher lamport wins (B1 lamport 2 > A1 lamport 1)",
+  "steps": [
+    {
+      "in": {
+        "type": "set",
+        "origin": "a",
+        "seq": "1",
+        "lamport": "1",
+        "payload": "QTE="
+      }
+    },
+    {
+      "in": {
+        "type": "set",
+        "origin": "b",
+        "seq": "1",
+        "lamport": "2",
+        "payload": "QjE="
+      }
+    },
+    {
+      "in": {
+        "type": "read",
+        "value_id": "v-A",
+        "stream_id": "s1"
+      }
+    }
+  ]
+}

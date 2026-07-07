@@ -184,10 +184,46 @@ Each pinned rule (D-number) gets at least one vector. The initial set:
     per late push, head unchanged, subsequent reads unaffected (the terminal
     state and any error stay as `close` set them — D18/D19).
 
+## 4b. The `value` shape (lww register) — vector catalog (value v0)
+
+The `value` shape (`ir/shape_value.taut.py`) is glade's `value` fold extracted
+to its own contract: a *set* of attributed whole-value writes (`ValueSet`) folds
+to a single winner — `max` by `(lamport, origin)`, dedup by `(origin, seq)`, a
+forked `(origin, seq)` is equivocation (`taut.crdt.glade_fold.fold_value`).
+Reads are immediate probes (`ValueReadRequest` → `ValueReadResponse{value?,
+winner?, state}`); there are no held reads, timers, or lifecycle in v0 (those are
+`shape_log` / later shapes). MV is deferred (GQ-1 sidestep): single winner only.
+Corpus `corpus/value.v0.json`, `version "value.oracle/v0"`; same step format as
+log-v0 minus the `node` knob (the register has no construction options).
+
+1. `set_then_read` — one `set`, then read → `data` with the payload + winner
+   stamp.
+2. `read_empty` — read before any set folds the empty set → `empty` (no
+   value/winner).
+3. `concurrent_lamport` — two writers; higher lamport wins.
+4. `tiebreak_origin` — lamport tie → origin breaks it (`"b" > "a"`).
+5. `out_of_order` — arrival order irrelevant; same winner.
+6. `overwrite_same_origin` — a later write by the same origin (higher lamport)
+   supersedes its earlier one.
+7. `duplicate_idempotent` — exact re-sends by `(origin, seq)` are dropped, no
+   diagnostic; winner unchanged.
+8. `read_reflects_latest` — the register is live: read, set, read shows the
+   winner advancing.
+9. `equivocation_rejected` — a forked `(origin, seq)` with a different payload →
+   exactly one `ValueDiagnostic{error, equivocation}`, register unchanged.
+10. `equivocation_prev_mismatch` — same `(origin, seq)` and payload but a
+    different `prev` is still a forked chain → equivocation, register unchanged.
+11. `two_reads_two_streams` — two reads on different stream ids each get their
+    own addressed response.
+
 ## 5. Generation
 
-`taut-shape-rs` is the reference implementation: its tool's `gen` mode replays
-authored scripts through the reference engine and emits the corpus JSON. The
+`taut-shape-rs` is the reference implementation for `shape_log`: its tool's
+`gen` mode replays authored scripts through the reference engine and emits the
+corpus JSON. For `shape_value` the reference is Python — `fold_value` in the taut
+runtime — so `corpus/value_gen.py` replays `scripts_value/` through it directly
+(self-contained, no per-language build); the register-shell glue asserts its
+winner equals `fold_value(ops)`, keeping the fold the authority. Either way the
 authored *inputs* (scripts + construction knobs) live in this repo; `gen` fills
 in the expected outputs; a human reviews the diff before committing (every
 expected output is hand-reviewed once, the `glade_folds` discipline).

@@ -1,0 +1,31 @@
+{
+  "name": "equivocation_rejected",
+  "comment": "a forked (origin,seq) with a different payload is equivocation: rejected + diagnostic; register unchanged (A1)",
+  "steps": [
+    {
+      "in": {
+        "type": "set",
+        "origin": "a",
+        "seq": "1",
+        "lamport": "1",
+        "payload": "QTE="
+      }
+    },
+    {
+      "in": {
+        "type": "set",
+        "origin": "a",
+        "seq": "1",
+        "lamport": "1",
+        "payload": "QTEtZm9yaw=="
+      }
+    },
+    {
+      "in": {
+        "type": "read",
+        "value_id": "v-A",
+        "stream_id": "s1"
+      }
+    }
+  ]
+}

@@ -1,0 +1,555 @@
+{
+  "shape": "value",
+  "vectors": [
+    {
+      "comment": "one whole-value set then a read: winner = the sole write, state=data with its stamp",
+      "name": "set_then_read",
+      "steps": [
+        {
+          "in": {
+            "lamport": "1",
+            "origin": "a",
+            "payload": "QTE=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read",
+            "value_id": "v-A"
+          },
+          "out": [
+            {
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": "QTE=",
+              "value_id": "v-A",
+              "winner": {
+                "lamport": "1",
+                "origin": "a",
+                "seq": "1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "read before any set folds the empty set -> state=empty, no value/winner",
+      "name": "read_empty",
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read",
+            "value_id": "v-A"
+          },
+          "out": [
+            {
+              "state": "empty",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": null,
+              "value_id": "v-A",
+              "winner": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "two concurrent writers; higher lamport wins (B1 lamport 2 > A1 lamport 1)",
+      "name": "concurrent_lamport",
+      "steps": [
+        {
+          "in": {
+            "lamport": "1",
+            "origin": "a",
+            "payload": "QTE=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "lamport": "2",
+            "origin": "b",
+            "payload": "QjE=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read",
+            "value_id": "v-A"
+          },
+          "out": [
+            {
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": "QjE=",
+              "value_id": "v-A",
+              "winner": {
+                "lamport": "2",
+                "origin": "b",
+                "seq": "1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "lamport tie (both 2) -> origin breaks the tie, 'b' > 'a' so B1 wins",
+      "name": "tiebreak_origin",
+      "steps": [
+        {
+          "in": {
+            "lamport": "2",
+            "origin": "a",
+            "payload": "QTI=",
+            "seq": "2",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "lamport": "2",
+            "origin": "b",
+            "payload": "QjE=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read",
+            "value_id": "v-A"
+          },
+          "out": [
+            {
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": "QjE=",
+              "value_id": "v-A",
+              "winner": {
+                "lamport": "2",
+                "origin": "b",
+                "seq": "1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "arrival order is irrelevant: B1 applied before A1 still folds to B1 (lamport 2 > 1)",
+      "name": "out_of_order",
+      "steps": [
+        {
+          "in": {
+            "lamport": "2",
+            "origin": "b",
+            "payload": "QjE=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "lamport": "1",
+            "origin": "a",
+            "payload": "QTE=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read",
+            "value_id": "v-A"
+          },
+          "out": [
+            {
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": "QjE=",
+              "value_id": "v-A",
+              "winner": {
+                "lamport": "2",
+                "origin": "b",
+                "seq": "1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "same origin overwrites: a/seq2 lamport 3 (A2) supersedes a/seq1 lamport 1 (A1)",
+      "name": "overwrite_same_origin",
+      "steps": [
+        {
+          "in": {
+            "lamport": "1",
+            "origin": "a",
+            "payload": "QTE=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "lamport": "3",
+            "origin": "a",
+            "payload": "QTI=",
+            "seq": "2",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read",
+            "value_id": "v-A"
+          },
+          "out": [
+            {
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": "QTI=",
+              "value_id": "v-A",
+              "winner": {
+                "lamport": "3",
+                "origin": "a",
+                "seq": "2"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "exact re-sends by (origin,seq) are idempotent (dropped, no diagnostic); winner still B1",
+      "name": "duplicate_idempotent",
+      "steps": [
+        {
+          "in": {
+            "lamport": "1",
+            "origin": "a",
+            "payload": "QTE=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "lamport": "2",
+            "origin": "b",
+            "payload": "QjE=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "lamport": "1",
+            "origin": "a",
+            "payload": "QTE=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "lamport": "2",
+            "origin": "b",
+            "payload": "QjE=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read",
+            "value_id": "v-A"
+          },
+          "out": [
+            {
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": "QjE=",
+              "value_id": "v-A",
+              "winner": {
+                "lamport": "2",
+                "origin": "b",
+                "seq": "1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "the register is live: read after A1 -> A1, then set B1 and read -> B1",
+      "name": "read_reflects_latest",
+      "steps": [
+        {
+          "in": {
+            "lamport": "1",
+            "origin": "a",
+            "payload": "QTE=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read",
+            "value_id": "v-A"
+          },
+          "out": [
+            {
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": "QTE=",
+              "value_id": "v-A",
+              "winner": {
+                "lamport": "1",
+                "origin": "a",
+                "seq": "1"
+              }
+            }
+          ]
+        },
+        {
+          "in": {
+            "lamport": "2",
+            "origin": "b",
+            "payload": "QjE=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read",
+            "value_id": "v-A"
+          },
+          "out": [
+            {
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": "QjE=",
+              "value_id": "v-A",
+              "winner": {
+                "lamport": "2",
+                "origin": "b",
+                "seq": "1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "a forked (origin,seq) with a different payload is equivocation: rejected + diagnostic; register unchanged (A1)",
+      "name": "equivocation_rejected",
+      "steps": [
+        {
+          "in": {
+            "lamport": "1",
+            "origin": "a",
+            "payload": "QTE=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "lamport": "1",
+            "origin": "a",
+            "payload": "QTEtZm9yaw==",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": [
+            {
+              "code": "equivocation",
+              "severity": "error",
+              "type": "diagnostic"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read",
+            "value_id": "v-A"
+          },
+          "out": [
+            {
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": "QTE=",
+              "value_id": "v-A",
+              "winner": {
+                "lamport": "1",
+                "origin": "a",
+                "seq": "1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "same (origin,seq) and payload but a different prev is still a forked chain -> equivocation diagnostic; register unchanged (A1)",
+      "name": "equivocation_prev_mismatch",
+      "steps": [
+        {
+          "in": {
+            "lamport": "1",
+            "origin": "a",
+            "payload": "QTE=",
+            "prev": "AAE=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "lamport": "1",
+            "origin": "a",
+            "payload": "QTE=",
+            "prev": "AAI=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": [
+            {
+              "code": "equivocation",
+              "severity": "error",
+              "type": "diagnostic"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read",
+            "value_id": "v-A"
+          },
+          "out": [
+            {
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": "QTE=",
+              "value_id": "v-A",
+              "winner": {
+                "lamport": "1",
+                "origin": "a",
+                "seq": "1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "after one set, reads on two stream ids each get their own addressed response with the same winner",
+      "name": "two_reads_two_streams",
+      "steps": [
+        {
+          "in": {
+            "lamport": "1",
+            "origin": "a",
+            "payload": "QTE=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read",
+            "value_id": "v-A"
+          },
+          "out": [
+            {
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": "QTE=",
+              "value_id": "v-A",
+              "winner": {
+                "lamport": "1",
+                "origin": "a",
+                "seq": "1"
+              }
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s2",
+            "type": "read",
+            "value_id": "v-A"
+          },
+          "out": [
+            {
+              "state": "data",
+              "stream_id": "s2",
+              "type": "read_response",
+              "value": "QTE=",
+              "value_id": "v-A",
+              "winner": {
+                "lamport": "1",
+                "origin": "a",
+                "seq": "1"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "version": "value.oracle/v0"
+}

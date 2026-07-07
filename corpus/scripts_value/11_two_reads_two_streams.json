@@ -1,0 +1,29 @@
+{
+  "name": "two_reads_two_streams",
+  "comment": "after one set, reads on two stream ids each get their own addressed response with the same winner",
+  "steps": [
+    {
+      "in": {
+        "type": "set",
+        "origin": "a",
+        "seq": "1",
+        "lamport": "1",
+        "payload": "QTE="
+      }
+    },
+    {
+      "in": {
+        "type": "read",
+        "value_id": "v-A",
+        "stream_id": "s1"
+      }
+    },
+    {
+      "in": {
+        "type": "read",
+        "value_id": "v-A",
+        "stream_id": "s2"
+      }
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "set_then_read",
+  "comment": "one whole-value set then a read: winner = the sole write, state=data with its stamp",
+  "steps": [
+    {
+      "in": {
+        "type": "set",
+        "origin": "a",
+        "seq": "1",
+        "lamport": "1",
+        "payload": "QTE="
+      }
+    },
+    {
+      "in": {
+        "type": "read",
+        "value_id": "v-A",
+        "stream_id": "s1"
+      }
+    }
+  ]
+}

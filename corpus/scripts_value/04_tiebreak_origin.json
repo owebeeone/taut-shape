@@ -1,0 +1,31 @@
+{
+  "name": "tiebreak_origin",
+  "comment": "lamport tie (both 2) -> origin breaks the tie, 'b' > 'a' so B1 wins",
+  "steps": [
+    {
+      "in": {
+        "type": "set",
+        "origin": "a",
+        "seq": "2",
+        "lamport": "2",
+        "payload": "QTI="
+      }
+    },
+    {
+      "in": {
+        "type": "set",
+        "origin": "b",
+        "seq": "1",
+        "lamport": "2",
+        "payload": "QjE="
+      }
+    },
+    {
+      "in": {
+        "type": "read",
+        "value_id": "v-A",
+        "stream_id": "s1"
+      }
+    }
+  ]
+}

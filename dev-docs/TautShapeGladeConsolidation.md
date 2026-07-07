@@ -26,6 +26,49 @@ staying lockstep with the corpus, not by being the corpus.
 - S3: matrix rows: `node(X) ⊗ client(Y)` over value scenarios.
   Exit: value shape conformance runs in CI beside log-v0.
 
+### P1 build notes (S1–S2 landed; S3 blocked)
+
+Delivered: `ir/shape_value.taut.py` + exported `ir/shape_value.ir.json`
+(`ir/regen.py` now gates both shapes), the authored input scripts
+`corpus/scripts_value/*.json`, the committed oracle `corpus/value.v0.json`
+(11 vectors), and its self-contained lockstep gate `corpus/value_gen.py`
+(`--check`). Decisions taken (smallest reasonable calls):
+
+- **Reference engine is Python, not Rust.** `shape_log`'s `gen.py` shells to the
+  external `taut-shape-tool` (Rust). The `value` fold is small and its canonical
+  reference already exists in the taut runtime — `taut.crdt.glade_fold.fold_value`
+  (winner = `max (lamport, origin)`; dedup by `(origin, seq)`; forked chain =
+  equivocation). `value_gen.py` imports it, so value corpus gen/gate is
+  self-contained in the workspace (no per-language build). taut-shape still holds
+  no engine of its own — `fold_value` is the authority; the register-shell glue
+  is driver code and asserts its winner equals `fold_value(ops)`.
+- **Wire vocabulary (v0):** `ValueSet` (a whole-value write — the fold-relevant
+  subset of the glade `Op` envelope: origin/seq/lamport/prev?/payload; glade owns
+  share/glade_id/key routing), `ValueReadRequest{value_id, stream_id}` →
+  `ValueReadResponse{value_id, stream_id, value?, winner?, state}`, and
+  `ValueDiagnostic{severity, code}`. `ValueStamp{origin, seq, lamport}` is the
+  winner provenance.
+- **Reads are immediate probes** — no held reads, no timers, no lifecycle
+  (seal/close/evict). Those are `shape_log` / later shapes; whole-value v0 does
+  not need them. `end_stream` is omitted for the same reason (a probe leaves no
+  per-stream state to clean up) — a v-next addition if the matrix needs it.
+- **MV deferred (GQ-1 sidestep, GladeSubstrateV1 §11):** single-winner only;
+  `ValueReadResponse.winner` is one stamp. MV grows additively (a repeated field)
+  and forecloses nothing.
+- **Equivocation** is a `ValueDiagnostic{error, equivocation}` on the offending
+  write (rejected, register unchanged) — not a read outcome. `error` (not log's
+  `warn`) because a forked chain is a rejected op, not a benign late-write race.
+- **Format delta from log-v0:** value vectors carry no `node` construction knob
+  (value has no `stop_when`); otherwise `corpus/value.v0.json` matches Oracle §3.
+
+**S3 (interop matrix) — BLOCKED, not started.** The matrix needs a `value`
+`node`/`client` CLI in each `taut-shape-<lang>`; none of `taut-shape-rs|ts|py`
+are cloned in this workspace (and `matrix/driver.py` is log-specific — it
+hardcodes the log tools and canonicalises log transcripts). Value matrix rows
+land when those sibling repos gain a value engine. The corpus + Python-reference
+gate already give cross-language conformance-against-spec; the matrix adds
+live A-vs-B, which requires the language tools to exist.
+
 **P2 — glade rebases onto the contracts.**
 - S1: glade's fold-conformance vectors (lww + log byte-parity oracles from
   M-LIMP) MERGE into the taut-shape corpora — one corpus per shape, glade's

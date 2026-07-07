@@ -1,0 +1,341 @@
+{
+  "version": 1,
+  "shapes": {
+    "unary": {
+      "payload": "whole",
+      "history": "none",
+      "initiation": "pull",
+      "writers": "single",
+      "events": [
+        "value"
+      ],
+      "delivery": "once"
+    },
+    "atom": {
+      "payload": "whole-state",
+      "history": "latest",
+      "initiation": "pull|push",
+      "writers": "single",
+      "events": [
+        "replace"
+      ],
+      "delivery": "stream"
+    },
+    "log": {
+      "payload": "whole",
+      "history": "append-only",
+      "initiation": "pull|push",
+      "writers": "source",
+      "events": [
+        "append"
+      ],
+      "delivery": "stream"
+    },
+    "stream": {
+      "payload": "whole-or-delta",
+      "history": "none",
+      "initiation": "push",
+      "writers": "source",
+      "events": [
+        "event"
+      ],
+      "delivery": "stream"
+    },
+    "swmr": {
+      "payload": "delta",
+      "history": "reconstructible",
+      "initiation": "push",
+      "writers": "single",
+      "events": [
+        "delta",
+        "reset",
+        "snapshot"
+      ],
+      "delivery": "stream"
+    },
+    "snapshot_delta": {
+      "payload": "delta",
+      "history": "reconstructible",
+      "initiation": "push",
+      "writers": "single",
+      "events": [
+        "delta",
+        "snapshot"
+      ],
+      "delivery": "stream"
+    },
+    "crdt": {
+      "payload": "ops",
+      "history": "reconstructible",
+      "initiation": "push-bidi",
+      "writers": "multi-merge",
+      "events": [
+        "op",
+        "sync"
+      ],
+      "delivery": "stream"
+    }
+  },
+  "enums": [
+    {
+      "name": "ValueMsgType",
+      "members": {
+        "set": 0,
+        "read": 1,
+        "read_response": 2,
+        "diagnostic": 3
+      }
+    },
+    {
+      "name": "ValueState",
+      "members": {
+        "data": 0,
+        "empty": 1
+      }
+    },
+    {
+      "name": "ValueSeverity",
+      "members": {
+        "warn": 0,
+        "error": 1
+      }
+    },
+    {
+      "name": "ValueDiagCode",
+      "members": {
+        "equivocation": 0
+      }
+    }
+  ],
+  "messages": [
+    {
+      "name": "ValueStamp",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "origin",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "seq",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "lamport",
+          "tag": 3,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "ValueSet",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "origin",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "seq",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "lamport",
+          "tag": 3,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "prev",
+          "tag": 4,
+          "type": {
+            "k": "scalar",
+            "scalar": "bytes"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "payload",
+          "tag": 5,
+          "type": {
+            "k": "scalar",
+            "scalar": "bytes"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "ValueReadRequest",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "value_id",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "stream_id",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "ValueReadResponse",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "value_id",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "stream_id",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "value",
+          "tag": 3,
+          "type": {
+            "k": "scalar",
+            "scalar": "bytes"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "winner",
+          "tag": 4,
+          "type": {
+            "k": "msg",
+            "name": "ValueStamp"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "state",
+          "tag": 5,
+          "type": {
+            "k": "enum",
+            "name": "ValueState"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "ValueDiagnostic",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "severity",
+          "tag": 1,
+          "type": {
+            "k": "enum",
+            "name": "ValueSeverity"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "code",
+          "tag": 2,
+          "type": {
+            "k": "enum",
+            "name": "ValueDiagCode"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    }
+  ],
+  "services": [],
+  "extensions": []
+}

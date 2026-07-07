@@ -1,0 +1,31 @@
+{
+  "name": "out_of_order",
+  "comment": "arrival order is irrelevant: B1 applied before A1 still folds to B1 (lamport 2 > 1)",
+  "steps": [
+    {
+      "in": {
+        "type": "set",
+        "origin": "b",
+        "seq": "1",
+        "lamport": "2",
+        "payload": "QjE="
+      }
+    },
+    {
+      "in": {
+        "type": "set",
+        "origin": "a",
+        "seq": "1",
+        "lamport": "1",
+        "payload": "QTE="
+      }
+    },
+    {
+      "in": {
+        "type": "read",
+        "value_id": "v-A",
+        "stream_id": "s1"
+      }
+    }
+  ]
+}

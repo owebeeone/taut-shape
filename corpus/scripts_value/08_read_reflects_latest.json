@@ -1,0 +1,38 @@
+{
+  "name": "read_reflects_latest",
+  "comment": "the register is live: read after A1 -> A1, then set B1 and read -> B1",
+  "steps": [
+    {
+      "in": {
+        "type": "set",
+        "origin": "a",
+        "seq": "1",
+        "lamport": "1",
+        "payload": "QTE="
+      }
+    },
+    {
+      "in": {
+        "type": "read",
+        "value_id": "v-A",
+        "stream_id": "s1"
+      }
+    },
+    {
+      "in": {
+        "type": "set",
+        "origin": "b",
+        "seq": "1",
+        "lamport": "2",
+        "payload": "QjE="
+      }
+    },
+    {
+      "in": {
+        "type": "read",
+        "value_id": "v-A",
+        "stream_id": "s1"
+      }
+    }
+  ]
+}

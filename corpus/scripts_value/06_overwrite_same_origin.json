@@ -1,0 +1,31 @@
+{
+  "name": "overwrite_same_origin",
+  "comment": "same origin overwrites: a/seq2 lamport 3 (A2) supersedes a/seq1 lamport 1 (A1)",
+  "steps": [
+    {
+      "in": {
+        "type": "set",
+        "origin": "a",
+        "seq": "1",
+        "lamport": "1",
+        "payload": "QTE="
+      }
+    },
+    {
+      "in": {
+        "type": "set",
+        "origin": "a",
+        "seq": "2",
+        "lamport": "3",
+        "payload": "QTI="
+      }
+    },
+    {
+      "in": {
+        "type": "read",
+        "value_id": "v-A",
+        "stream_id": "s1"
+      }
+    }
+  ]
+}
