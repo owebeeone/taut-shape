@@ -1,0 +1,21 @@
+{
+  "name": "log/tiebreak-origin",
+  "fold": "log",
+  "comment": "lamport tie -> 'a' < 'b' in the interleave",
+  "ops": [
+    {
+      "origin": "a",
+      "seq": 2,
+      "lamport": 2,
+      "prev": null,
+      "payload": "4132"
+    },
+    {
+      "origin": "b",
+      "seq": 1,
+      "lamport": 2,
+      "prev": null,
+      "payload": "4231"
+    }
+  ]
+}

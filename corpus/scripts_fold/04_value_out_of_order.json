@@ -1,0 +1,21 @@
+{
+  "name": "value/out-of-order",
+  "fold": "value",
+  "comment": "arrival order irrelevant; same winner",
+  "ops": [
+    {
+      "origin": "b",
+      "seq": 1,
+      "lamport": 2,
+      "prev": null,
+      "payload": "4231"
+    },
+    {
+      "origin": "a",
+      "seq": 1,
+      "lamport": 1,
+      "prev": null,
+      "payload": "4131"
+    }
+  ]
+}

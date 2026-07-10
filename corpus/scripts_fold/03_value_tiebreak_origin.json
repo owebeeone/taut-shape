@@ -1,0 +1,21 @@
+{
+  "name": "value/tiebreak-origin",
+  "fold": "value",
+  "comment": "lamport tie -> higher origin id wins ('b' > 'a')",
+  "ops": [
+    {
+      "origin": "a",
+      "seq": 2,
+      "lamport": 2,
+      "prev": null,
+      "payload": "4132"
+    },
+    {
+      "origin": "b",
+      "seq": 1,
+      "lamport": 2,
+      "prev": null,
+      "payload": "4231"
+    }
+  ]
+}

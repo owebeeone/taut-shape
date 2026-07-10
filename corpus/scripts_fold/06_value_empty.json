@@ -1,0 +1,6 @@
+{
+  "name": "value/empty",
+  "fold": "value",
+  "comment": "the empty op-set folds to no value",
+  "ops": []
+}

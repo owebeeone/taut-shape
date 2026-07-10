@@ -1,0 +1,35 @@
+{
+  "name": "value/duplicate",
+  "fold": "value",
+  "comment": "exact re-sends are idempotent; winner unchanged",
+  "ops": [
+    {
+      "origin": "a",
+      "seq": 1,
+      "lamport": 1,
+      "prev": null,
+      "payload": "4131"
+    },
+    {
+      "origin": "b",
+      "seq": 1,
+      "lamport": 2,
+      "prev": null,
+      "payload": "4231"
+    },
+    {
+      "origin": "a",
+      "seq": 1,
+      "lamport": 1,
+      "prev": null,
+      "payload": "4131"
+    },
+    {
+      "origin": "b",
+      "seq": 1,
+      "lamport": 2,
+      "prev": null,
+      "payload": "4231"
+    }
+  ]
+}

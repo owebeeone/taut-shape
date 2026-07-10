@@ -1,0 +1,296 @@
+{
+  "shape": "fold",
+  "vectors": [
+    {
+      "comment": "sole write is the winner",
+      "expect": "4131",
+      "fold": "value",
+      "name": "value/single",
+      "ops": [
+        {
+          "lamport": 1,
+          "origin": "a",
+          "payload": "4131",
+          "prev": null,
+          "seq": 1
+        }
+      ]
+    },
+    {
+      "comment": "two writers, higher lamport wins (B1)",
+      "expect": "4231",
+      "fold": "value",
+      "name": "value/concurrent-lamport",
+      "ops": [
+        {
+          "lamport": 1,
+          "origin": "a",
+          "payload": "4131",
+          "prev": null,
+          "seq": 1
+        },
+        {
+          "lamport": 2,
+          "origin": "b",
+          "payload": "4231",
+          "prev": null,
+          "seq": 1
+        }
+      ]
+    },
+    {
+      "comment": "lamport tie -> higher origin id wins ('b' > 'a')",
+      "expect": "4231",
+      "fold": "value",
+      "name": "value/tiebreak-origin",
+      "ops": [
+        {
+          "lamport": 2,
+          "origin": "a",
+          "payload": "4132",
+          "prev": null,
+          "seq": 2
+        },
+        {
+          "lamport": 2,
+          "origin": "b",
+          "payload": "4231",
+          "prev": null,
+          "seq": 1
+        }
+      ]
+    },
+    {
+      "comment": "arrival order irrelevant; same winner",
+      "expect": "4231",
+      "fold": "value",
+      "name": "value/out-of-order",
+      "ops": [
+        {
+          "lamport": 2,
+          "origin": "b",
+          "payload": "4231",
+          "prev": null,
+          "seq": 1
+        },
+        {
+          "lamport": 1,
+          "origin": "a",
+          "payload": "4131",
+          "prev": null,
+          "seq": 1
+        }
+      ]
+    },
+    {
+      "comment": "exact re-sends are idempotent; winner unchanged",
+      "expect": "4231",
+      "fold": "value",
+      "name": "value/duplicate",
+      "ops": [
+        {
+          "lamport": 1,
+          "origin": "a",
+          "payload": "4131",
+          "prev": null,
+          "seq": 1
+        },
+        {
+          "lamport": 2,
+          "origin": "b",
+          "payload": "4231",
+          "prev": null,
+          "seq": 1
+        },
+        {
+          "lamport": 1,
+          "origin": "a",
+          "payload": "4131",
+          "prev": null,
+          "seq": 1
+        },
+        {
+          "lamport": 2,
+          "origin": "b",
+          "payload": "4231",
+          "prev": null,
+          "seq": 1
+        }
+      ]
+    },
+    {
+      "comment": "the empty op-set folds to no value",
+      "expect": null,
+      "fold": "value",
+      "name": "value/empty",
+      "ops": []
+    },
+    {
+      "comment": "append log in (lamport,origin,seq) order",
+      "expect": [
+        "4131",
+        "4231"
+      ],
+      "fold": "log",
+      "name": "log/order",
+      "ops": [
+        {
+          "lamport": 1,
+          "origin": "a",
+          "payload": "4131",
+          "prev": null,
+          "seq": 1
+        },
+        {
+          "lamport": 2,
+          "origin": "b",
+          "payload": "4231",
+          "prev": null,
+          "seq": 1
+        }
+      ]
+    },
+    {
+      "comment": "lamport tie -> 'a' < 'b' in the interleave",
+      "expect": [
+        "4132",
+        "4231"
+      ],
+      "fold": "log",
+      "name": "log/tiebreak-origin",
+      "ops": [
+        {
+          "lamport": 2,
+          "origin": "a",
+          "payload": "4132",
+          "prev": null,
+          "seq": 2
+        },
+        {
+          "lamport": 2,
+          "origin": "b",
+          "payload": "4231",
+          "prev": null,
+          "seq": 1
+        }
+      ]
+    },
+    {
+      "comment": "(1,a,1) < (2,a,2) < (2,b,1) regardless of arrival",
+      "expect": [
+        "4131",
+        "4132",
+        "4231"
+      ],
+      "fold": "log",
+      "name": "log/out-of-order",
+      "ops": [
+        {
+          "lamport": 2,
+          "origin": "b",
+          "payload": "4231",
+          "prev": null,
+          "seq": 1
+        },
+        {
+          "lamport": 2,
+          "origin": "a",
+          "payload": "4132",
+          "prev": null,
+          "seq": 2
+        },
+        {
+          "lamport": 1,
+          "origin": "a",
+          "payload": "4131",
+          "prev": null,
+          "seq": 1
+        }
+      ]
+    },
+    {
+      "comment": "duplicate delivery dropped; each payload once",
+      "expect": [
+        "4131",
+        "4231"
+      ],
+      "fold": "log",
+      "name": "log/duplicate",
+      "ops": [
+        {
+          "lamport": 1,
+          "origin": "a",
+          "payload": "4131",
+          "prev": null,
+          "seq": 1
+        },
+        {
+          "lamport": 2,
+          "origin": "b",
+          "payload": "4231",
+          "prev": null,
+          "seq": 1
+        },
+        {
+          "lamport": 1,
+          "origin": "a",
+          "payload": "4131",
+          "prev": null,
+          "seq": 1
+        }
+      ]
+    },
+    {
+      "comment": "same (origin,seq), different payload -> equivocation detected",
+      "expect": true,
+      "fold": "equiv",
+      "name": "equiv/forked",
+      "ops": [
+        {
+          "lamport": 1,
+          "origin": "a",
+          "payload": "4131",
+          "prev": null,
+          "seq": 1
+        },
+        {
+          "lamport": 1,
+          "origin": "a",
+          "payload": "41312d666f726b",
+          "prev": null,
+          "seq": 1
+        }
+      ]
+    },
+    {
+      "comment": "a clean idempotent duplicate is not equivocation",
+      "expect": false,
+      "fold": "equiv",
+      "name": "equiv/clean",
+      "ops": [
+        {
+          "lamport": 1,
+          "origin": "a",
+          "payload": "4131",
+          "prev": null,
+          "seq": 1
+        },
+        {
+          "lamport": 2,
+          "origin": "b",
+          "payload": "4231",
+          "prev": null,
+          "seq": 1
+        },
+        {
+          "lamport": 1,
+          "origin": "a",
+          "payload": "4131",
+          "prev": null,
+          "seq": 1
+        }
+      ]
+    }
+  ],
+  "version": "fold.oracle/v0"
+}

@@ -1,0 +1,21 @@
+{
+  "name": "log/order",
+  "fold": "log",
+  "comment": "append log in (lamport,origin,seq) order",
+  "ops": [
+    {
+      "origin": "a",
+      "seq": 1,
+      "lamport": 1,
+      "prev": null,
+      "payload": "4131"
+    },
+    {
+      "origin": "b",
+      "seq": 1,
+      "lamport": 2,
+      "prev": null,
+      "payload": "4231"
+    }
+  ]
+}

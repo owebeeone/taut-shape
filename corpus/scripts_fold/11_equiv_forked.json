@@ -1,0 +1,21 @@
+{
+  "name": "equiv/forked",
+  "fold": "equiv",
+  "comment": "same (origin,seq), different payload -> equivocation detected",
+  "ops": [
+    {
+      "origin": "a",
+      "seq": 1,
+      "lamport": 1,
+      "prev": null,
+      "payload": "4131"
+    },
+    {
+      "origin": "a",
+      "seq": 1,
+      "lamport": 1,
+      "prev": null,
+      "payload": "41312d666f726b"
+    }
+  ]
+}

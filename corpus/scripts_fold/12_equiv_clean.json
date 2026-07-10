@@ -1,0 +1,28 @@
+{
+  "name": "equiv/clean",
+  "fold": "equiv",
+  "comment": "a clean idempotent duplicate is not equivocation",
+  "ops": [
+    {
+      "origin": "a",
+      "seq": 1,
+      "lamport": 1,
+      "prev": null,
+      "payload": "4131"
+    },
+    {
+      "origin": "b",
+      "seq": 1,
+      "lamport": 2,
+      "prev": null,
+      "payload": "4231"
+    },
+    {
+      "origin": "a",
+      "seq": 1,
+      "lamport": 1,
+      "prev": null,
+      "payload": "4131"
+    }
+  ]
+}

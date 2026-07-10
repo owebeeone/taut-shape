@@ -81,6 +81,101 @@ live A-vs-B, which requires the language tools to exist.
   Exit: deleting glade's private oracle dir loses nothing; matrix covers
   glade engines.
 
+### P2.S1 build notes (fold oracle merged 2026-07-10)
+
+Delivered the merge (S1). glade's frozen M-LIMP fold oracle
+(`taut/corpus/glade_folds.json`, 12 vectors, generated from
+`taut.crdt.glade_fold`) is re-homed into taut-shape as `corpus/fold.v0.json`
+(`version "fold.oracle/v0"`) following the established scripts/gen/`--check`
+pattern: `corpus/scripts_fold/*.json` (authored raw-op inputs) → `corpus/fold_gen.py`
+(imports the taut fold reference, fills `expect`, self-contained — no per-language
+build, mirroring `value_gen.py`). Smallest reasonable calls taken:
+
+- **Re-homed whole, not shredded per shape.** glade's oracle is inherently one
+  artifact spanning three folds (`value`/`log`/`equiv`); it lands as one
+  taut-shape corpus (`fold.v0.json`), *not* split into `value.v0`/`log.v0`. This
+  keeps byte-parity with glade's frozen file trivial (so the conflict guard is a
+  simple by-name `(ops, expect)` compare) and preserves the "the fold is one
+  contract" framing. A minor deviation from the plan's "one corpus per shape" —
+  recorded here. The message-level per-shape corpora (`value.v0`, `log.v0`) stay
+  the per-shape homes; `fold.v0` is the shared fold-primitive layer beneath them.
+- **Raw-op / hex granularity, no jsoncodec.** The fold operates on the raw op
+  envelope (`origin/seq/lamport/prev/payload`), not schema messages, so — unlike
+  `value_gen.py` — there is no jsoncodec/CBOR round-trip and payloads ride **hex**
+  (glade's convention), matching `glade_folds.json` exactly.
+- **`value` + `equiv` rows deduped against P1's `value.v0.json`** (`corpus/README.md`
+  mapping table): the fold rows and the message-level `value` corpus derive from
+  the *same* `fold_value` reference at two granularities, so the fold rows add no
+  new `value` *behavior* — they are re-homed (so deleting glade's oracle loses
+  nothing) with the overlap documented. `value.v0.json` already supersets glade's
+  value+equiv coverage (`overwrite_same_origin`, `read_reflects_latest`,
+  `equivocation_prev_mismatch`, `two_reads_two_streams` are beyond the fold oracle).
+- **The 4 `log/*` rows are genuinely new coverage.** taut-shape's `log.v0.json`
+  is the `shape_log` *behavioral* corpus (streaming/holds/timers/lifecycle,
+  Rust-generated) and never exercises the pure causal-interleave fold `fold_log`.
+  P1 built only `value`; the log fold enters taut-shape here.
+- **Conflict guard is the "gate" half of the brief.** `fold_gen.py --check`
+  doubles as a design-event tripwire: it reads glade's frozen `glade_folds.json`
+  (read-only) and fails loud if any glade vector's `(ops, expect)` diverges from
+  ours. Result on this merge: **no conflict** — every glade fold row agrees.
+
+**No IR / `regen.py` change.** The fold consumes raw ops, not a taut schema
+message, so there is no new `shape_*.taut.py` / `.ir.json` and no `regen.py` row.
+
+**P2.S2/S3 (glade rebases its schema + swaps engines onto the seam) — not done
+here; out of scope** (this task is the taut-shape-side merge only; those edit
+`glade/`, which was read-only). Exit condition (delete glade's private oracle,
+lose nothing) is now *reachable*: glade's `client-ts/test/oracle.test.ts` can
+repoint from `taut/corpus/glade_folds.json` to `taut-shape/corpus/fold.v0.json`
+(the same 12 vectors, now taut-shape-owned + conflict-gated), a one-line glade
+change left for glade's P2.S3.
+
+### Value interop-matrix (P1.S3) — assessment 2026-07-10 (repos now present, still deferred)
+
+P1.S3 was BLOCKED on the sibling repos being absent. They are now workspace
+members — so the blocker is *partly* lifted — but a value×(rs,ts) matrix is still
+not a ~500 LOC build; it stays deferred, with the shape estimated here.
+
+**What exists.** Both `taut-shape-rs` and `taut-shape-ts` are strictly
+**single-shape (`log` only)**:
+- `taut-shape-rs`: `generated.rs` is `shape_log` codegen only (`LogMsgType`,
+  `Log*` structs — no `Value*` types); the engine is `LogNode`
+  (`crates/taut-shape/src/log/*`); the CLI (`main.rs` mode dispatch, `node.rs`,
+  `client.rs`, `framing.rs`) is log-typed throughout.
+- `taut-shape-ts`: `src/taut/gen/` holds only `shape_log.ir.json` + `shape_log.ts`
+  (`LogMsgType` only); engine `LogNode` (`src/log/*`); `cli.ts` hardwires
+  `node`→`LogNode` / `client`→the log cursor loop.
+- `matrix/driver.py` is log-specific: `LogReadRequest`/`Response`, `--stream-id`/
+  `--from`, *held* reads released by a producer `--script` after the k-th frame,
+  and a 3-dialect **log** transcript canonicaliser + log scenarios/goldens.
+
+**What's missing (per language), to run value×(rs,ts) live:**
+1. Codegen the value vocabulary: `tautc gen ir/shape_value.ir.json` → `Value*`
+   types + CBOR (rs `generated_value.rs`; ts `shape_value.ts`), wired into each
+   crate/package (both are currently single-shape, so this is new module + tag-map
+   plumbing, not a drop-in).
+2. A value engine mirroring `value_gen.py`'s `Register` (accumulate `ValueSet`,
+   answer `ValueReadRequest` by folding — winner = max `(lamport, origin)`, dedup
+   `(origin, seq)`, equivocation → `ValueDiagnostic`): rs `value/node.rs` ~120,
+   ts `value/node.ts` ~110.
+3. A value CLI mode (`node`/`client` for value) + value framing tag-map: ~80–120
+   LOC each (the current `node`/`client` modes are log-hardwired).
+4. A value matrix driver + scenarios/goldens. Value reads are **immediate probes**
+   (no held reads, no timers, no lifecycle), so the driver's release-after-k
+   coordination model does *not* transfer — a value scenario is "client sets N
+   writes, then probes"; needs a new/generalized driver (~150) + scenarios.
+
+**Estimate & verdict.** ~250–350 LOC (rs) + ~230–330 (ts) + ~180–250 (driver +
+scenarios) ≈ **700–900 LOC across three repos**, plus codegen wiring into two
+engines that are architecturally single-shape today. That exceeds the ~500 LOC
+step budget and is invasive (each CLI/framing assumes one shape). **Verdict: not
+a minimal S3 — deferred.** The `fold.v0.json` + `value.v0.json` Python-reference
+gates already give cross-language conformance-*against-spec*; the matrix's extra
+value (live A-vs-B) waits on the value engines above. Natural first move when
+picked up: generalize `main.rs`/`cli.ts` mode dispatch + `framing` over a shape
+parameter, then add the value engine behind it — smaller if the two engine repos
+are de-log-hardwired first (a shared step across all future shapes).
+
 **P3 — `shape_window`.**
 - Window semantics from the s-window trace: windowed projection over a log,
   interactive-priority first paint, backfill separately; window params are

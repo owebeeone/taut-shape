@@ -1,0 +1,28 @@
+{
+  "name": "log/out-of-order",
+  "fold": "log",
+  "comment": "(1,a,1) < (2,a,2) < (2,b,1) regardless of arrival",
+  "ops": [
+    {
+      "origin": "b",
+      "seq": 1,
+      "lamport": 2,
+      "prev": null,
+      "payload": "4231"
+    },
+    {
+      "origin": "a",
+      "seq": 2,
+      "lamport": 2,
+      "prev": null,
+      "payload": "4132"
+    },
+    {
+      "origin": "a",
+      "seq": 1,
+      "lamport": 1,
+      "prev": null,
+      "payload": "4131"
+    }
+  ]
+}
