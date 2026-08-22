@@ -1,6 +1,6 @@
 # Taut Shape Phase 1 post-remediation review
 
-Date: 2026-08-22  
+Date: 2026-08-22
 Status: clean review; no open correctness finding in the reviewed scope.
 
 ## Scope

@@ -1,6 +1,6 @@
 # Taut Shape Phase 6 Post-Implementation Review
 
-Date: 2026-08-22  
+Date: 2026-08-22
 Scope: SWMR engines, snapshot-delta expiry profile, live interop, and Datascad
 runtime integration
 

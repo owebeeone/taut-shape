@@ -1,7 +1,7 @@
 # Taut Shape Phase 3 Post-Implementation Review
 
-Status: clean — no open correctness finding  
-Date: 2026-08-22  
+Status: clean — no open correctness finding
+Date: 2026-08-22
 Scope: the `value.oracle/v0` contract, three language engines and tools, live
 interop matrix, and Glial consumer adapter
 

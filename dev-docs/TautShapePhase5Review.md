@@ -1,6 +1,6 @@
 # Taut Shape Phase 5 Post-Implementation Review
 
-Date: 2026-08-22  
+Date: 2026-08-22
 Scope: stream policy, schema/corpus, Rust/TypeScript/Python engines and tools,
 live interop, and Glial live-metrics integration
 

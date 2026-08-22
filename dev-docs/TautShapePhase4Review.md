@@ -1,6 +1,6 @@
 # Taut Shape Phase 4 Post-Implementation Review
 
-Date: 2026-08-22  
+Date: 2026-08-22
 Scope: atom schema/corpus, Rust/TypeScript/Python engines and tools, live
 interop, and the Glial provider-status consumer
 

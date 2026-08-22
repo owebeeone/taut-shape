@@ -1,7 +1,7 @@
 # Snapshot-Delta Profile Decision
 
-Date: 2026-08-22  
-Contract: `snapshot_delta.profile/v1`  
+Date: 2026-08-22
+Contract: `snapshot_delta.profile/v1`
 Core: `swmr.oracle/v1`
 
 ## Decision

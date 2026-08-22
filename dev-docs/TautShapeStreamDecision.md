@@ -1,6 +1,6 @@
 # Taut Stream Policy Decision
 
-Status: accepted for `stream.oracle/v1`  
+Status: accepted for `stream.oracle/v1`
 Date: 2026-08-22
 
 ## Decision

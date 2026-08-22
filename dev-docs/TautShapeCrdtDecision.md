@@ -1,7 +1,7 @@
 # Taut CRDT Delivery and Text Specialization Decision
 
-Status: accepted for `crdt.oracle/v1` and `text_crdt.profile/v1`  
-Date: 2026-08-22  
+Status: accepted for `crdt.oracle/v1` and `text_crdt.profile/v1`
+Date: 2026-08-22
 Scope: Phase 7 of `TautShapeImplementationPlan.md`
 
 ## Decision
