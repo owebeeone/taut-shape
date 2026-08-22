@@ -1,0 +1,11 @@
+{
+  "node": {"capacity_records": 4},
+  "client": {"stream_ids": ["s1"]},
+  "responses": [
+    {"stream_id": "s1", "records": [{"seq": 1, "payload": "b25l"}], "next_position": 1, "state": "data", "error": null},
+    {"stream_id": "s1", "records": [{"seq": 2, "payload": "dHdv"}], "next_position": 2, "state": "data", "error": null},
+    {"stream_id": "s1", "records": [], "next_position": 2, "state": "eof", "error": null}
+  ],
+  "diagnostics": [],
+  "final": "done"
+}

@@ -1,0 +1,1 @@
+{"name":"late_timer_ignored","steps":[{"in":{"type":"read","stream_id":"s1","timeout_ms":"50"}},{"in":{"type":"end_stream","stream_id":"s1"}},{"in":{"type":"timer_expired","token":"1"}}]}

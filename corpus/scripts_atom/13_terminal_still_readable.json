@@ -1,0 +1,11 @@
+{
+  "name": "terminal_still_readable",
+  "comment": "after seal, a fresh read below current version still reads data before eof -- there is no floor/eviction for atom (the single retained value is always readable; terminal describes the producer, not the value)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "replace", "payload": "aGVsbG8=" } },
+    { "in": { "type": "seal" } },
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1", "timeout_ms": "0" } },
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s2", "version": { "version": "1" }, "timeout_ms": "0" } }
+  ]
+}

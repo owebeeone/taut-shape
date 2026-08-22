@@ -1,0 +1,11 @@
+{
+  "name": "end_stream_mid_hold",
+  "comment": "end_stream{s1} drops s1's held read (no response), cancels its timer; s2 is untouched",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "timeout_ms": "50" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s2" } },
+    { "in": { "type": "end_stream", "swmr_id": "swmr-A", "stream_id": "s1" } },
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } }
+  ]
+}

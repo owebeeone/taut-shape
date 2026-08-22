@@ -4,7 +4,8 @@ The `value` shape is a **last-writer-wins register**: a *set* of attributed
 whole-value writes folds to a single materialized winner. This is glade's `value`
 fold extracted to its own contract home (`TautShapeGladeConsolidation.md` P1),
 lifting the reference in `taut.crdt.glade_fold.fold_value` — winner = `max` by
-`(lamport, origin)` (the GladeSubstrateV1 §2 tiebreak, the glade analogue of
+`(lamport, origin, seq)` (the GladeSubstrateV1 §2 tiebreak plus a deterministic
+same-origin clock-reuse fallback, the glade analogue of
 taut ReferenceDoc's `(seq, actor)` lww stamp).
 
 Like `shape_log` this is the *delivery substrate* for any `shape="value"`
@@ -41,7 +42,7 @@ are a deterministic, immediate function of the input op-set. The oracle corpus
 taut jsoncodec form and generated from the `fold_value` reference (Python —
 `corpus/value_gen.py`), the `glade_folds` discipline.
 
-Regenerate (from the taut-dev/gwz workspace root):
+Regenerate (from the taut-dev workspace root):
   PYTHONPATH=../taut/src python3 -m taut.cli gen ir/shape_value.taut.py \
       -o <out> -l python,typescript,rust --api-only
 """
@@ -82,8 +83,9 @@ SCHEMA = schema(
 
     # ---- core types ----------------------------------------------------------
     # The provenance of the winning write: its (origin, seq, lamport). This is
-    # the lww stamp `fold_value` maximizes over `(lamport, origin)`; `seq`
-    # carries the per-origin position. Surfaced so the winner is legible and so
+    # the lww stamp `fold_value` maximizes over `(lamport, origin, seq)`; `seq`
+    # carries the per-origin position and deterministically resolves reused
+    # same-origin clocks. Surfaced so the winner is legible and so
     # MV surfacing can grow additively (a repeated ValueStamp later).
     Msg("ValueStamp",
         F("origin", 1, STR),

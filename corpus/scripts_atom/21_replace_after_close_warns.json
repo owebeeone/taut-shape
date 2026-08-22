@@ -1,0 +1,10 @@
+{
+  "name": "replace_after_close_warns",
+  "comment": "close{} then a replace: same shape as replace_after_seal_warns -- dropped, one AtomDiagnostic{warn, replace_after_terminal}, version unchanged, subsequent reads unaffected (D18/D19 analogue)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "replace", "payload": "aGVsbG8=" } },
+    { "in": { "type": "close" } },
+    { "in": { "type": "replace", "payload": "bGF0ZQ==" } }
+  ]
+}

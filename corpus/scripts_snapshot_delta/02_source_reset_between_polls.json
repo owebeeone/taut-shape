@@ -1,0 +1,10 @@
+{
+  "name": "source_reset_between_polls",
+  "comment": "A positioned held reader crossing producer reset sees only out-of-band source_changed; reset detail is not an application event.",
+  "steps": [
+    {"in": {"type": "snapshot_push", "writer_id": "w1", "payload": "b2xk"}},
+    {"in": {"type": "read", "swmr_id": "sd-A", "stream_id": "held", "cursor": null, "timeout_ms": "0"}},
+    {"in": {"type": "read", "swmr_id": "sd-A", "stream_id": "held", "cursor": {"seq": "0", "epoch": "0"}, "timeout_ms": null}},
+    {"in": {"type": "reset", "writer_id": "w1", "reason": "producer_requested", "detail": "cXVlcnktZ2VuLTI="}}
+  ]
+}

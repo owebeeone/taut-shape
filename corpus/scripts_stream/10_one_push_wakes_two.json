@@ -1,0 +1,1 @@
+{"name":"one_push_wakes_two","steps":[{"in":{"type":"read","stream_id":"s1"}},{"in":{"type":"read","stream_id":"s2"}},{"in":{"type":"push","payload":"cmVhZHk="}}]}

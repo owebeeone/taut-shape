@@ -1,0 +1,11 @@
+{
+  "name": "replace_after_seal_warns",
+  "comment": "seal, then a replace: the value is dropped (version unchanged), the step emits exactly one AtomDiagnostic{warn, replace_after_terminal}, and a subsequent read still sees only the pre-seal value (D18/D19 analogue)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "replace", "payload": "aGVsbG8=" } },
+    { "in": { "type": "seal" } },
+    { "in": { "type": "replace", "payload": "bGF0ZQ==" } },
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1", "timeout_ms": "0" } }
+  ]
+}

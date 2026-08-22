@@ -1,0 +1,11 @@
+{
+  "name": "caught_up_survives_compaction_push",
+  "comment": "review F5-03/PH0-D24: a reader caught up at head=0 right after the first snapshot holds (no timeout_ms); a SECOND snapshot_push (a redundant re-assertion / compaction, same writer) does NOT advance head (PH0-D20: a snapshot consumes no delivery-sequence slot) so the reader's stored cursor is still exactly caught up -- this step emits NOTHING (the hold is untouched, no spurious `reset`); a follow-up probe at the same cursor confirms would_block, not reset",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "cursor": { "epoch": "0", "seq": "0" } } },
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDI=" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "cursor": { "epoch": "0", "seq": "0" }, "timeout_ms": "0" } }
+  ]
+}

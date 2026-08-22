@@ -1,0 +1,11 @@
+{
+  "name": "delta_batches",
+  "comment": "delta batches: snapshot then two deltas; a fresh read (cursor absent) delivers the snapshot plus both deltas as one contiguous tail, next_cursor=2 (snapshot resumes at 0 -- PH0-D20 -- so the two deltas land at 1 and 2)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } },
+    { "in": { "type": "delta_push", "writer_id": "w1", "payload": "ZDE=" } },
+    { "in": { "type": "delta_push", "writer_id": "w1", "payload": "ZDI=" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "timeout_ms": "0" } }
+  ]
+}

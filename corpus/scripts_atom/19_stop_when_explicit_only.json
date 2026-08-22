@@ -1,0 +1,9 @@
+{
+  "name": "stop_when_explicit_only",
+  "comment": "same script as last_stream_producer_stop, knob off -> no ProducerStop on last-reader-gone (D6 analogue)",
+  "node": { "stop_when": "explicit_only" },
+  "steps": [
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1" } },
+    { "in": { "type": "end_stream", "atom_id": "atom-A", "stream_id": "s1" } }
+  ]
+}

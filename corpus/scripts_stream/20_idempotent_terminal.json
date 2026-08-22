@@ -1,0 +1,1 @@
+{"name":"idempotent_terminal","steps":[{"in":{"type":"seal"}},{"in":{"type":"seal"}},{"in":{"type":"close","error":null}},{"in":{"type":"close","error":{"code":"producer_error","message":"late"}}}]}

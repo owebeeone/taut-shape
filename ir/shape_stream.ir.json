@@ -1,0 +1,691 @@
+{
+  "version": 1,
+  "shapes": {
+    "unary": {
+      "name": "unary",
+      "class": "interaction",
+      "core": null,
+      "contract_version": "v1",
+      "fixed_profile": {},
+      "delivery": "once",
+      "events": [
+        "value"
+      ],
+      "operations": [
+        "call"
+      ],
+      "payload": "whole",
+      "history": "none",
+      "initiation": "pull",
+      "writers": "single",
+      "ordering": "none",
+      "retention": "none",
+      "position": "none",
+      "recovery": "not_applicable",
+      "merge": "none",
+      "lifecycle": "request_response"
+    },
+    "value": {
+      "name": "value",
+      "class": "engine",
+      "core": "value",
+      "contract_version": "v0",
+      "fixed_profile": {},
+      "delivery": "once",
+      "events": [
+        "value"
+      ],
+      "operations": [
+        "read",
+        "set"
+      ],
+      "payload": "whole-state",
+      "history": "materialized",
+      "initiation": "pull|push",
+      "writers": "multi-attributed",
+      "ordering": "lww_lamport_origin",
+      "retention": "materialized_winner",
+      "position": "op_identity",
+      "recovery": "materialized_read",
+      "merge": "attributed_lww",
+      "lifecycle": "persistent_register"
+    },
+    "atom": {
+      "name": "atom",
+      "class": "engine",
+      "core": "atom",
+      "contract_version": "v1",
+      "fixed_profile": {},
+      "delivery": "stream",
+      "events": [
+        "replace"
+      ],
+      "operations": [
+        "read",
+        "replace",
+        "subscribe"
+      ],
+      "payload": "whole-state",
+      "history": "latest",
+      "initiation": "pull|push",
+      "writers": "single",
+      "ordering": "scalar_version",
+      "retention": "latest",
+      "position": "version",
+      "recovery": "latest_refresh",
+      "merge": "sequential_overwrite",
+      "lifecycle": "mailbox_terminal"
+    },
+    "log": {
+      "name": "log",
+      "class": "engine",
+      "core": "log",
+      "contract_version": "v1",
+      "fixed_profile": {},
+      "delivery": "stream",
+      "events": [
+        "append"
+      ],
+      "operations": [
+        "append",
+        "read",
+        "subscribe"
+      ],
+      "payload": "whole",
+      "history": "append-only",
+      "initiation": "pull|push",
+      "writers": "source",
+      "ordering": "scalar_sequence",
+      "retention": "bounded_records",
+      "position": "cursor",
+      "recovery": "expire_below_floor",
+      "merge": "none",
+      "lifecycle": "mailbox_terminal"
+    },
+    "stream": {
+      "name": "stream",
+      "class": "engine",
+      "core": "stream",
+      "contract_version": "v1",
+      "fixed_profile": {},
+      "delivery": "stream",
+      "events": [
+        "event"
+      ],
+      "operations": [
+        "publish",
+        "subscribe"
+      ],
+      "payload": "whole-or-delta",
+      "history": "none",
+      "initiation": "push",
+      "writers": "source",
+      "ordering": "live_session",
+      "retention": "none",
+      "position": "none",
+      "recovery": "none",
+      "merge": "none",
+      "lifecycle": "live_terminal"
+    },
+    "swmr": {
+      "name": "swmr",
+      "class": "engine",
+      "core": "swmr",
+      "contract_version": "v1",
+      "fixed_profile": {},
+      "delivery": "stream",
+      "events": [
+        "delta",
+        "reset",
+        "snapshot"
+      ],
+      "operations": [
+        "publish_delta",
+        "publish_snapshot",
+        "read",
+        "reset",
+        "subscribe"
+      ],
+      "payload": "delta",
+      "history": "reconstructible",
+      "initiation": "push",
+      "writers": "single",
+      "ordering": "scalar_epoch_sequence",
+      "retention": "snapshot_bounded_deltas",
+      "position": "epoch_cursor",
+      "recovery": "in_band_reset_repair",
+      "merge": "sequential_single_writer",
+      "lifecycle": "mailbox_terminal"
+    },
+    "snapshot_delta": {
+      "name": "snapshot_delta",
+      "class": "profile",
+      "core": "swmr",
+      "contract_version": "v1",
+      "fixed_profile": {
+        "recovery": "expire"
+      },
+      "delivery": "stream",
+      "events": [
+        "delta",
+        "snapshot"
+      ],
+      "operations": [
+        "publish_delta",
+        "publish_snapshot",
+        "read",
+        "subscribe"
+      ],
+      "payload": "delta",
+      "history": "reconstructible",
+      "initiation": "push",
+      "writers": "single",
+      "ordering": "scalar_epoch_sequence",
+      "retention": "snapshot_bounded_deltas",
+      "position": "epoch_cursor",
+      "recovery": "expire",
+      "merge": "sequential_single_writer",
+      "lifecycle": "mailbox_terminal"
+    },
+    "crdt": {
+      "name": "crdt",
+      "class": "engine",
+      "core": "crdt",
+      "contract_version": "v1",
+      "fixed_profile": {},
+      "delivery": "stream",
+      "events": [
+        "op",
+        "sync"
+      ],
+      "operations": [
+        "apply",
+        "bootstrap",
+        "read",
+        "sync"
+      ],
+      "payload": "opaque-ops",
+      "history": "reconstructible",
+      "initiation": "push-bidi",
+      "writers": "multi-merge",
+      "ordering": "causal_per_origin",
+      "retention": "convergence_safe",
+      "position": "causal_vector",
+      "recovery": "anti_entropy",
+      "merge": "profile_defined_convergent",
+      "lifecycle": "replica_sync"
+    },
+    "text_crdt": {
+      "name": "text_crdt",
+      "class": "profile",
+      "core": "crdt",
+      "contract_version": "v1",
+      "fixed_profile": {
+        "payload": "text_crdt.profile/v1"
+      },
+      "delivery": "stream",
+      "events": [
+        "op",
+        "sync"
+      ],
+      "operations": [
+        "bootstrap",
+        "delete",
+        "insert",
+        "read",
+        "sync"
+      ],
+      "payload": "text-ops",
+      "history": "reconstructible",
+      "initiation": "push-bidi",
+      "writers": "multi-merge",
+      "ordering": "causal_per_origin",
+      "retention": "convergence_safe",
+      "position": "causal_vector",
+      "recovery": "anti_entropy",
+      "merge": "stable_item_text",
+      "lifecycle": "replica_sync"
+    }
+  },
+  "enums": [
+    {
+      "name": "StreamMsgType",
+      "members": {
+        "push": 0,
+        "seal": 1,
+        "close": 2,
+        "read": 3,
+        "end_stream": 4,
+        "timer_expired": 5,
+        "read_response": 6,
+        "set_timer": 7,
+        "cancel_timer": 8,
+        "producer_stop": 9,
+        "diagnostic": 10
+      }
+    },
+    {
+      "name": "StreamState",
+      "members": {
+        "data": 0,
+        "would_block": 1,
+        "eof": 2,
+        "closed": 3,
+        "failed": 4,
+        "dropped": 5
+      }
+    },
+    {
+      "name": "StreamErrorCode",
+      "members": {
+        "unknown_stream": 0,
+        "producer_error": 1,
+        "internal": 2,
+        "slow_consumer": 3
+      }
+    },
+    {
+      "name": "StreamStopReason",
+      "members": {
+        "last_reader_gone": 0,
+        "closed": 1,
+        "failed": 2
+      }
+    },
+    {
+      "name": "StreamSeverity",
+      "members": {
+        "warn": 0,
+        "error": 1
+      }
+    },
+    {
+      "name": "StreamDiagCode",
+      "members": {
+        "push_after_terminal": 0
+      }
+    }
+  ],
+  "messages": [
+    {
+      "name": "StreamPosition",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "seq",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "StreamRecord",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "seq",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "payload",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "bytes"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "StreamError",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "code",
+          "tag": 1,
+          "type": {
+            "k": "enum",
+            "name": "StreamErrorCode"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "message",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "StreamPush",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "payload",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "bytes"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "StreamSeal",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": []
+    },
+    {
+      "name": "StreamClose",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "error",
+          "tag": 1,
+          "type": {
+            "k": "msg",
+            "name": "StreamError"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "StreamReadRequest",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "stream_id",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "max_records",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "max_bytes",
+          "tag": 3,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "timeout_ms",
+          "tag": 4,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "StreamEndStream",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "stream_id",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "StreamTimerExpired",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "token",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "StreamReadResponse",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "stream_id",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "records",
+          "tag": 2,
+          "type": {
+            "k": "list",
+            "elem": {
+              "k": "msg",
+              "name": "StreamRecord"
+            }
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "next_position",
+          "tag": 3,
+          "type": {
+            "k": "msg",
+            "name": "StreamPosition"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "state",
+          "tag": 4,
+          "type": {
+            "k": "enum",
+            "name": "StreamState"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "error",
+          "tag": 5,
+          "type": {
+            "k": "msg",
+            "name": "StreamError"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "StreamSetTimer",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "token",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "ms",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "StreamCancelTimer",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "token",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "StreamProducerStop",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "reason",
+          "tag": 1,
+          "type": {
+            "k": "enum",
+            "name": "StreamStopReason"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "StreamDiagnostic",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "severity",
+          "tag": 1,
+          "type": {
+            "k": "enum",
+            "name": "StreamSeverity"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "code",
+          "tag": 2,
+          "type": {
+            "k": "enum",
+            "name": "StreamDiagCode"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    }
+  ],
+  "services": [],
+  "extensions": []
+}

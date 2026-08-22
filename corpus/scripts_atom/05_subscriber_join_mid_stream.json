@@ -1,0 +1,10 @@
+{
+  "name": "subscriber_join_mid_stream",
+  "comment": "subscriber join mid-stream: two replaces happen before any reader exists; a fresh stream's first read (version absent = 0) immediately gets the LATEST value, not the first one -- there is no back-history to replay (roadmap Sec 1: atom keeps exactly one record)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "replace", "payload": "QTE=" } },
+    { "in": { "type": "replace", "payload": "QjE=" } },
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s-late", "timeout_ms": "0" } }
+  ]
+}

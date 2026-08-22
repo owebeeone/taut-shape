@@ -1,0 +1,14 @@
+[
+  {
+    "after_frames": 0,
+    "inputs": [
+      {"type": "set", "origin": "a", "seq": "1", "lamport": "1", "payload": "QTE="}
+    ]
+  },
+  {
+    "after_frames": 1,
+    "inputs": [
+      {"type": "set", "origin": "b", "seq": "1", "lamport": "2", "payload": "QjE="}
+    ]
+  }
+]

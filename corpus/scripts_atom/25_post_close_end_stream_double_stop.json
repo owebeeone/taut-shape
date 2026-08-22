@@ -1,0 +1,10 @@
+{
+  "name": "post_close_end_stream_double_stop",
+  "comment": "review F5 Sec 8.9: close{} answers s1 closed and emits ProducerStop{closed}; a LATER end_stream{s1} still transitions reader-count >=1->0 (the stream entry is not removed by close) and emits a SECOND ProducerStop{last_reader_gone} -- ProducerStop is idempotent by design (D6), so this double-stop is intentional and cross-engine-consistent, previously unpinned",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1" } },
+    { "in": { "type": "close" } },
+    { "in": { "type": "end_stream", "atom_id": "atom-A", "stream_id": "s1" } }
+  ]
+}

@@ -1,0 +1,4 @@
+[
+  {"after_frames": 2, "inputs": [{"type": "replace", "payload": "cmVhZHk="}]},
+  {"after_frames": 4, "inputs": [{"type": "seal"}]}
+]

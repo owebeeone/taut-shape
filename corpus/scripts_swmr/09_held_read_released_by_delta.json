@@ -1,0 +1,9 @@
+{
+  "name": "held_read_released_by_delta",
+  "comment": "a read with no timeout_ms on a caught-up swmr (nothing pushed yet) emits nothing; a later snapshot_push releases it with the snapshot (D1/D14 analogues)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1" } },
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } }
+  ]
+}

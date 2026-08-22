@@ -1,0 +1,8 @@
+{
+  "client": {"atom_id": "atom-A", "stream_ids": ["s1"], "from": 0, "timeout_ms": 25},
+  "responses": [
+    {"atom_id": "atom-A", "stream_id": "s1", "value": null, "next_version": 0, "state": "would_block", "error": null}
+  ],
+  "diagnostics": [],
+  "final": "done"
+}

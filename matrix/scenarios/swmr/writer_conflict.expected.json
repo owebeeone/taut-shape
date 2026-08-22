@@ -1,0 +1,11 @@
+{
+  "node": {"max_deltas": null},
+  "client": {"swmr_id": "swmr-A", "stream_ids": ["writer-check"], "cursor": null, "timeout_ms": null},
+  "responses": [
+    {"swmr_id": "swmr-A", "stream_id": "writer-check", "snapshot": {"seq": 0, "payload": "YmFzZQ=="}, "deltas": [], "next_cursor": {"seq": 0, "epoch": 0}, "state": "data", "reset_reason": null, "error": null, "reset_detail": null},
+    {"swmr_id": "swmr-A", "stream_id": "writer-check", "snapshot": null, "deltas": [{"base_seq": 0, "seq": 1, "payload": "Z29vZA=="}], "next_cursor": {"seq": 1, "epoch": 0}, "state": "data", "reset_reason": null, "error": null, "reset_detail": null},
+    {"swmr_id": "swmr-A", "stream_id": "writer-check", "snapshot": null, "deltas": [], "next_cursor": {"seq": 1, "epoch": 0}, "state": "eof", "reset_reason": null, "error": null, "reset_detail": null}
+  ],
+  "diagnostics": [{"type": "diagnostic", "severity": "error", "code": "writer_conflict"}],
+  "final": "done"
+}

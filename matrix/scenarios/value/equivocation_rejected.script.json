@@ -1,0 +1,9 @@
+[
+  {
+    "after_frames": 0,
+    "inputs": [
+      {"type": "set", "origin": "a", "seq": "1", "lamport": "1", "payload": "QTE="},
+      {"type": "set", "origin": "a", "seq": "1", "lamport": "9", "payload": "Rk9SSw=="}
+    ]
+  }
+]

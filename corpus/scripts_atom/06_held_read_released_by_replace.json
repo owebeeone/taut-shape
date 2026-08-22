@@ -1,0 +1,9 @@
+{
+  "name": "held_read_released_by_replace",
+  "comment": "a read with no timeout_ms on a caught-up atom (version=0, nothing replaced yet) emits nothing; a later replace emits the response",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1" } },
+    { "in": { "type": "replace", "payload": "aGVsbG8=" } }
+  ]
+}

@@ -1,0 +1,1 @@
+{"name":"close_clean","steps":[{"in":{"type":"read","stream_id":"s1"}},{"in":{"type":"close","error":null}}]}

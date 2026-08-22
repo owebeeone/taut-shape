@@ -1,0 +1,9 @@
+{
+  "name": "delta_before_snapshot",
+  "comment": "a delta_push before any snapshot exists is rejected (dropped) with SwmrDiagnostic{error, delta_before_snapshot} -- a producer sequencing bug, not a benign race",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "delta_push", "writer_id": "w1", "payload": "ZDE=" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "timeout_ms": "0" } }
+  ]
+}

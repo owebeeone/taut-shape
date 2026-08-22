@@ -1,0 +1,9 @@
+{
+  "name": "replace_then_read_data",
+  "comment": "initial delivery: one replace then a catch-up read; first version=1 (D8 analogue), next_version advances to current",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "replace", "payload": "aGVsbG8=" } },
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1", "timeout_ms": "0" } }
+  ]
+}

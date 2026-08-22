@@ -1,0 +1,13 @@
+{
+  "node": {"max_deltas": null},
+  "client": {"swmr_id": "swmr-A", "stream_ids": ["repair"], "cursor": null, "timeout_ms": null},
+  "responses": [
+    {"swmr_id": "swmr-A", "stream_id": "repair", "snapshot": {"seq": 0, "payload": "b2xk"}, "deltas": [], "next_cursor": {"seq": 0, "epoch": 0}, "state": "data", "reset_reason": null, "error": null, "reset_detail": null},
+    {"swmr_id": "swmr-A", "stream_id": "repair", "snapshot": null, "deltas": [], "next_cursor": null, "state": "reset", "reset_reason": "producer_requested", "error": null, "reset_detail": "Z2VuMg=="},
+    {"swmr_id": "swmr-A", "stream_id": "repair", "snapshot": {"seq": 0, "payload": "bmV3"}, "deltas": [], "next_cursor": {"seq": 0, "epoch": 1}, "state": "data", "reset_reason": null, "error": null, "reset_detail": null},
+    {"swmr_id": "swmr-A", "stream_id": "repair", "snapshot": null, "deltas": [{"base_seq": 0, "seq": 1, "payload": "bmV3ZA=="}], "next_cursor": {"seq": 1, "epoch": 1}, "state": "data", "reset_reason": null, "error": null, "reset_detail": null},
+    {"swmr_id": "swmr-A", "stream_id": "repair", "snapshot": null, "deltas": [], "next_cursor": {"seq": 1, "epoch": 1}, "state": "eof", "reset_reason": null, "error": null, "reset_detail": null}
+  ],
+  "diagnostics": [],
+  "final": "done"
+}

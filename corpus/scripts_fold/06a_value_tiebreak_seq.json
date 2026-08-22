@@ -1,0 +1,21 @@
+{
+  "name": "value/tiebreak-seq",
+  "fold": "value",
+  "comment": "same origin and reused lamport -> higher seq wins regardless of arrival",
+  "ops": [
+    {
+      "origin": "a",
+      "seq": 3,
+      "lamport": 2,
+      "prev": null,
+      "payload": "4133"
+    },
+    {
+      "origin": "a",
+      "seq": 2,
+      "lamport": 2,
+      "prev": null,
+      "payload": "4132"
+    }
+  ]
+}

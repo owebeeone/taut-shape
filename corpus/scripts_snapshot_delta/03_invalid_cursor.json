@@ -1,0 +1,8 @@
+{
+  "name": "invalid_cursor",
+  "comment": "A future cursor maps to external invalid_cursor instead of SWMR reset repair.",
+  "steps": [
+    {"in": {"type": "snapshot_push", "writer_id": "w1", "payload": "YmFzZQ=="}},
+    {"in": {"type": "read", "swmr_id": "sd-A", "stream_id": "future", "cursor": {"seq": "9", "epoch": "0"}, "timeout_ms": "0"}}
+  ]
+}

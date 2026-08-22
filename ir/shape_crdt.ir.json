@@ -1,0 +1,714 @@
+{
+  "version": 1,
+  "shapes": {
+    "unary": {
+      "name": "unary",
+      "class": "interaction",
+      "core": null,
+      "contract_version": "v1",
+      "fixed_profile": {},
+      "delivery": "once",
+      "events": [
+        "value"
+      ],
+      "operations": [
+        "call"
+      ],
+      "payload": "whole",
+      "history": "none",
+      "initiation": "pull",
+      "writers": "single",
+      "ordering": "none",
+      "retention": "none",
+      "position": "none",
+      "recovery": "not_applicable",
+      "merge": "none",
+      "lifecycle": "request_response"
+    },
+    "value": {
+      "name": "value",
+      "class": "engine",
+      "core": "value",
+      "contract_version": "v0",
+      "fixed_profile": {},
+      "delivery": "once",
+      "events": [
+        "value"
+      ],
+      "operations": [
+        "read",
+        "set"
+      ],
+      "payload": "whole-state",
+      "history": "materialized",
+      "initiation": "pull|push",
+      "writers": "multi-attributed",
+      "ordering": "lww_lamport_origin",
+      "retention": "materialized_winner",
+      "position": "op_identity",
+      "recovery": "materialized_read",
+      "merge": "attributed_lww",
+      "lifecycle": "persistent_register"
+    },
+    "atom": {
+      "name": "atom",
+      "class": "engine",
+      "core": "atom",
+      "contract_version": "v1",
+      "fixed_profile": {},
+      "delivery": "stream",
+      "events": [
+        "replace"
+      ],
+      "operations": [
+        "read",
+        "replace",
+        "subscribe"
+      ],
+      "payload": "whole-state",
+      "history": "latest",
+      "initiation": "pull|push",
+      "writers": "single",
+      "ordering": "scalar_version",
+      "retention": "latest",
+      "position": "version",
+      "recovery": "latest_refresh",
+      "merge": "sequential_overwrite",
+      "lifecycle": "mailbox_terminal"
+    },
+    "log": {
+      "name": "log",
+      "class": "engine",
+      "core": "log",
+      "contract_version": "v1",
+      "fixed_profile": {},
+      "delivery": "stream",
+      "events": [
+        "append"
+      ],
+      "operations": [
+        "append",
+        "read",
+        "subscribe"
+      ],
+      "payload": "whole",
+      "history": "append-only",
+      "initiation": "pull|push",
+      "writers": "source",
+      "ordering": "scalar_sequence",
+      "retention": "bounded_records",
+      "position": "cursor",
+      "recovery": "expire_below_floor",
+      "merge": "none",
+      "lifecycle": "mailbox_terminal"
+    },
+    "stream": {
+      "name": "stream",
+      "class": "engine",
+      "core": "stream",
+      "contract_version": "v1",
+      "fixed_profile": {},
+      "delivery": "stream",
+      "events": [
+        "event"
+      ],
+      "operations": [
+        "publish",
+        "subscribe"
+      ],
+      "payload": "whole-or-delta",
+      "history": "none",
+      "initiation": "push",
+      "writers": "source",
+      "ordering": "live_session",
+      "retention": "none",
+      "position": "none",
+      "recovery": "none",
+      "merge": "none",
+      "lifecycle": "live_terminal"
+    },
+    "swmr": {
+      "name": "swmr",
+      "class": "engine",
+      "core": "swmr",
+      "contract_version": "v1",
+      "fixed_profile": {},
+      "delivery": "stream",
+      "events": [
+        "delta",
+        "reset",
+        "snapshot"
+      ],
+      "operations": [
+        "publish_delta",
+        "publish_snapshot",
+        "read",
+        "reset",
+        "subscribe"
+      ],
+      "payload": "delta",
+      "history": "reconstructible",
+      "initiation": "push",
+      "writers": "single",
+      "ordering": "scalar_epoch_sequence",
+      "retention": "snapshot_bounded_deltas",
+      "position": "epoch_cursor",
+      "recovery": "in_band_reset_repair",
+      "merge": "sequential_single_writer",
+      "lifecycle": "mailbox_terminal"
+    },
+    "snapshot_delta": {
+      "name": "snapshot_delta",
+      "class": "profile",
+      "core": "swmr",
+      "contract_version": "v1",
+      "fixed_profile": {
+        "recovery": "expire"
+      },
+      "delivery": "stream",
+      "events": [
+        "delta",
+        "snapshot"
+      ],
+      "operations": [
+        "publish_delta",
+        "publish_snapshot",
+        "read",
+        "subscribe"
+      ],
+      "payload": "delta",
+      "history": "reconstructible",
+      "initiation": "push",
+      "writers": "single",
+      "ordering": "scalar_epoch_sequence",
+      "retention": "snapshot_bounded_deltas",
+      "position": "epoch_cursor",
+      "recovery": "expire",
+      "merge": "sequential_single_writer",
+      "lifecycle": "mailbox_terminal"
+    },
+    "crdt": {
+      "name": "crdt",
+      "class": "engine",
+      "core": "crdt",
+      "contract_version": "v1",
+      "fixed_profile": {},
+      "delivery": "stream",
+      "events": [
+        "op",
+        "sync"
+      ],
+      "operations": [
+        "apply",
+        "bootstrap",
+        "read",
+        "sync"
+      ],
+      "payload": "opaque-ops",
+      "history": "reconstructible",
+      "initiation": "push-bidi",
+      "writers": "multi-merge",
+      "ordering": "causal_per_origin",
+      "retention": "convergence_safe",
+      "position": "causal_vector",
+      "recovery": "anti_entropy",
+      "merge": "profile_defined_convergent",
+      "lifecycle": "replica_sync"
+    },
+    "text_crdt": {
+      "name": "text_crdt",
+      "class": "profile",
+      "core": "crdt",
+      "contract_version": "v1",
+      "fixed_profile": {
+        "payload": "text_crdt.profile/v1"
+      },
+      "delivery": "stream",
+      "events": [
+        "op",
+        "sync"
+      ],
+      "operations": [
+        "bootstrap",
+        "delete",
+        "insert",
+        "read",
+        "sync"
+      ],
+      "payload": "text-ops",
+      "history": "reconstructible",
+      "initiation": "push-bidi",
+      "writers": "multi-merge",
+      "ordering": "causal_per_origin",
+      "retention": "convergence_safe",
+      "position": "causal_vector",
+      "recovery": "anti_entropy",
+      "merge": "stable_item_text",
+      "lifecycle": "replica_sync"
+    }
+  },
+  "enums": [
+    {
+      "name": "CrdtMsgType",
+      "members": {
+        "apply": 0,
+        "install_bootstrap": 1,
+        "seal": 2,
+        "close": 3,
+        "read": 4,
+        "read_response": 5,
+        "diagnostic": 6
+      }
+    },
+    {
+      "name": "CrdtState",
+      "members": {
+        "data": 0,
+        "empty": 1,
+        "eof": 2,
+        "closed": 3,
+        "failed": 4,
+        "bootstrap_required": 5,
+        "invalid_cursor": 6
+      }
+    },
+    {
+      "name": "CrdtErrorCode",
+      "members": {
+        "unknown_crdt": 0,
+        "producer_error": 1,
+        "internal": 2
+      }
+    },
+    {
+      "name": "CrdtSeverity",
+      "members": {
+        "warn": 0,
+        "error": 1
+      }
+    },
+    {
+      "name": "CrdtDiagCode",
+      "members": {
+        "apply_after_terminal": 0,
+        "invalid_operation": 1,
+        "equivocation": 2,
+        "bootstrap_conflict": 3,
+        "pending_bound_exceeded": 4
+      }
+    }
+  ],
+  "messages": [
+    {
+      "name": "CrdtClockEntry",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "origin",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "seq",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "CrdtClock",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "entries",
+          "tag": 1,
+          "type": {
+            "k": "list",
+            "elem": {
+              "k": "msg",
+              "name": "CrdtClockEntry"
+            }
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "CrdtOp",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "origin",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "seq",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "deps",
+          "tag": 3,
+          "type": {
+            "k": "msg",
+            "name": "CrdtClock"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "payload",
+          "tag": 4,
+          "type": {
+            "k": "scalar",
+            "scalar": "bytes"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "CrdtBootstrap",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "clock",
+          "tag": 1,
+          "type": {
+            "k": "msg",
+            "name": "CrdtClock"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "state",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "bytes"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "CrdtError",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "code",
+          "tag": 1,
+          "type": {
+            "k": "enum",
+            "name": "CrdtErrorCode"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "message",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "CrdtApply",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "op",
+          "tag": 1,
+          "type": {
+            "k": "msg",
+            "name": "CrdtOp"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "CrdtInstallBootstrap",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "bootstrap",
+          "tag": 1,
+          "type": {
+            "k": "msg",
+            "name": "CrdtBootstrap"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "CrdtSeal",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": []
+    },
+    {
+      "name": "CrdtClose",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "error",
+          "tag": 1,
+          "type": {
+            "k": "msg",
+            "name": "CrdtError"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "CrdtReadRequest",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "crdt_id",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "stream_id",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "cursor",
+          "tag": 3,
+          "type": {
+            "k": "msg",
+            "name": "CrdtClock"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "CrdtReadResponse",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "crdt_id",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "stream_id",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "bootstrap",
+          "tag": 3,
+          "type": {
+            "k": "msg",
+            "name": "CrdtBootstrap"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "ops",
+          "tag": 4,
+          "type": {
+            "k": "list",
+            "elem": {
+              "k": "msg",
+              "name": "CrdtOp"
+            }
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "next_cursor",
+          "tag": 5,
+          "type": {
+            "k": "msg",
+            "name": "CrdtClock"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "state",
+          "tag": 6,
+          "type": {
+            "k": "enum",
+            "name": "CrdtState"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "error",
+          "tag": 7,
+          "type": {
+            "k": "msg",
+            "name": "CrdtError"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "CrdtDiagnostic",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "severity",
+          "tag": 1,
+          "type": {
+            "k": "enum",
+            "name": "CrdtSeverity"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "code",
+          "tag": 2,
+          "type": {
+            "k": "enum",
+            "name": "CrdtDiagCode"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "origin",
+          "tag": 3,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "seq",
+          "tag": 4,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    }
+  ],
+  "services": [],
+  "extensions": []
+}

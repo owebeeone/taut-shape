@@ -1,0 +1,1 @@
+{"clock":{"entries":[{"origin":"a","seq":"1"},{"origin":"b","seq":"1"},{"origin":"c","seq":"1"}]},"ops":[{"origin":"a","seq":"1","deps":{"entries":[]},"payload":"QQ=="},{"origin":"b","seq":"1","deps":{"entries":[]},"payload":"Qg=="},{"origin":"c","seq":"1","deps":{"entries":[]},"payload":"Qw=="}],"diagnostics":[]}

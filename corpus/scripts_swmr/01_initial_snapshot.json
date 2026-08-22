@@ -1,0 +1,9 @@
+{
+  "name": "initial_snapshot",
+  "comment": "one snapshot_push then a fresh read (cursor absent): delivers the snapshot with an empty delta tail, state=data, next_cursor=0 (a snapshot consumes no delivery-sequence slot -- PH0-D20)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "timeout_ms": "0" } }
+  ]
+}

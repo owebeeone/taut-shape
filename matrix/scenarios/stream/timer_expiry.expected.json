@@ -1,0 +1,9 @@
+{
+  "node": {"capacity_records": 4},
+  "client": {"stream_ids": ["s1"], "timeout_ms": 25},
+  "responses": [
+    {"stream_id": "s1", "records": [], "next_position": 0, "state": "would_block", "error": null}
+  ],
+  "diagnostics": [],
+  "final": "done"
+}

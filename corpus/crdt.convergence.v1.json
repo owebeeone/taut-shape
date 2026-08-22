@@ -1,0 +1,514 @@
+{
+  "scenarios": [
+    {
+      "bootstrap": null,
+      "expect": {
+        "clock": {
+          "entries": [
+            {
+              "origin": "a",
+              "seq": "1"
+            },
+            {
+              "origin": "b",
+              "seq": "1"
+            },
+            {
+              "origin": "c",
+              "seq": "1"
+            }
+          ]
+        },
+        "diagnostics": [],
+        "ops": [
+          {
+            "deps": {
+              "entries": []
+            },
+            "origin": "a",
+            "payload": "QQ==",
+            "seq": "1"
+          },
+          {
+            "deps": {
+              "entries": []
+            },
+            "origin": "b",
+            "payload": "Qg==",
+            "seq": "1"
+          },
+          {
+            "deps": {
+              "entries": []
+            },
+            "origin": "c",
+            "payload": "Qw==",
+            "seq": "1"
+          }
+        ]
+      },
+      "max_pending": 1024,
+      "name": "three_origin_concurrent",
+      "ops": [
+        {
+          "deps": {
+            "entries": []
+          },
+          "origin": "a",
+          "payload": "QQ==",
+          "seq": "1"
+        },
+        {
+          "deps": {
+            "entries": []
+          },
+          "origin": "b",
+          "payload": "Qg==",
+          "seq": "1"
+        },
+        {
+          "deps": {
+            "entries": []
+          },
+          "origin": "c",
+          "payload": "Qw==",
+          "seq": "1"
+        }
+      ],
+      "replicas": [
+        {
+          "name": "r1",
+          "order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "name": "r2",
+          "order": [
+            2,
+            0,
+            1
+          ]
+        },
+        {
+          "name": "r3",
+          "order": [
+            1,
+            2,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "bootstrap": null,
+      "expect": {
+        "clock": {
+          "entries": [
+            {
+              "origin": "a",
+              "seq": "2"
+            },
+            {
+              "origin": "b",
+              "seq": "1"
+            }
+          ]
+        },
+        "diagnostics": [],
+        "ops": [
+          {
+            "deps": {
+              "entries": []
+            },
+            "origin": "a",
+            "payload": "QQ==",
+            "seq": "1"
+          },
+          {
+            "deps": {
+              "entries": [
+                {
+                  "origin": "b",
+                  "seq": "1"
+                }
+              ]
+            },
+            "origin": "a",
+            "payload": "Qw==",
+            "seq": "2"
+          },
+          {
+            "deps": {
+              "entries": []
+            },
+            "origin": "b",
+            "payload": "Qg==",
+            "seq": "1"
+          }
+        ]
+      },
+      "max_pending": 1024,
+      "name": "causal_reorder",
+      "ops": [
+        {
+          "deps": {
+            "entries": []
+          },
+          "origin": "a",
+          "payload": "QQ==",
+          "seq": "1"
+        },
+        {
+          "deps": {
+            "entries": [
+              {
+                "origin": "b",
+                "seq": "1"
+              }
+            ]
+          },
+          "origin": "a",
+          "payload": "Qw==",
+          "seq": "2"
+        },
+        {
+          "deps": {
+            "entries": []
+          },
+          "origin": "b",
+          "payload": "Qg==",
+          "seq": "1"
+        }
+      ],
+      "replicas": [
+        {
+          "name": "ordered",
+          "order": [
+            0,
+            2,
+            1
+          ]
+        },
+        {
+          "name": "reverse",
+          "order": [
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "mixed",
+          "order": [
+            2,
+            1,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "bootstrap": null,
+      "expect": {
+        "clock": {
+          "entries": [
+            {
+              "origin": "a",
+              "seq": "1"
+            },
+            {
+              "origin": "b",
+              "seq": "1"
+            }
+          ]
+        },
+        "diagnostics": [],
+        "ops": [
+          {
+            "deps": {
+              "entries": []
+            },
+            "origin": "a",
+            "payload": "QQ==",
+            "seq": "1"
+          },
+          {
+            "deps": {
+              "entries": [
+                {
+                  "origin": "a",
+                  "seq": "1"
+                }
+              ]
+            },
+            "origin": "b",
+            "payload": "Qg==",
+            "seq": "1"
+          }
+        ]
+      },
+      "max_pending": 1024,
+      "name": "duplicates_and_reconnect",
+      "ops": [
+        {
+          "deps": {
+            "entries": []
+          },
+          "origin": "a",
+          "payload": "QQ==",
+          "seq": "1"
+        },
+        {
+          "deps": {
+            "entries": []
+          },
+          "origin": "a",
+          "payload": "QQ==",
+          "seq": "1"
+        },
+        {
+          "deps": {
+            "entries": [
+              {
+                "origin": "a",
+                "seq": "1"
+              }
+            ]
+          },
+          "origin": "b",
+          "payload": "Qg==",
+          "seq": "1"
+        }
+      ],
+      "replicas": [
+        {
+          "name": "online",
+          "order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "name": "reconnect",
+          "order": [
+            2,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "replay",
+          "order": [
+            1,
+            0,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "bootstrap": null,
+      "expect": {
+        "clock": {
+          "entries": [
+            {
+              "origin": "a",
+              "seq": "1"
+            },
+            {
+              "origin": "b",
+              "seq": "1"
+            }
+          ]
+        },
+        "diagnostics": [
+          [
+            "equivocation",
+            "a",
+            "1"
+          ]
+        ],
+        "ops": [
+          {
+            "deps": {
+              "entries": []
+            },
+            "origin": "a",
+            "payload": "QQ==",
+            "seq": "1"
+          },
+          {
+            "deps": {
+              "entries": []
+            },
+            "origin": "b",
+            "payload": "Qw==",
+            "seq": "1"
+          }
+        ]
+      },
+      "max_pending": 1024,
+      "name": "equivocation_order_independent",
+      "ops": [
+        {
+          "deps": {
+            "entries": []
+          },
+          "origin": "a",
+          "payload": "Qg==",
+          "seq": "1"
+        },
+        {
+          "deps": {
+            "entries": []
+          },
+          "origin": "a",
+          "payload": "QQ==",
+          "seq": "1"
+        },
+        {
+          "deps": {
+            "entries": []
+          },
+          "origin": "b",
+          "payload": "Qw==",
+          "seq": "1"
+        }
+      ],
+      "replicas": [
+        {
+          "name": "r1",
+          "order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "name": "r2",
+          "order": [
+            1,
+            2,
+            0
+          ]
+        },
+        {
+          "name": "r3",
+          "order": [
+            2,
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "bootstrap": {
+        "clock": {
+          "entries": [
+            {
+              "origin": "a",
+              "seq": "2"
+            }
+          ]
+        },
+        "state": "U05BUA=="
+      },
+      "expect": {
+        "clock": {
+          "entries": [
+            {
+              "origin": "a",
+              "seq": "3"
+            },
+            {
+              "origin": "b",
+              "seq": "1"
+            }
+          ]
+        },
+        "diagnostics": [],
+        "ops": [
+          {
+            "deps": {
+              "entries": [
+                {
+                  "origin": "b",
+                  "seq": "1"
+                }
+              ]
+            },
+            "origin": "a",
+            "payload": "Qw==",
+            "seq": "3"
+          },
+          {
+            "deps": {
+              "entries": [
+                {
+                  "origin": "a",
+                  "seq": "2"
+                }
+              ]
+            },
+            "origin": "b",
+            "payload": "Qg==",
+            "seq": "1"
+          }
+        ]
+      },
+      "max_pending": 1024,
+      "name": "bootstrap_then_offline_tail",
+      "ops": [
+        {
+          "deps": {
+            "entries": [
+              {
+                "origin": "a",
+                "seq": "2"
+              }
+            ]
+          },
+          "origin": "b",
+          "payload": "Qg==",
+          "seq": "1"
+        },
+        {
+          "deps": {
+            "entries": [
+              {
+                "origin": "b",
+                "seq": "1"
+              }
+            ]
+          },
+          "origin": "a",
+          "payload": "Qw==",
+          "seq": "3"
+        }
+      ],
+      "replicas": [
+        {
+          "name": "online",
+          "order": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "offline",
+          "order": [
+            1,
+            0
+          ]
+        }
+      ]
+    }
+  ],
+  "shape": "crdt",
+  "version": "crdt.convergence/v1"
+}

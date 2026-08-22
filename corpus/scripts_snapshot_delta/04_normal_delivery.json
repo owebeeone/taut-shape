@@ -1,0 +1,11 @@
+{
+  "name": "normal_delivery",
+  "comment": "Ordinary snapshot/delta delivery and terminal behavior pass through unchanged.",
+  "steps": [
+    {"in": {"type": "snapshot_push", "writer_id": "w1", "payload": "YmFzZQ=="}},
+    {"in": {"type": "delta_push", "writer_id": "w1", "payload": "ZDE="}},
+    {"in": {"type": "read", "swmr_id": "sd-A", "stream_id": "fresh", "cursor": null, "timeout_ms": "0"}},
+    {"in": {"type": "seal"}},
+    {"in": {"type": "read", "swmr_id": "sd-A", "stream_id": "fresh", "cursor": {"seq": "1", "epoch": "0"}, "timeout_ms": "0"}}
+  ]
+}

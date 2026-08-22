@@ -1,0 +1,1 @@
+{"name":"push_after_seal","steps":[{"in":{"type":"seal"}},{"in":{"type":"push","payload":"bGF0ZQ=="}}]}

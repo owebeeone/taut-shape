@@ -1,0 +1,10 @@
+{
+  "client": {"atom_id": "atom-A", "stream_ids": ["s1"], "from": 0},
+  "responses": [
+    {"atom_id": "atom-A", "stream_id": "s1", "value": {"version": 1, "payload": "b25l"}, "next_version": 1, "state": "data", "error": null},
+    {"atom_id": "atom-A", "stream_id": "s1", "value": {"version": 2, "payload": "dHdv"}, "next_version": 2, "state": "data", "error": null},
+    {"atom_id": "atom-A", "stream_id": "s1", "value": null, "next_version": 2, "state": "eof", "error": null}
+  ],
+  "diagnostics": [],
+  "final": "done"
+}

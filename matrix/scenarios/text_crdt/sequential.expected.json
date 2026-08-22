@@ -1,0 +1,1 @@
+{"clock":{"entries":[{"origin":"a","seq":"2"}]},"ops":[{"origin":"a","seq":"1","deps":{"entries":[]},"payload":"eyJhZnRlciI6bnVsbCwiYXRvbV9pZCI6ImEiLCJraW5kIjoiaW5zZXJ0IiwidGV4dCI6IkEifQ=="},{"origin":"a","seq":"2","deps":{"entries":[]},"payload":"eyJhZnRlciI6ImEiLCJhdG9tX2lkIjoiYiIsImtpbmQiOiJpbnNlcnQiLCJ0ZXh0IjoiQiJ9"}],"diagnostics":[],"text":"AB","text_diagnostics":[]}

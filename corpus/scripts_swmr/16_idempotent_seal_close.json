@@ -1,0 +1,12 @@
+{
+  "name": "idempotent_seal_close",
+  "comment": "repeated seal/close emit nothing new (D6 analogue)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "seal" } },
+    { "in": { "type": "seal" } },
+    { "in": { "type": "close" } },
+    { "in": { "type": "close" } },
+    { "in": { "type": "close", "error": { "code": "internal" } } }
+  ]
+}

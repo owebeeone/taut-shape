@@ -21,8 +21,9 @@ See [`../dev-docs/TautShapeOracle.md`](../dev-docs/TautShapeOracle.md) (§3 form
 ## The `value` shape (lww register)
 
 - `value.v0.json` — the committed `value` oracle (`version "value.oracle/v0"`),
-  11 vectors: lww basics (single/concurrent-lamport/tiebreak-origin/out-of-order/
-  overwrite), idempotent duplicates, a live read-reflects-latest sequence,
+  13 vectors: lww basics (single/concurrent-lamport/tiebreak-origin/out-of-order/
+  overwrite), deterministic same-origin clock-reuse tiebreaks, idempotent
+  duplicates, a live read-reflects-latest sequence,
   equivocation rejection (forked `(origin,seq)` by payload or by prev), and
   two-stream addressing. Same `(input → output)` step format as log-v0; value
   vectors carry no `node` knob (the register has no construction options).
@@ -38,6 +39,119 @@ See [`../dev-docs/TautShapeOracle.md`](../dev-docs/TautShapeOracle.md) (§3 form
   python3 corpus/value_gen.py --check    # CI gate: nonzero if committed is stale
   ```
 
+## The `atom` shape (replace-only latest state)
+
+- `atom.v1.json` — the committed `atom` oracle (`version "atom.oracle/v1"`),
+  28 vectors: initial delivery, replacement (overwrite, no back-history),
+  generation-change replace (a consumer-level concept — taut-shape sees an
+  ordinary replace, see `dev-docs/AtomSwmrNotes.md` #4), subscriber-join-mid-
+  stream (a fresh stream gets the LATEST value, never back-history), held
+  reads/timers/supersede, seal/close/idempotent-teardown, terminal-still-
+  readable (no floor, so this always holds), multi-stream addressing and
+  one-replace-wakes-two, `ProducerStop` on last-reader-gone (plus a never-read
+  no-stop variant and a post-close double-`ProducerStop` pin), replace-after-
+  terminal diagnostics, a beyond-current version clamp (immediate probe and
+  timed-expiry variants), and timed early-wake `CancelTimer`-ordering pins
+  (replace/seal/close). `atom` is a strict simplification of `log` —
+  window=1, no floor/expiry/max_records/max_bytes (`TautShapeRoadmap.md` §1).
+  Bumped `v0`→`v1` (2026-07-19, PH0 review remediation): `AtomTimerExpired`
+  now normalizes `next_version` through the canonical resolver instead of
+  echoing the originally requested version (fixes review 56-F2), and a
+  timer-backed held read released for any reason other than `TimerExpired`
+  now cancels its timer first (fixes review 56-F4).
+- `scripts_atom/` — the authored inputs.
+- `atom_gen.py` — the generator + lockstep gate (`--check`). This driver embeds
+  its own small, hand-written reference
+  mailbox engine (`AtomNode`, held reads + timers + lifecycle included, since
+  `atom` is not a pure fold). See `dev-docs/AtomSwmrNotes.md` #13.
+
+  ```sh
+  python3 corpus/atom_gen.py            # rewrite corpus/atom.v1.json
+  python3 corpus/atom_gen.py --check    # CI gate: nonzero if committed is stale
+  ```
+
+## The `stream` shape (bounded disposable ordered delivery)
+
+- `stream.v1.json` — 28 vectors for the policy frozen in
+  `dev-docs/TautShapeStreamDecision.md`: live-only late join, bounded batches,
+  byte-bound forward progress, slow-reader drop, independent fast/slow readers,
+  reconnect-as-late-join, multi-reader held wake-up, timers/supersession,
+  terminal drain, clean/failed close, teardown, and diagnostics.
+- `scripts_stream/` — authored inputs and `capacity_records`/`stop_when` node
+  knobs.
+- `stream_gen.py` — the self-contained reference engine and lockstep gate.
+
+  ```sh
+  python3 corpus/stream_gen.py
+  python3 corpus/stream_gen.py --check
+  ```
+
+## The `swmr` shape (snapshot + delta + typed reset)
+
+- `swmr.v1.json` — the committed `swmr` oracle (`version "swmr.oracle/v1"`),
+  33 vectors: initial snapshot, delta batches, resume from a retained seq
+  (success, no dup/no skip), resume from an expired seq (typed
+  `state=reset, reason=retention_exceeded`, engine-repaired in-band with a
+  fresh snapshot — not client-decided like `log`'s `expired`), a producer-
+  declared generation-change reset (`reason=producer_requested`), two readers
+  at different cursors, a backpressure/retention-bound vector
+  (`max_deltas` construction knob rejects a delta past the bound), a
+  writer-uniqueness-violation vector (a second `writer_id` is rejected,
+  `SwmrDiagnostic{error, writer_conflict}`), plus the full `log`/`atom`-parity
+  lifecycle set (held reads/timers/supersede/seal/close/idempotent-teardown/
+  end_stream/`ProducerStop`/push-after-terminal/delta-before-snapshot/
+  terminal-still-readable), a never-read no-stop variant, a post-close
+  double-`ProducerStop` pin, an `invalid_resume_seq` reset vector, a
+  pre-snapshot timed request with a supplied (unusable) cursor, an
+  absent-cursor hold surviving a producer reset untouched, a caught-up reader
+  surviving a compaction/re-basing push with no spurious reset, timed
+  early-wake `CancelTimer`-ordering pins (delta/seal/close/reset), and a
+  durable-reset regression where an old `(epoch, seq)` cursor cannot miss a
+  reset while between polls even when the new epoch reuses the same sequence.
+  Reset responses also surface the producer's opaque `detail`. Every
+  decision the `TautShapeRoadmap.md` §3 sketch left open (including the two
+  new mechanisms — `writer_id` enforcement and the `max_deltas` bound — that
+  go beyond the sketch) is recorded in `dev-docs/AtomSwmrNotes.md`. Bumped
+  `v0`→`v1` (2026-07-19, PH0 review remediation): a `SwmrSnapshotPush` now
+  resumes at the pre-push base rather than consuming a delivery-sequence slot
+  (so a caught-up reader survives a compaction push, PH0-D20/D24); every
+  response path (including `SwmrTimerExpired` and `SwmrReset`) now computes
+  `next_cursor` through the canonical resolver — present iff a snapshot
+  exists, never a caller-echoed or hardcoded position (fixes reviews 56-F2
+  and F5-03); an absent-cursor held read is never force-answered `reset` by a
+  producer reset (fixes review F5-02); `SwmrReset.reason` is normalized to
+  `producer_requested` (fixes review F5-13); and a timer-backed held read
+  released for any reason other than `TimerExpired` now cancels its timer
+  first (fixes review 56-F4). The v1 draft now uses `(epoch, seq)` cursors;
+  successful producer reset increments the epoch and retains reason/detail so
+  stale cursors remain detectable after the immediate reset step.
+- `scripts_swmr/` — the authored inputs.
+- `swmr_gen.py` — the generator + lockstep gate (`--check`), same
+  self-contained-reference-engine strategy as `atom_gen.py` (`SwmrNode`: a
+  snapshot+delta store core, held reads, timers, writer-checked producer
+  inputs).
+
+  ```sh
+  python3 corpus/swmr_gen.py            # rewrite corpus/swmr.v1.json
+  python3 corpus/swmr_gen.py --check    # CI gate: nonzero if committed is stale
+  ```
+
+## CRDT delivery and text specialization
+
+- `crdt.v1.json` contains 15 exact mailbox vectors for vector reads, causal
+  buffering, deduplication, deterministic equivocation, bootstrap, resume, and
+  lifecycle.
+- `crdt.convergence.v1.json` contains five N-replica delivery-permutation
+  scenarios. Every implementation must produce an identical clock, canonical
+  op set, and diagnostic set for every replica order.
+- `text_crdt.profile.v1.json` contains five text projections over the same core,
+  including concurrent siblings, delete-before-insert, bootstrap, and stable
+  text diagnostics.
+- `crdt_gen.py` and `crdt_convergence_gen.py` regenerate/check these artifacts;
+  authored inputs live in `scripts_crdt*` and `scripts_text_crdt`.
+
+The normative boundary is `../dev-docs/TautShapeCrdtDecision.md`.
+
 ## The fold oracle (glade's M-LIMP folds, re-homed — P2.S1)
 
 Glade's frozen fold oracle (`taut/corpus/glade_folds.json`, generated from
@@ -46,8 +160,8 @@ fold semantics. This is the pure `(op-set) → folded state` layer *beneath* the
 message-level shape corpora: raw attributed ops in, folded state out — no
 sessions, streams, reads, timers, or lifecycle.
 
-- `fold.v0.json` — the committed fold oracle (`version "fold.oracle/v0"`), 12
-  vectors across three folds: `value` (lww; 6), `log` (causal-order append; 4),
+- `fold.v0.json` — the committed fold oracle (`version "fold.oracle/v0"`), 13
+  vectors across three folds: `value` (lww; 7), `log` (causal-order append; 4),
   and `equiv` (forked-chain detection; 2). Raw-op granularity: ops carry
   `origin/seq/lamport/prev/payload` with **hex** payloads (glade's convention —
   the fold works on the raw op envelope, not schema messages, so there is no
@@ -75,6 +189,7 @@ beyond what P1 already gates. Mapping:
 | `value/single`              | `set_then_read`                   | payload `4131` = `b"A1"` (base64 `QTE=`) |
 | `value/concurrent-lamport`  | `concurrent_lamport`              | higher lamport wins |
 | `value/tiebreak-origin`     | `tiebreak_origin`                 | lamport tie → origin `b`>`a` |
+| `value/tiebreak-seq`        | `tiebreak_seq`                    | same origin/lamport → higher seq |
 | `value/out-of-order`        | `out_of_order`                    | arrival-order independent |
 | `value/duplicate`           | `duplicate_idempotent`            | exact re-sends dropped |
 | `value/empty`               | `read_empty`                      | empty set → `empty` |
@@ -82,7 +197,8 @@ beyond what P1 already gates. Mapping:
 | `equiv/clean`               | `duplicate_idempotent`            | clean dup is *not* equivocation |
 
 `value.v0.json` additionally covers `overwrite_same_origin`, `read_reflects_latest`,
-`equivocation_prev_mismatch`, and `two_reads_two_streams` — value coverage
+`tiebreak_seq_out_of_order`, `equivocation_prev_mismatch`, and
+`two_reads_two_streams` — value coverage
 *beyond* glade's fold oracle (P1 supersets it).
 
 **New coverage — the `log` fold.** The 4 `log/*` rows are the causal-interleave

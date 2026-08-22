@@ -1,0 +1,10 @@
+{
+  "name": "late_timer_ignored",
+  "comment": "timer_expired for a canceled/already-answered token emits nothing",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1", "timeout_ms": "50" } },
+    { "in": { "type": "replace", "payload": "aGVsbG8=" } },
+    { "in": { "type": "timer_expired", "token": "1" } }
+  ]
+}

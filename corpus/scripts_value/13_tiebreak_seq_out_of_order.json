@@ -1,0 +1,31 @@
+{
+  "name": "tiebreak_seq_out_of_order",
+  "comment": "the higher seq wins even when reused-lamport writes arrive in reverse order",
+  "steps": [
+    {
+      "in": {
+        "type": "set",
+        "origin": "a",
+        "seq": "2",
+        "lamport": "5",
+        "payload": "QTI="
+      }
+    },
+    {
+      "in": {
+        "type": "set",
+        "origin": "a",
+        "seq": "1",
+        "lamport": "5",
+        "payload": "QTE="
+      }
+    },
+    {
+      "in": {
+        "type": "read",
+        "value_id": "v-A",
+        "stream_id": "s1"
+      }
+    }
+  ]
+}

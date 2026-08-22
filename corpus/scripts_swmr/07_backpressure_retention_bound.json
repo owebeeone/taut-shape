@@ -1,0 +1,12 @@
+{
+  "name": "backpressure_retention_bound",
+  "comment": "backpressure/retention-bound behavior: node constructed with max_deltas=2; a snapshot then two deltas are accepted, but a third delta_push is rejected (dropped, nothing appended) with SwmrDiagnostic{error, retention_bound_exceeded} -- the producer must SnapshotPush to continue (see dev-docs/AtomSwmrNotes.md)",
+  "node": { "stop_when": "last_reader", "max_deltas": 2 },
+  "steps": [
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } },
+    { "in": { "type": "delta_push", "writer_id": "w1", "payload": "ZDE=" } },
+    { "in": { "type": "delta_push", "writer_id": "w1", "payload": "ZDI=" } },
+    { "in": { "type": "delta_push", "writer_id": "w1", "payload": "ZDM=" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "timeout_ms": "0" } }
+  ]
+}

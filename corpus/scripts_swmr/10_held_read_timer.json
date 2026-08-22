@@ -1,0 +1,10 @@
+{
+  "name": "held_read_timer",
+  "comment": "read with timeout_ms=50 on a caught-up swmr (already at head=0, PH0-D20) emits SetTimer{1,50}; timer_expired{1} answers would_block with next_cursor recomputed via the canonical resolver, not echoed (PH0-D19) (D14/D16 analogues)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "cursor": { "epoch": "0", "seq": "0" }, "timeout_ms": "50" } },
+    { "in": { "type": "timer_expired", "token": "1" } }
+  ]
+}

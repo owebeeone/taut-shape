@@ -1,0 +1,11 @@
+{
+  "name": "generation_change_reset",
+  "comment": "generation-change reset: the producer explicitly declares SwmrReset (e.g. datascad's query generation changed -- opaque to taut-shape, carried in `detail`) while a reader is held caught-up at epoch=0/head=0 (PH0-D20); reset increments the node epoch to 1 and answers immediately with state=reset, reset_reason=producer_requested, reset_detail=gen2, no snapshot/deltas, next_cursor ABSENT (no snapshot survives a reset -- PH0-D19) -- a typed announcement, not silence. A subsequent probe read (cursor absent, timeout_ms=0) then sees would_block until the producer pushes a fresh snapshot.",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "cursor": { "epoch": "0", "seq": "0" } } },
+    { "in": { "type": "reset", "writer_id": "w1", "reason": "producer_requested", "detail": "Z2VuMg==" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "timeout_ms": "0" } }
+  ]
+}

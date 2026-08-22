@@ -1,0 +1,1 @@
+{"name":"terminal_drain","steps":[{"in":{"type":"read","stream_id":"s1","timeout_ms":"0"}},{"in":{"type":"push","payload":"YQ=="}},{"in":{"type":"push","payload":"Yg=="}},{"in":{"type":"seal"}},{"in":{"type":"read","stream_id":"s1","timeout_ms":"0"}},{"in":{"type":"read","stream_id":"s1","timeout_ms":"0"}}]}

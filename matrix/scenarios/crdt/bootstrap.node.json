@@ -1,0 +1,1 @@
+[{"after_frames":0,"inputs":[{"type":"install_bootstrap","bootstrap":{"clock":{"entries":[{"origin":"a","seq":"2"}]},"state":"U05BUA=="}},{"type":"apply","op":{"origin":"b","seq":"1","deps":{"entries":[{"origin":"a","seq":"2"}]},"payload":"Qg=="}}]},{"after_frames":3,"inputs":[{"type":"seal"}]}]

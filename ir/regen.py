@@ -38,6 +38,10 @@ REPO = IR_DIR.parent
 SHAPES = [
     (IR_DIR / "shape_log.taut.py", IR_DIR / "shape_log.ir.json"),
     (IR_DIR / "shape_value.taut.py", IR_DIR / "shape_value.ir.json"),
+    (IR_DIR / "shape_atom.taut.py", IR_DIR / "shape_atom.ir.json"),
+    (IR_DIR / "shape_stream.taut.py", IR_DIR / "shape_stream.ir.json"),
+    (IR_DIR / "shape_swmr.taut.py", IR_DIR / "shape_swmr.ir.json"),
+    (IR_DIR / "shape_crdt.taut.py", IR_DIR / "shape_crdt.ir.json"),
 ]
 
 # Bootstrap the taut builder from the sibling workspace member, mirroring the

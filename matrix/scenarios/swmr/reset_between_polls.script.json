@@ -1,0 +1,7 @@
+[
+  {"after_frames": 1, "inputs": [{"type": "snapshot_push", "writer_id": "writer-A", "payload": "b2xk"}]},
+  {"after_frames": 2, "inputs": [{"type": "reset", "writer_id": "writer-A", "reason": "producer_requested", "detail": "Z2VuMg=="}]},
+  {"after_frames": 3, "inputs": [{"type": "snapshot_push", "writer_id": "writer-A", "payload": "bmV3"}]},
+  {"after_frames": 4, "inputs": [{"type": "delta_push", "writer_id": "writer-A", "payload": "bmV3ZA=="}]},
+  {"after_frames": 5, "inputs": [{"type": "seal"}]}
+]

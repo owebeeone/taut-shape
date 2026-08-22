@@ -1,0 +1,1 @@
+{"name":"byte_bound_forward_progress","steps":[{"in":{"type":"read","stream_id":"s1","timeout_ms":"0"}},{"in":{"type":"push","payload":"YWJj"}},{"in":{"type":"push","payload":"ZA=="}},{"in":{"type":"read","stream_id":"s1","max_bytes":"1","timeout_ms":"0"}},{"in":{"type":"read","stream_id":"s1","max_bytes":"1","timeout_ms":"0"}}]}

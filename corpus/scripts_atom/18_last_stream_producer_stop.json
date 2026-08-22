@@ -1,0 +1,11 @@
+{
+  "name": "last_stream_producer_stop",
+  "comment": "with stop_when=last_reader: s1 and s2 end -> ProducerStop{last_reader_gone} exactly on the >=1->0 transition (D6 analogue)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1" } },
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s2" } },
+    { "in": { "type": "end_stream", "atom_id": "atom-A", "stream_id": "s1" } },
+    { "in": { "type": "end_stream", "atom_id": "atom-A", "stream_id": "s2" } }
+  ]
+}

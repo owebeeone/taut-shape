@@ -1,0 +1,10 @@
+{
+  "name": "invalid_resume_seq_after_snapshot",
+  "comment": "review F5-06b: SwmrResetReason.invalid_resume_seq has schema and code but no prior vector reached it. A snapshot then a delta bring head=1; a probe read with a cursor past head (seq=99, a position that never existed -- always a client bug, the engine is authoritative on seq) -> state=reset, reset_reason=invalid_resume_seq, with a fresh snapshot+tail attached, next_cursor=head=1",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } },
+    { "in": { "type": "delta_push", "writer_id": "w1", "payload": "ZDE=" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "cursor": { "epoch": "0", "seq": "99" }, "timeout_ms": "0" } }
+  ]
+}

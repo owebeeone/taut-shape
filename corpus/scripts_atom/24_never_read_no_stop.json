@@ -1,0 +1,8 @@
+{
+  "name": "never_read_no_stop",
+  "comment": "the never-read variant of #18 (log 20b parity, review F5-06c): an atom with no streams ever created never spuriously stops its producer; end_stream on an unknown stream is a no-op (D6)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "end_stream", "atom_id": "atom-A", "stream_id": "ghost" } }
+  ]
+}

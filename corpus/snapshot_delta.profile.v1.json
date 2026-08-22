@@ -1,0 +1,275 @@
+{
+  "shape": "snapshot_delta",
+  "core": "swmr",
+  "version": "snapshot_delta.profile/v1",
+  "vectors": [
+    {
+      "name": "retention_expired",
+      "comment": "A cursor below a compacted snapshot requires external refresh, never in-band repair.",
+      "node": {
+        "stop_when": "last_reader",
+        "max_deltas": 64,
+        "recovery": "expire"
+      },
+      "steps": [
+        {
+          "in": {
+            "type": "snapshot_push",
+            "writer_id": "w1",
+            "payload": "czE="
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "delta_push",
+            "writer_id": "w1",
+            "payload": "ZDE="
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "snapshot_push",
+            "writer_id": "w1",
+            "payload": "czI="
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "read",
+            "swmr_id": "sd-A",
+            "stream_id": "old",
+            "cursor": {
+              "seq": "0",
+              "epoch": "0"
+            },
+            "timeout_ms": "0"
+          },
+          "out": [
+            {
+              "type": "refresh_required",
+              "swmr_id": "sd-A",
+              "stream_id": "old",
+              "reason": "retention_expired"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "source_reset_between_polls",
+      "comment": "A positioned held reader crossing producer reset sees only out-of-band source_changed; reset detail is not an application event.",
+      "node": {
+        "stop_when": "last_reader",
+        "max_deltas": 64,
+        "recovery": "expire"
+      },
+      "steps": [
+        {
+          "in": {
+            "type": "snapshot_push",
+            "writer_id": "w1",
+            "payload": "b2xk"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "read",
+            "swmr_id": "sd-A",
+            "stream_id": "held",
+            "cursor": null,
+            "timeout_ms": "0"
+          },
+          "out": [
+            {
+              "type": "read_response",
+              "swmr_id": "sd-A",
+              "stream_id": "held",
+              "snapshot": {
+                "seq": "0",
+                "payload": "b2xk"
+              },
+              "deltas": [],
+              "next_cursor": {
+                "seq": "0",
+                "epoch": "0"
+              },
+              "state": "data",
+              "reset_reason": null,
+              "error": null,
+              "reset_detail": null
+            }
+          ]
+        },
+        {
+          "in": {
+            "type": "read",
+            "swmr_id": "sd-A",
+            "stream_id": "held",
+            "cursor": {
+              "seq": "0",
+              "epoch": "0"
+            },
+            "timeout_ms": null
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "reset",
+            "writer_id": "w1",
+            "reason": "producer_requested",
+            "detail": "cXVlcnktZ2VuLTI="
+          },
+          "out": [
+            {
+              "type": "refresh_required",
+              "swmr_id": "sd-A",
+              "stream_id": "held",
+              "reason": "source_changed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "invalid_cursor",
+      "comment": "A future cursor maps to external invalid_cursor instead of SWMR reset repair.",
+      "node": {
+        "stop_when": "last_reader",
+        "max_deltas": 64,
+        "recovery": "expire"
+      },
+      "steps": [
+        {
+          "in": {
+            "type": "snapshot_push",
+            "writer_id": "w1",
+            "payload": "YmFzZQ=="
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "read",
+            "swmr_id": "sd-A",
+            "stream_id": "future",
+            "cursor": {
+              "seq": "9",
+              "epoch": "0"
+            },
+            "timeout_ms": "0"
+          },
+          "out": [
+            {
+              "type": "refresh_required",
+              "swmr_id": "sd-A",
+              "stream_id": "future",
+              "reason": "invalid_cursor"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "normal_delivery",
+      "comment": "Ordinary snapshot/delta delivery and terminal behavior pass through unchanged.",
+      "node": {
+        "stop_when": "last_reader",
+        "max_deltas": 64,
+        "recovery": "expire"
+      },
+      "steps": [
+        {
+          "in": {
+            "type": "snapshot_push",
+            "writer_id": "w1",
+            "payload": "YmFzZQ=="
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "delta_push",
+            "writer_id": "w1",
+            "payload": "ZDE="
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "read",
+            "swmr_id": "sd-A",
+            "stream_id": "fresh",
+            "cursor": null,
+            "timeout_ms": "0"
+          },
+          "out": [
+            {
+              "type": "read_response",
+              "swmr_id": "sd-A",
+              "stream_id": "fresh",
+              "snapshot": {
+                "seq": "0",
+                "payload": "YmFzZQ=="
+              },
+              "deltas": [
+                {
+                  "base_seq": "0",
+                  "seq": "1",
+                  "payload": "ZDE="
+                }
+              ],
+              "next_cursor": {
+                "seq": "1",
+                "epoch": "0"
+              },
+              "state": "data",
+              "reset_reason": null,
+              "error": null,
+              "reset_detail": null
+            }
+          ]
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "read",
+            "swmr_id": "sd-A",
+            "stream_id": "fresh",
+            "cursor": {
+              "seq": "1",
+              "epoch": "0"
+            },
+            "timeout_ms": "0"
+          },
+          "out": [
+            {
+              "type": "read_response",
+              "swmr_id": "sd-A",
+              "stream_id": "fresh",
+              "snapshot": null,
+              "deltas": [],
+              "next_cursor": {
+                "seq": "1",
+                "epoch": "0"
+              },
+              "state": "eof",
+              "reset_reason": null,
+              "error": null,
+              "reset_detail": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "two_streams_two_positions",
+  "comment": "s1 and s2 read the same atom at different versions; each gets its own addressed response (D3-D6 analogues)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "replace", "payload": "QTE=" } },
+    { "in": { "type": "replace", "payload": "QjE=" } },
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1", "timeout_ms": "0" } },
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s2", "version": { "version": "2" }, "timeout_ms": "0" } }
+  ]
+}

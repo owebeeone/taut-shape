@@ -1,0 +1,10 @@
+{
+  "name": "timed_early_wake_delta",
+  "comment": "56-F4: a reader caught up at head=0 with timeout_ms=50 holds and emits SetTimer{1,50}; a delta_push releases it EARLY (before the timer fires) and must cancel the now-unneeded timer first -- SwmrCancelTimer{1} THEN the data SwmrReadResponse carrying the new delta",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "cursor": { "epoch": "0", "seq": "0" }, "timeout_ms": "50" } },
+    { "in": { "type": "delta_push", "writer_id": "w1", "payload": "ZDE=" } }
+  ]
+}

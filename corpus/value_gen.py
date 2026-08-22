@@ -11,9 +11,9 @@ Unlike `shape_log` — whose reference engine is the external Rust
 `taut-shape-tool` (`gen.py` shells to it) — the `value` fold is small and its
 canonical reference already lives in the taut runtime:
 `taut.crdt.glade_fold.fold_value` (glade's lww oracle: winner = max by
-`(lamport, origin)`; dedup by `(origin, seq)`; a forked `(origin, seq)` is
+`(lamport, origin, seq)`; dedup by `(origin, seq)`; a forked `(origin, seq)` is
 equivocation). This driver imports that reference, so value corpus generation is
-self-contained in the taut-dev/gwz workspace with no per-language build. The
+self-contained in the taut-dev workspace with no per-language build. The
 register-shell glue (accumulate ops, answer reads) is driver code, not a shipped
 engine — taut-shape still holds no engine of its own; `fold_value` is the
 authority (`fold_value(ops)` is asserted to agree with the driver's winner).
@@ -122,7 +122,7 @@ class Register:
         base = {"value_id": n["value_id"], "stream_id": n["stream_id"]}
         if not self.ops:
             return [self._out("ValueReadResponse", {**base, "state": "empty"})]
-        winner = max(self.ops, key=lambda o: (o["lamport"], o["origin"]))
+        winner = max(self.ops, key=lambda o: (o["lamport"], o["origin"], o["seq"]))
         assert winner["payload"] == fold_value(self.ops), \
             "driver winner disagrees with fold_value reference"
         jv = {**base,

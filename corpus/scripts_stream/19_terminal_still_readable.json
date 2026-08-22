@@ -1,0 +1,1 @@
+{"name":"terminal_still_readable","steps":[{"in":{"type":"read","stream_id":"s1","timeout_ms":"0"}},{"in":{"type":"push","payload":"YQ=="}},{"in":{"type":"close","error":null}},{"in":{"type":"read","stream_id":"s1","timeout_ms":"0"}},{"in":{"type":"read","stream_id":"s1","timeout_ms":"0"}}]}

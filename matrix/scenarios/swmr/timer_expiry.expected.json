@@ -1,0 +1,9 @@
+{
+  "node": {"max_deltas": null},
+  "client": {"swmr_id": "swmr-A", "stream_ids": ["timed"], "cursor": null, "timeout_ms": 25},
+  "responses": [
+    {"swmr_id": "swmr-A", "stream_id": "timed", "snapshot": null, "deltas": [], "next_cursor": null, "state": "would_block", "reset_reason": null, "error": null, "reset_detail": null}
+  ],
+  "diagnostics": [],
+  "final": "done"
+}

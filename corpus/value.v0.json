@@ -549,6 +549,100 @@
           ]
         }
       ]
+    },
+    {
+      "comment": "a reused same-origin lamport remains deterministic: higher seq wins",
+      "name": "tiebreak_seq",
+      "steps": [
+        {
+          "in": {
+            "lamport": "5",
+            "origin": "a",
+            "payload": "QTE=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "lamport": "5",
+            "origin": "a",
+            "payload": "QTI=",
+            "seq": "2",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read",
+            "value_id": "v-A"
+          },
+          "out": [
+            {
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": "QTI=",
+              "value_id": "v-A",
+              "winner": {
+                "lamport": "5",
+                "origin": "a",
+                "seq": "2"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "the higher seq wins even when reused-lamport writes arrive in reverse order",
+      "name": "tiebreak_seq_out_of_order",
+      "steps": [
+        {
+          "in": {
+            "lamport": "5",
+            "origin": "a",
+            "payload": "QTI=",
+            "seq": "2",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "lamport": "5",
+            "origin": "a",
+            "payload": "QTE=",
+            "seq": "1",
+            "type": "set"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read",
+            "value_id": "v-A"
+          },
+          "out": [
+            {
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": "QTI=",
+              "value_id": "v-A",
+              "winner": {
+                "lamport": "5",
+                "origin": "a",
+                "seq": "2"
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "version": "value.oracle/v0"

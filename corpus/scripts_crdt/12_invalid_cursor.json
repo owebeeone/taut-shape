@@ -1,0 +1,1 @@
+{"name":"invalid_cursor","inputs":[{"type":"apply","op":{"origin":"a","seq":"1","deps":{"entries":[]},"payload":"QQ=="}},{"type":"read","crdt_id":"c","stream_id":"future","cursor":{"entries":[{"origin":"a","seq":"2"}]}},{"type":"read","crdt_id":"c","stream_id":"unnormalized","cursor":{"entries":[{"origin":"b","seq":"1"},{"origin":"a","seq":"1"}]}}]}

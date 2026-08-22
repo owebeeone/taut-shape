@@ -1,0 +1,10 @@
+{
+  "name": "timed_reset_cancels_timer",
+  "comment": "56-F4: a reader caught up at epoch=0/head=0 (positioned cursor, not absent) with timeout_ms=50 holds and emits SetTimer{1,50}; a producer SwmrReset increments epoch to 1, releases it EARLY with state=reset, and must cancel the timer first -- SwmrCancelTimer{1} THEN the reset SwmrReadResponse (reset_reason=producer_requested, reset_detail=gen2, next_cursor ABSENT per PH0-D19)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "cursor": { "epoch": "0", "seq": "0" }, "timeout_ms": "50" } },
+    { "in": { "type": "reset", "writer_id": "w1", "reason": "producer_requested", "detail": "Z2VuMg==" } }
+  ]
+}

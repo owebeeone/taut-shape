@@ -1,0 +1,10 @@
+{
+  "name": "one_replace_wakes_two",
+  "comment": "s1 and s2 both held at version=0; one replace emits two responses in stream-creation order (D16 analogue)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1" } },
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s2" } },
+    { "in": { "type": "replace", "payload": "aGVsbG8=" } }
+  ]
+}

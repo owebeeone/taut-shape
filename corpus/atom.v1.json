@@ -1,0 +1,1311 @@
+{
+  "shape": "atom",
+  "vectors": [
+    {
+      "comment": "timeout_ms=0 probe on an atom with no value yet -> would_block, next_version=0 (D8/D14 analogue)",
+      "name": "read_empty_probe",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "0"
+              },
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "initial delivery: one replace then a catch-up read; first version=1 (D8 analogue), next_version advances to current",
+      "name": "replace_then_read_data",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "aGVsbG8=",
+            "type": "replace"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "1"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": {
+                "payload": "aGVsbG8=",
+                "version": "1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "replacement: a second replace OVERWRITES the single slot (no back-history); a read after both sees only the latest, version=2",
+      "name": "replacement_overwrites",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "QTE=",
+            "type": "replace"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "QjE=",
+            "type": "replace"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "2"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": {
+                "payload": "QjE=",
+                "version": "2"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "generation change (consumer-level concept, e.g. datascad's query generation): a subscriber caught up on version=1 is woken by a replace carrying a NEW opaque payload representing the next generation. taut-shape has no generation concept of its own -- this is an ordinary replace like any other; the held read is released exactly as ordinary_replace releases it. The consumer decides from the (opaque) payload contents whether the generation it just received is compatible with what it expected; an incompatible generation is a consumer-level decision to end the stream (AtomEndStream) and re-establish a fresh subscription -- both ordinary AtomEndStream + AtomReadRequest, no new taut-shape mechanism (see dev-docs/AtomSwmrNotes.md).",
+      "name": "generation_change_replace",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "Z2VuMQ==",
+            "type": "replace"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "type": "read",
+            "version": {
+              "version": "1"
+            }
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "Z2VuMg==",
+            "type": "replace"
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "2"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": {
+                "payload": "Z2VuMg==",
+                "version": "2"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "subscriber join mid-stream: two replaces happen before any reader exists; a fresh stream's first read (version absent = 0) immediately gets the LATEST value, not the first one -- there is no back-history to replay (roadmap Sec 1: atom keeps exactly one record)",
+      "name": "subscriber_join_mid_stream",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "QTE=",
+            "type": "replace"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "QjE=",
+            "type": "replace"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s-late",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "2"
+              },
+              "state": "data",
+              "stream_id": "s-late",
+              "type": "read_response",
+              "value": {
+                "payload": "QjE=",
+                "version": "2"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "a read with no timeout_ms on a caught-up atom (version=0, nothing replaced yet) emits nothing; a later replace emits the response",
+      "name": "held_read_released_by_replace",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "aGVsbG8=",
+            "type": "replace"
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "1"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": {
+                "payload": "aGVsbG8=",
+                "version": "1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "read with timeout_ms=50 on a caught-up atom emits SetTimer{1,50}; timer_expired{1} answers would_block (D14/D16 analogues)",
+      "name": "held_read_timer",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "token": "1",
+            "type": "timer_expired"
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "0"
+              },
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "timer_expired for a canceled/already-answered token emits nothing",
+      "name": "late_timer_ignored",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "aGVsbG8=",
+            "type": "replace"
+          },
+          "out": [
+            {
+              "token": "1",
+              "type": "cancel_timer"
+            },
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "1"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": {
+                "payload": "aGVsbG8=",
+                "version": "1"
+              }
+            }
+          ]
+        },
+        {
+          "in": {
+            "token": "1",
+            "type": "timer_expired"
+          },
+          "out": []
+        }
+      ]
+    },
+    {
+      "comment": "a second read on the same stream drops the held first (unanswered) and cancels its timer; the new hold gets a fresh monotonic token (D5, D16 analogues)",
+      "name": "supersede",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "token": "1",
+              "type": "cancel_timer"
+            },
+            {
+              "ms": "50",
+              "token": "2",
+              "type": "set_timer"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "a value then seal; a caught-up reader gets eof; held reads are answered eof by seal itself (D12 analogue)",
+      "name": "seal_then_drain_eof",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "aGVsbG8=",
+            "type": "replace"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "type": "read",
+            "version": {
+              "version": "1"
+            }
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "1"
+              },
+              "state": "eof",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "close{} answers held reads closed and emits ProducerStop{closed}",
+      "name": "close_clean",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "close"
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "0"
+              },
+              "state": "closed",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": null
+            },
+            {
+              "reason": "closed",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "close{error} answers held reads failed with the error attached and emits ProducerStop{failed}",
+      "name": "close_failed",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "error": {
+              "code": "producer_error",
+              "message": "boom"
+            },
+            "type": "close"
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": {
+                "code": "producer_error",
+                "message": "boom"
+              },
+              "next_version": {
+                "version": "0"
+              },
+              "state": "failed",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": null
+            },
+            {
+              "reason": "failed",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "after seal, a fresh read below current version still reads data before eof -- there is no floor/eviction for atom (the single retained value is always readable; terminal describes the producer, not the value)",
+      "name": "terminal_still_readable",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "aGVsbG8=",
+            "type": "replace"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "1"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": {
+                "payload": "aGVsbG8=",
+                "version": "1"
+              }
+            }
+          ]
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s2",
+            "timeout_ms": "0",
+            "type": "read",
+            "version": {
+              "version": "1"
+            }
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "1"
+              },
+              "state": "eof",
+              "stream_id": "s2",
+              "type": "read_response",
+              "value": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "repeated seal/close emit nothing new (D6 analogue)",
+      "name": "idempotent_seal_close",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "close"
+          },
+          "out": [
+            {
+              "reason": "closed",
+              "type": "producer_stop"
+            }
+          ]
+        },
+        {
+          "in": {
+            "type": "close"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "error": {
+              "code": "internal"
+            },
+            "type": "close"
+          },
+          "out": []
+        }
+      ]
+    },
+    {
+      "comment": "s1 and s2 read the same atom at different versions; each gets its own addressed response (D3-D6 analogues)",
+      "name": "two_streams_two_positions",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "QTE=",
+            "type": "replace"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "QjE=",
+            "type": "replace"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "2"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": {
+                "payload": "QjE=",
+                "version": "2"
+              }
+            }
+          ]
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s2",
+            "timeout_ms": "0",
+            "type": "read",
+            "version": {
+              "version": "2"
+            }
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "2"
+              },
+              "state": "would_block",
+              "stream_id": "s2",
+              "type": "read_response",
+              "value": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "s1 and s2 both held at version=0; one replace emits two responses in stream-creation order (D16 analogue)",
+      "name": "one_replace_wakes_two",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s2",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "aGVsbG8=",
+            "type": "replace"
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "1"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": {
+                "payload": "aGVsbG8=",
+                "version": "1"
+              }
+            },
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "1"
+              },
+              "state": "data",
+              "stream_id": "s2",
+              "type": "read_response",
+              "value": {
+                "payload": "aGVsbG8=",
+                "version": "1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "end_stream{s1} drops s1's held read (no response), cancels its timer; s2 is untouched",
+      "name": "end_stream_mid_hold",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s2",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "type": "end_stream"
+          },
+          "out": [
+            {
+              "token": "1",
+              "type": "cancel_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "aGVsbG8=",
+            "type": "replace"
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "1"
+              },
+              "state": "data",
+              "stream_id": "s2",
+              "type": "read_response",
+              "value": {
+                "payload": "aGVsbG8=",
+                "version": "1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "with stop_when=last_reader: s1 and s2 end -> ProducerStop{last_reader_gone} exactly on the >=1->0 transition (D6 analogue)",
+      "name": "last_stream_producer_stop",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s2",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "type": "end_stream"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s2",
+            "type": "end_stream"
+          },
+          "out": [
+            {
+              "reason": "last_reader_gone",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "same script as last_stream_producer_stop, knob off -> no ProducerStop on last-reader-gone (D6 analogue)",
+      "name": "stop_when_explicit_only",
+      "node": {
+        "stop_when": "explicit_only"
+      },
+      "steps": [
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "type": "end_stream"
+          },
+          "out": []
+        }
+      ]
+    },
+    {
+      "comment": "seal, then a replace: the value is dropped (version unchanged), the step emits exactly one AtomDiagnostic{warn, replace_after_terminal}, and a subsequent read still sees only the pre-seal value (D18/D19 analogue)",
+      "name": "replace_after_seal_warns",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "aGVsbG8=",
+            "type": "replace"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "bGF0ZQ==",
+            "type": "replace"
+          },
+          "out": [
+            {
+              "code": "replace_after_terminal",
+              "severity": "warn",
+              "type": "diagnostic"
+            }
+          ]
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "1"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": {
+                "payload": "aGVsbG8=",
+                "version": "1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "close{} then a replace: same shape as replace_after_seal_warns -- dropped, one AtomDiagnostic{warn, replace_after_terminal}, version unchanged, subsequent reads unaffected (D18/D19 analogue)",
+      "name": "replace_after_close_warns",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "aGVsbG8=",
+            "type": "replace"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "close"
+          },
+          "out": [
+            {
+              "reason": "closed",
+              "type": "producer_stop"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "bGF0ZQ==",
+            "type": "replace"
+          },
+          "out": [
+            {
+              "code": "replace_after_terminal",
+              "severity": "warn",
+              "type": "diagnostic"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "56-F2: a request naming a version beyond current (a client bug -- the engine is the sole source of truth on version) is clamped exactly like caught-up, never a new state; timeout_ms=0 probe on a fresh atom (current=0) with version=9 -> would_block, next_version=0 (NOT 9)",
+      "name": "beyond_current_probe",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read",
+            "version": {
+              "version": "9"
+            }
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "0"
+              },
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "56-F2 (the timed-expiry variant of #22, the defect this pins): version=9 with timeout_ms=50 holds and emits SetTimer{1,50}; timer_expired{1} answers would_block with next_version=0 (clamped, via the canonical resolver in probe mode -- PH0-D19), NOT next_version=9 echoed from the original request",
+      "name": "beyond_current_timed_expiry",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read",
+            "version": {
+              "version": "9"
+            }
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "token": "1",
+            "type": "timer_expired"
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "0"
+              },
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "the never-read variant of #18 (log 20b parity, review F5-06c): an atom with no streams ever created never spuriously stops its producer; end_stream on an unknown stream is a no-op (D6)",
+      "name": "never_read_no_stop",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "ghost",
+            "type": "end_stream"
+          },
+          "out": []
+        }
+      ]
+    },
+    {
+      "comment": "review F5 Sec 8.9: close{} answers s1 closed and emits ProducerStop{closed}; a LATER end_stream{s1} still transitions reader-count >=1->0 (the stream entry is not removed by close) and emits a SECOND ProducerStop{last_reader_gone} -- ProducerStop is idempotent by design (D6), so this double-stop is intentional and cross-engine-consistent, previously unpinned",
+      "name": "post_close_end_stream_double_stop",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "close"
+          },
+          "out": [
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "0"
+              },
+              "state": "closed",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": null
+            },
+            {
+              "reason": "closed",
+              "type": "producer_stop"
+            }
+          ]
+        },
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "type": "end_stream"
+          },
+          "out": [
+            {
+              "reason": "last_reader_gone",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "56-F4: read timeout_ms=50 holds and emits SetTimer{1,50}; a replace releases it EARLY (before the timer fires) and must cancel the now-unneeded timer first -- the step emits AtomCancelTimer{1} THEN the AtomReadResponse, matching the three log engines' established CancelTimer-before-response ordering",
+      "name": "timed_early_wake_replace",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "aGVsbG8=",
+            "type": "replace"
+          },
+          "out": [
+            {
+              "token": "1",
+              "type": "cancel_timer"
+            },
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "1"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": {
+                "payload": "aGVsbG8=",
+                "version": "1"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "56-F4: read timeout_ms=50 holds and emits SetTimer{1,50}; seal releases it EARLY with eof and must cancel the timer first -- AtomCancelTimer{1} THEN the eof AtomReadResponse",
+      "name": "timed_seal_cancels_timer",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": [
+            {
+              "token": "1",
+              "type": "cancel_timer"
+            },
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "0"
+              },
+              "state": "eof",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "56-F4: read timeout_ms=50 holds and emits SetTimer{1,50}; close{} releases it EARLY with closed and must cancel the timer first -- AtomCancelTimer{1} THEN the closed AtomReadResponse THEN AtomProducerStop{closed}",
+      "name": "timed_close_cancels_timer",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "atom_id": "atom-A",
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "type": "close"
+          },
+          "out": [
+            {
+              "token": "1",
+              "type": "cancel_timer"
+            },
+            {
+              "atom_id": "atom-A",
+              "error": null,
+              "next_version": {
+                "version": "0"
+              },
+              "state": "closed",
+              "stream_id": "s1",
+              "type": "read_response",
+              "value": null
+            },
+            {
+              "reason": "closed",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "version": "atom.oracle/v1"
+}

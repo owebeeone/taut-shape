@@ -1,0 +1,11 @@
+{
+  "name": "terminal_still_readable",
+  "comment": "after seal, a fresh subscribe (cursor absent) still reads the retained snapshot+deltas as data before eof; only a reader already caught up at head sees eof (D12 analogue -- terminal describes the producer, not the retained state)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } },
+    { "in": { "type": "seal" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "timeout_ms": "0" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s2", "cursor": { "epoch": "0", "seq": "0" }, "timeout_ms": "0" } }
+  ]
+}

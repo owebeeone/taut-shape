@@ -1,0 +1,3 @@
+[
+  {"after_frames": 1, "inputs": [{"type": "close", "error": {"code": "producer_error", "message": "boom"}}]}
+]

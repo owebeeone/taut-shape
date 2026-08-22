@@ -1,0 +1,1 @@
+[{"type":"install_bootstrap","bootstrap":{"clock":{"entries":[{"origin":"a","seq":"2"}]},"state":"U05BUA=="}},{"type":"apply","op":{"origin":"a","seq":"3","deps":{"entries":[{"origin":"b","seq":"1"}]},"payload":"Qw=="}}]

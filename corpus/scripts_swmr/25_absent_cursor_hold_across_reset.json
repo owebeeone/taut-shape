@@ -1,0 +1,10 @@
+{
+  "name": "absent_cursor_hold_across_reset",
+  "comment": "review F5-02 (PH0-D19): a held read whose ORIGINAL request had an absent cursor holds (no snapshot yet, no timeout_ms); a producer SwmrReset must NOT force-answer it `state=reset` (there is nothing to have been reset FROM) -- this step emits NOTHING for s1, which stays held; a later snapshot_push then releases it normally with the fresh data (\"resolves with a fresh snapshot of the new state\")",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1" } },
+    { "in": { "type": "reset", "writer_id": "w1", "reason": "producer_requested", "detail": "Z2VuMg==" } },
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } }
+  ]
+}

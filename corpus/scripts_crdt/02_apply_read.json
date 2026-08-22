@@ -1,0 +1,1 @@
+{"name":"apply_then_read","inputs":[{"type":"apply","op":{"origin":"a","seq":"1","deps":{"entries":[]},"payload":"QQ=="}},{"type":"read","crdt_id":"c","stream_id":"s","cursor":null},{"type":"read","crdt_id":"c","stream_id":"s","cursor":{"entries":[{"origin":"a","seq":"1"}]}}]}

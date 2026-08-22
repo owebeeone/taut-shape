@@ -1,0 +1,1 @@
+{"name":"push_after_close","steps":[{"in":{"type":"close","error":null}},{"in":{"type":"push","payload":"bGF0ZQ=="}}]}

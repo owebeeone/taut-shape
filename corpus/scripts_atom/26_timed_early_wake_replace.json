@@ -1,0 +1,9 @@
+{
+  "name": "timed_early_wake_replace",
+  "comment": "56-F4: read timeout_ms=50 holds and emits SetTimer{1,50}; a replace releases it EARLY (before the timer fires) and must cancel the now-unneeded timer first -- the step emits AtomCancelTimer{1} THEN the AtomReadResponse, matching the three log engines' established CancelTimer-before-response ordering",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1", "timeout_ms": "50" } },
+    { "in": { "type": "replace", "payload": "aGVsbG8=" } }
+  ]
+}

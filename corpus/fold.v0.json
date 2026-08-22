@@ -126,6 +126,28 @@
       "ops": []
     },
     {
+      "comment": "same origin and reused lamport -> higher seq wins regardless of arrival",
+      "expect": "4133",
+      "fold": "value",
+      "name": "value/tiebreak-seq",
+      "ops": [
+        {
+          "lamport": 2,
+          "origin": "a",
+          "payload": "4133",
+          "prev": null,
+          "seq": 3
+        },
+        {
+          "lamport": 2,
+          "origin": "a",
+          "payload": "4132",
+          "prev": null,
+          "seq": 2
+        }
+      ]
+    },
+    {
       "comment": "append log in (lamport,origin,seq) order",
       "expect": [
         "4131",

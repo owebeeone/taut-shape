@@ -1,0 +1,12 @@
+{
+  "name": "push_after_seal_warns",
+  "comment": "seal, then a snapshot_push and a delta_push: both are dropped (nothing appended), each emits exactly one SwmrDiagnostic{warn, push_after_terminal}, and a subsequent read still sees the pre-seal state (D18/D19 analogue)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } },
+    { "in": { "type": "seal" } },
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDI=" } },
+    { "in": { "type": "delta_push", "writer_id": "w1", "payload": "ZDE=" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "timeout_ms": "0" } }
+  ]
+}

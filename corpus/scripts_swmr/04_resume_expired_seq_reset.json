@@ -1,0 +1,11 @@
+{
+  "name": "resume_expired_seq_reset",
+  "comment": "resume from an expired seq (typed reset): a reader is at seq=0 (caught up right after the initial snapshot -- PH0-D20 -- before consuming the pushed delta), which is below a NEW snapshot that later re-bases the store at seq=1 (the delta folded in, retiring the old delta window); its next read cannot be served from retained deltas -> state=reset, reset_reason=retention_exceeded, with a fresh snapshot+tail attached so the reader recovers in-band (roadmap Sec 3.2)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } },
+    { "in": { "type": "delta_push", "writer_id": "w1", "payload": "ZDE=" } },
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDI=" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "cursor": { "epoch": "0", "seq": "0" }, "timeout_ms": "0" } }
+  ]
+}

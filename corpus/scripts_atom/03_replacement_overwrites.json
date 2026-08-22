@@ -1,0 +1,10 @@
+{
+  "name": "replacement_overwrites",
+  "comment": "replacement: a second replace OVERWRITES the single slot (no back-history); a read after both sees only the latest, version=2",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "replace", "payload": "QTE=" } },
+    { "in": { "type": "replace", "payload": "QjE=" } },
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1", "timeout_ms": "0" } }
+  ]
+}

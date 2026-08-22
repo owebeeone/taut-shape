@@ -1,0 +1,11 @@
+{
+  "name": "writer_uniqueness_violation",
+  "comment": "writer-uniqueness violation: writer_id 'w1' binds on the first producer input; a delta_push from a DIFFERENT writer_id 'w2' is rejected (dropped, nothing appended) with SwmrDiagnostic{error, writer_conflict} -- the wire-level enforcement of writers=single (single-writer discipline). A subsequent read from w1's writer still shows only w1's content.",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } },
+    { "in": { "type": "delta_push", "writer_id": "w1", "payload": "ZDE=" } },
+    { "in": { "type": "delta_push", "writer_id": "w2", "payload": "ZDI=" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "timeout_ms": "0" } }
+  ]
+}

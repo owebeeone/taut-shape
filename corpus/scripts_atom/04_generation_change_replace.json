@@ -1,0 +1,10 @@
+{
+  "name": "generation_change_replace",
+  "comment": "generation change (consumer-level concept, e.g. datascad's query generation): a subscriber caught up on version=1 is woken by a replace carrying a NEW opaque payload representing the next generation. taut-shape has no generation concept of its own -- this is an ordinary replace like any other; the held read is released exactly as ordinary_replace releases it. The consumer decides from the (opaque) payload contents whether the generation it just received is compatible with what it expected; an incompatible generation is a consumer-level decision to end the stream (AtomEndStream) and re-establish a fresh subscription -- both ordinary AtomEndStream + AtomReadRequest, no new taut-shape mechanism (see dev-docs/AtomSwmrNotes.md).",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "replace", "payload": "Z2VuMQ==" } },
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1", "version": { "version": "1" } } },
+    { "in": { "type": "replace", "payload": "Z2VuMg==" } }
+  ]
+}

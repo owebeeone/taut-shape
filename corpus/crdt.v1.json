@@ -1,0 +1,1485 @@
+{
+  "shape": "crdt",
+  "vectors": [
+    {
+      "name": "empty_read",
+      "node": {},
+      "steps": [
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": null,
+            "stream_id": "s",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": null,
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": []
+              },
+              "ops": [],
+              "state": "empty",
+              "stream_id": "s",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "apply_then_read",
+      "node": {},
+      "steps": [
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "QQ==",
+              "seq": "1"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": null,
+            "stream_id": "s",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": null,
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "ops": [
+                {
+                  "deps": {
+                    "entries": []
+                  },
+                  "origin": "a",
+                  "payload": "QQ==",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": {
+              "entries": [
+                {
+                  "origin": "a",
+                  "seq": "1"
+                }
+              ]
+            },
+            "stream_id": "s",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": null,
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "ops": [],
+              "state": "empty",
+              "stream_id": "s",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "causal_reorder_buffers",
+      "node": {},
+      "steps": [
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "Qg==",
+              "seq": "2"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": null,
+            "stream_id": "early",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": null,
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": []
+              },
+              "ops": [],
+              "state": "empty",
+              "stream_id": "early",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "QQ==",
+              "seq": "1"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": null,
+            "stream_id": "ready",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": null,
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "2"
+                  }
+                ]
+              },
+              "ops": [
+                {
+                  "deps": {
+                    "entries": []
+                  },
+                  "origin": "a",
+                  "payload": "QQ==",
+                  "seq": "1"
+                },
+                {
+                  "deps": {
+                    "entries": []
+                  },
+                  "origin": "a",
+                  "payload": "Qg==",
+                  "seq": "2"
+                }
+              ],
+              "state": "data",
+              "stream_id": "ready",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "cross_origin_dependency",
+      "node": {},
+      "steps": [
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "origin": "b",
+              "payload": "Qg==",
+              "seq": "1"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "QQ==",
+              "seq": "1"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": null,
+            "stream_id": "s",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": null,
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "1"
+                  },
+                  {
+                    "origin": "b",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "ops": [
+                {
+                  "deps": {
+                    "entries": []
+                  },
+                  "origin": "a",
+                  "payload": "QQ==",
+                  "seq": "1"
+                },
+                {
+                  "deps": {
+                    "entries": [
+                      {
+                        "origin": "a",
+                        "seq": "1"
+                      }
+                    ]
+                  },
+                  "origin": "b",
+                  "payload": "Qg==",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "exact_duplicate_idempotent",
+      "node": {},
+      "steps": [
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "QQ==",
+              "seq": "1"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "QQ==",
+              "seq": "1"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": null,
+            "stream_id": "s",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": null,
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "ops": [
+                {
+                  "deps": {
+                    "entries": []
+                  },
+                  "origin": "a",
+                  "payload": "QQ==",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "equivocation_canonical_variant",
+      "node": {},
+      "steps": [
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "Qg==",
+              "seq": "1"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "QQ==",
+              "seq": "1"
+            },
+            "type": "apply"
+          },
+          "out": [
+            {
+              "code": "equivocation",
+              "origin": "a",
+              "seq": "1",
+              "severity": "error",
+              "type": "diagnostic"
+            }
+          ]
+        },
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "Qw==",
+              "seq": "1"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": null,
+            "stream_id": "s",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": null,
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "ops": [
+                {
+                  "deps": {
+                    "entries": []
+                  },
+                  "origin": "a",
+                  "payload": "QQ==",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "invalid_operations",
+      "node": {},
+      "steps": [
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "",
+              "payload": "QQ==",
+              "seq": "1"
+            },
+            "type": "apply"
+          },
+          "out": [
+            {
+              "code": "invalid_operation",
+              "origin": "",
+              "seq": "1",
+              "severity": "error",
+              "type": "diagnostic"
+            }
+          ]
+        },
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "QQ==",
+              "seq": "0"
+            },
+            "type": "apply"
+          },
+          "out": [
+            {
+              "code": "invalid_operation",
+              "origin": "a",
+              "seq": "0",
+              "severity": "error",
+              "type": "diagnostic"
+            }
+          ]
+        },
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "2"
+                  }
+                ]
+              },
+              "origin": "a",
+              "payload": "Qg==",
+              "seq": "2"
+            },
+            "type": "apply"
+          },
+          "out": [
+            {
+              "code": "invalid_operation",
+              "origin": "a",
+              "seq": "2",
+              "severity": "error",
+              "type": "diagnostic"
+            }
+          ]
+        },
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": [
+                  {
+                    "origin": "z",
+                    "seq": "1"
+                  },
+                  {
+                    "origin": "a",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "origin": "b",
+              "payload": "Qg==",
+              "seq": "1"
+            },
+            "type": "apply"
+          },
+          "out": [
+            {
+              "code": "invalid_operation",
+              "origin": "b",
+              "seq": "1",
+              "severity": "error",
+              "type": "diagnostic"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "pending_bound",
+      "node": {
+        "max_pending": 1
+      },
+      "steps": [
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "Qg==",
+              "seq": "2"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "b",
+              "payload": "Qw==",
+              "seq": "2"
+            },
+            "type": "apply"
+          },
+          "out": [
+            {
+              "code": "pending_bound_exceeded",
+              "origin": "b",
+              "seq": "2",
+              "severity": "error",
+              "type": "diagnostic"
+            }
+          ]
+        },
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "QQ==",
+              "seq": "1"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": null,
+            "stream_id": "s",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": null,
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "2"
+                  }
+                ]
+              },
+              "ops": [
+                {
+                  "deps": {
+                    "entries": []
+                  },
+                  "origin": "a",
+                  "payload": "QQ==",
+                  "seq": "1"
+                },
+                {
+                  "deps": {
+                    "entries": []
+                  },
+                  "origin": "a",
+                  "payload": "Qg==",
+                  "seq": "2"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "bootstrap_fresh_and_tail",
+      "node": {},
+      "steps": [
+        {
+          "in": {
+            "bootstrap": {
+              "clock": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "2"
+                  }
+                ]
+              },
+              "state": "U05BUA=="
+            },
+            "type": "install_bootstrap"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "Qw==",
+              "seq": "3"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": null,
+            "stream_id": "fresh",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": {
+                "clock": {
+                  "entries": [
+                    {
+                      "origin": "a",
+                      "seq": "2"
+                    }
+                  ]
+                },
+                "state": "U05BUA=="
+              },
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "3"
+                  }
+                ]
+              },
+              "ops": [
+                {
+                  "deps": {
+                    "entries": []
+                  },
+                  "origin": "a",
+                  "payload": "Qw==",
+                  "seq": "3"
+                }
+              ],
+              "state": "data",
+              "stream_id": "fresh",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": {
+              "entries": [
+                {
+                  "origin": "a",
+                  "seq": "2"
+                }
+              ]
+            },
+            "stream_id": "tail",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": null,
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "3"
+                  }
+                ]
+              },
+              "ops": [
+                {
+                  "deps": {
+                    "entries": []
+                  },
+                  "origin": "a",
+                  "payload": "Qw==",
+                  "seq": "3"
+                }
+              ],
+              "state": "data",
+              "stream_id": "tail",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "bootstrap_required_for_old_cursor",
+      "node": {},
+      "steps": [
+        {
+          "in": {
+            "bootstrap": {
+              "clock": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "2"
+                  },
+                  {
+                    "origin": "b",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "state": "U05BUA=="
+            },
+            "type": "install_bootstrap"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "2"
+                  }
+                ]
+              },
+              "origin": "b",
+              "payload": "Qg==",
+              "seq": "2"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": {
+              "entries": [
+                {
+                  "origin": "a",
+                  "seq": "1"
+                },
+                {
+                  "origin": "b",
+                  "seq": "1"
+                }
+              ]
+            },
+            "stream_id": "old",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": {
+                "clock": {
+                  "entries": [
+                    {
+                      "origin": "a",
+                      "seq": "2"
+                    },
+                    {
+                      "origin": "b",
+                      "seq": "1"
+                    }
+                  ]
+                },
+                "state": "U05BUA=="
+              },
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "2"
+                  },
+                  {
+                    "origin": "b",
+                    "seq": "2"
+                  }
+                ]
+              },
+              "ops": [
+                {
+                  "deps": {
+                    "entries": [
+                      {
+                        "origin": "a",
+                        "seq": "2"
+                      }
+                    ]
+                  },
+                  "origin": "b",
+                  "payload": "Qg==",
+                  "seq": "2"
+                }
+              ],
+              "state": "bootstrap_required",
+              "stream_id": "old",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "bootstrap_idempotence_and_conflict",
+      "node": {},
+      "steps": [
+        {
+          "in": {
+            "bootstrap": {
+              "clock": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "state": "QQ=="
+            },
+            "type": "install_bootstrap"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "bootstrap": {
+              "clock": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "state": "QQ=="
+            },
+            "type": "install_bootstrap"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "bootstrap": {
+              "clock": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "2"
+                  }
+                ]
+              },
+              "state": "Qg=="
+            },
+            "type": "install_bootstrap"
+          },
+          "out": [
+            {
+              "code": "bootstrap_conflict",
+              "origin": null,
+              "seq": null,
+              "severity": "error",
+              "type": "diagnostic"
+            }
+          ]
+        },
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "QQ==",
+              "seq": "1"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": null,
+            "stream_id": "s",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": {
+                "clock": {
+                  "entries": [
+                    {
+                      "origin": "a",
+                      "seq": "1"
+                    }
+                  ]
+                },
+                "state": "QQ=="
+              },
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "ops": [],
+              "state": "data",
+              "stream_id": "s",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "invalid_cursor",
+      "node": {},
+      "steps": [
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "QQ==",
+              "seq": "1"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": {
+              "entries": [
+                {
+                  "origin": "a",
+                  "seq": "2"
+                }
+              ]
+            },
+            "stream_id": "future",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": null,
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "ops": [],
+              "state": "invalid_cursor",
+              "stream_id": "future",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": {
+              "entries": [
+                {
+                  "origin": "b",
+                  "seq": "1"
+                },
+                {
+                  "origin": "a",
+                  "seq": "1"
+                }
+              ]
+            },
+            "stream_id": "unnormalized",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": null,
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "ops": [],
+              "state": "invalid_cursor",
+              "stream_id": "unnormalized",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "seal_and_terminal_apply",
+      "node": {},
+      "steps": [
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "QQ==",
+              "seq": "1"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "Qg==",
+              "seq": "2"
+            },
+            "type": "apply"
+          },
+          "out": [
+            {
+              "code": "apply_after_terminal",
+              "origin": "a",
+              "seq": "2",
+              "severity": "warn",
+              "type": "diagnostic"
+            }
+          ]
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": null,
+            "stream_id": "drain",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": null,
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "ops": [
+                {
+                  "deps": {
+                    "entries": []
+                  },
+                  "origin": "a",
+                  "payload": "QQ==",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "drain",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": {
+              "entries": [
+                {
+                  "origin": "a",
+                  "seq": "1"
+                }
+              ]
+            },
+            "stream_id": "eof",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": null,
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "ops": [],
+              "state": "eof",
+              "stream_id": "eof",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        }
+      ]
+    },
+    {
+      "name": "failed_close_after_drain",
+      "node": {},
+      "steps": [
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "QQ==",
+              "seq": "1"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "error": {
+              "code": "producer_error",
+              "message": "boom"
+            },
+            "type": "close"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": null,
+            "stream_id": "drain",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": null,
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "ops": [
+                {
+                  "deps": {
+                    "entries": []
+                  },
+                  "origin": "a",
+                  "payload": "QQ==",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "drain",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": {
+              "entries": [
+                {
+                  "origin": "a",
+                  "seq": "1"
+                }
+              ]
+            },
+            "stream_id": "failed",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": null,
+              "crdt_id": "c",
+              "error": {
+                "code": "producer_error",
+                "message": "boom"
+              },
+              "next_cursor": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "ops": [],
+              "state": "failed",
+              "stream_id": "failed",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "error": null,
+            "type": "close"
+          },
+          "out": []
+        }
+      ]
+    },
+    {
+      "name": "vector_resume_missing_components",
+      "node": {},
+      "steps": [
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "a",
+              "payload": "QQ==",
+              "seq": "1"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": []
+              },
+              "origin": "b",
+              "payload": "Qg==",
+              "seq": "1"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "op": {
+              "deps": {
+                "entries": [
+                  {
+                    "origin": "b",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "origin": "a",
+              "payload": "Qw==",
+              "seq": "2"
+            },
+            "type": "apply"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "crdt_id": "c",
+            "cursor": {
+              "entries": [
+                {
+                  "origin": "a",
+                  "seq": "1"
+                }
+              ]
+            },
+            "stream_id": "resume",
+            "type": "read"
+          },
+          "out": [
+            {
+              "bootstrap": null,
+              "crdt_id": "c",
+              "error": null,
+              "next_cursor": {
+                "entries": [
+                  {
+                    "origin": "a",
+                    "seq": "2"
+                  },
+                  {
+                    "origin": "b",
+                    "seq": "1"
+                  }
+                ]
+              },
+              "ops": [
+                {
+                  "deps": {
+                    "entries": [
+                      {
+                        "origin": "b",
+                        "seq": "1"
+                      }
+                    ]
+                  },
+                  "origin": "a",
+                  "payload": "Qw==",
+                  "seq": "2"
+                },
+                {
+                  "deps": {
+                    "entries": []
+                  },
+                  "origin": "b",
+                  "payload": "Qg==",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "resume",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "version": "crdt.oracle/v1"
+}

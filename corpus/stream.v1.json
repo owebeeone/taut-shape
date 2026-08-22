@@ -1,0 +1,1607 @@
+{
+  "shape": "stream",
+  "vectors": [
+    {
+      "name": "read_empty_probe",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "late_join_skips_backlog",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "YQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "late",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "1"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "late",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "held_read_released_by_push",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "YQ==",
+            "type": "push"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "1"
+              },
+              "records": [
+                {
+                  "payload": "YQ==",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "live_two_records",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "YQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "1"
+              },
+              "records": [
+                {
+                  "payload": "YQ==",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "Yg==",
+            "type": "push"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "2"
+              },
+              "records": [
+                {
+                  "payload": "Yg==",
+                  "seq": "2"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "batch_records",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "YQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "Yg==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "Yw==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "max_records": "2",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "2"
+              },
+              "records": [
+                {
+                  "payload": "YQ==",
+                  "seq": "1"
+                },
+                {
+                  "payload": "Yg==",
+                  "seq": "2"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "max_records": "2",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "3"
+              },
+              "records": [
+                {
+                  "payload": "Yw==",
+                  "seq": "3"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "byte_bound_forward_progress",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "YWJj",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "ZA==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "max_bytes": "1",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "1"
+              },
+              "records": [
+                {
+                  "payload": "YWJj",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "max_bytes": "1",
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "2"
+              },
+              "records": [
+                {
+                  "payload": "ZA==",
+                  "seq": "2"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "slow_reader_dropped",
+      "node": {
+        "capacity_records": 2,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "slow",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "slow",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "YQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "Yg==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "Yw==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "slow",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": {
+                "code": "slow_consumer",
+                "message": null
+              },
+              "next_position": {
+                "seq": "3"
+              },
+              "records": [],
+              "state": "dropped",
+              "stream_id": "slow",
+              "type": "read_response"
+            },
+            {
+              "reason": "last_reader_gone",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "fast_reader_survives_slow_drop",
+      "node": {
+        "capacity_records": 2,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "slow",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "slow",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "fast",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "fast",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "YQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "fast",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "1"
+              },
+              "records": [
+                {
+                  "payload": "YQ==",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "fast",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "Yg==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "fast",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "2"
+              },
+              "records": [
+                {
+                  "payload": "Yg==",
+                  "seq": "2"
+                }
+              ],
+              "state": "data",
+              "stream_id": "fast",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "Yw==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "slow",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": {
+                "code": "slow_consumer",
+                "message": null
+              },
+              "next_position": {
+                "seq": "3"
+              },
+              "records": [],
+              "state": "dropped",
+              "stream_id": "slow",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "fast",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "3"
+              },
+              "records": [
+                {
+                  "payload": "Yw==",
+                  "seq": "3"
+                }
+              ],
+              "state": "data",
+              "stream_id": "fast",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "late_join_after_overflow",
+      "node": {
+        "capacity_records": 2,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "YQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "Yg==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "Yw==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "late",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "3"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "late",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "one_push_wakes_two",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s2",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "cmVhZHk=",
+            "type": "push"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "1"
+              },
+              "records": [
+                {
+                  "payload": "cmVhZHk=",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            },
+            {
+              "error": null,
+              "next_position": {
+                "seq": "1"
+              },
+              "records": [
+                {
+                  "payload": "cmVhZHk=",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s2",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "held_read_timer",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "timer_expiry",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "token": "1",
+            "type": "timer_expired"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "late_timer_ignored",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "end_stream"
+          },
+          "out": [
+            {
+              "token": "1",
+              "type": "cancel_timer"
+            },
+            {
+              "reason": "last_reader_gone",
+              "type": "producer_stop"
+            }
+          ]
+        },
+        {
+          "in": {
+            "token": "1",
+            "type": "timer_expired"
+          },
+          "out": []
+        }
+      ]
+    },
+    {
+      "name": "supersede",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "60",
+            "type": "read"
+          },
+          "out": [
+            {
+              "token": "1",
+              "type": "cancel_timer"
+            },
+            {
+              "ms": "60",
+              "token": "2",
+              "type": "set_timer"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "seal_releases_held",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "eof",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "terminal_drain",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "YQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "Yg==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "2"
+              },
+              "records": [
+                {
+                  "payload": "YQ==",
+                  "seq": "1"
+                },
+                {
+                  "payload": "Yg==",
+                  "seq": "2"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "2"
+              },
+              "records": [],
+              "state": "eof",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "close_clean",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "error": null,
+            "type": "close"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "closed",
+              "stream_id": "s1",
+              "type": "read_response"
+            },
+            {
+              "reason": "closed",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "close_failed",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "error": {
+              "code": "producer_error",
+              "message": "boom"
+            },
+            "type": "close"
+          },
+          "out": [
+            {
+              "error": {
+                "code": "producer_error",
+                "message": "boom"
+              },
+              "next_position": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "failed",
+              "stream_id": "s1",
+              "type": "read_response"
+            },
+            {
+              "reason": "failed",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "terminal_still_readable",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "YQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "error": null,
+            "type": "close"
+          },
+          "out": [
+            {
+              "reason": "closed",
+              "type": "producer_stop"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "1"
+              },
+              "records": [
+                {
+                  "payload": "YQ==",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "1"
+              },
+              "records": [],
+              "state": "closed",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "idempotent_terminal",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "error": null,
+            "type": "close"
+          },
+          "out": [
+            {
+              "reason": "closed",
+              "type": "producer_stop"
+            }
+          ]
+        },
+        {
+          "in": {
+            "error": {
+              "code": "producer_error",
+              "message": "late"
+            },
+            "type": "close"
+          },
+          "out": []
+        }
+      ]
+    },
+    {
+      "name": "end_stream_mid_hold",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "end_stream"
+          },
+          "out": [
+            {
+              "token": "1",
+              "type": "cancel_timer"
+            },
+            {
+              "reason": "last_reader_gone",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "last_reader_stop",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s2",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s2",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "end_stream"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s2",
+            "type": "end_stream"
+          },
+          "out": [
+            {
+              "reason": "last_reader_gone",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "explicit_only",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "explicit_only"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "type": "end_stream"
+          },
+          "out": []
+        }
+      ]
+    },
+    {
+      "name": "push_after_seal",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "bGF0ZQ==",
+            "type": "push"
+          },
+          "out": [
+            {
+              "code": "push_after_terminal",
+              "severity": "warn",
+              "type": "diagnostic"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "push_after_close",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "error": null,
+            "type": "close"
+          },
+          "out": [
+            {
+              "reason": "closed",
+              "type": "producer_stop"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "bGF0ZQ==",
+            "type": "push"
+          },
+          "out": [
+            {
+              "code": "push_after_terminal",
+              "severity": "warn",
+              "type": "diagnostic"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "never_read_close",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "error": null,
+            "type": "close"
+          },
+          "out": [
+            {
+              "reason": "closed",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "timed_push_cancels",
+      "node": {
+        "capacity_records": 4,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "YQ==",
+            "type": "push"
+          },
+          "out": [
+            {
+              "token": "1",
+              "type": "cancel_timer"
+            },
+            {
+              "error": null,
+              "next_position": {
+                "seq": "1"
+              },
+              "records": [
+                {
+                  "payload": "YQ==",
+                  "seq": "1"
+                }
+              ],
+              "state": "data",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "dropped_reconnect_is_late_join",
+      "node": {
+        "capacity_records": 2,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "0"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "YQ==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "Yg==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "Yw==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": {
+                "code": "slow_consumer",
+                "message": null
+              },
+              "next_position": {
+                "seq": "3"
+              },
+              "records": [],
+              "state": "dropped",
+              "stream_id": "s1",
+              "type": "read_response"
+            },
+            {
+              "reason": "last_reader_gone",
+              "type": "producer_stop"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "ZA==",
+            "type": "push"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "error": null,
+              "next_position": {
+                "seq": "4"
+              },
+              "records": [],
+              "state": "would_block",
+              "stream_id": "s1",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "version": "stream.oracle/v1"
+}

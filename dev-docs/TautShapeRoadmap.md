@@ -3,12 +3,19 @@
 Status: design (draft). Scope: **design only** — no phasing, no implementation.
 This memo is a *pre-hardening review*, not a plan.
 
+Catalogue note (2026-08-22):
+[`../../dev-docs/TautShapeCatalogDecision.md`](../../dev-docs/TautShapeCatalogDecision.md)
+is now authoritative for names and boundaries. In particular, `value` is a
+distinct engine, `snapshot_delta` is an SWMR profile, and `message`, `exchange`,
+and `window` are not Taut delivery engines. The sections below remain useful as
+per-engine stress tests; their older raw-registry descriptions are historical.
+
 Audience: the `taut-shape-<lang>` maintainers and anyone about to build shape #2.
 It presumes [`TautShapeArchitecture.md`](TautShapeArchitecture.md) (the three-layer
 thesis, the mailbox engine, the store-core/session-table split) and
 [`TautClientImplPlan.md`](TautClientImplPlan.md) (D1–D20, the `log` vocabulary),
-and reads the shape registry as normative
-([`taut/src/taut/ir/shapes.py:27`](../../taut/src/taut/ir/shapes.py)).
+and reads the validated canonical registry as the executable catalogue
+([`taut/src/taut/ir/shapes.py`](../../taut/src/taut/ir/shapes.py)).
 
 Why now, and why adversarial: only `log` exists (schema + rs/ts/py engines +
 oracle, all green). But the committed consumer is **gryth** — the glade node +
@@ -311,7 +318,7 @@ The prior art is the richest in the tree and already oracle-backed:
   both directions ([`glade.taut.py:110`](../../taut/ir/glade.taut.py)) — the
   heads-exchange-then-gap-ship protocol, coded carrier-independent in
   `session.rs::missing_for` ([`glade/node/src/session.rs:25`](../../glade/node/src/session.rs)).
-- The fold: `fold_value` (lww by `(lamport, origin)`) / `fold_log` (order by
+- The fold: `fold_value` (lww by `(lamport, origin, seq)`) / `fold_log` (order by
   `(lamport, origin, seq)`), both **pure functions of the op-set**, deduped by
   `(origin, seq)`, equivocation-detecting
   ([`glade_fold.py:50`](../../taut/src/taut/crdt/glade_fold.py);

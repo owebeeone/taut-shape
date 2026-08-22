@@ -1,0 +1,11 @@
+{
+  "name": "end_stream_mid_hold",
+  "comment": "end_stream{s1} drops s1's held read (no response), cancels its timer; s2 is untouched",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1", "timeout_ms": "50" } },
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s2" } },
+    { "in": { "type": "end_stream", "atom_id": "atom-A", "stream_id": "s1" } },
+    { "in": { "type": "replace", "payload": "aGVsbG8=" } }
+  ]
+}

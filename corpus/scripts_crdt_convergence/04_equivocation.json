@@ -1,0 +1,1 @@
+{"name":"equivocation_order_independent","ops":[{"origin":"a","seq":"1","deps":{"entries":[]},"payload":"Qg=="},{"origin":"a","seq":"1","deps":{"entries":[]},"payload":"QQ=="},{"origin":"b","seq":"1","deps":{"entries":[]},"payload":"Qw=="}],"replicas":[{"name":"r1","order":[0,1,2]},{"name":"r2","order":[1,2,0]},{"name":"r3","order":[2,0,1]}]}

@@ -1,0 +1,8 @@
+{
+  "name": "beyond_current_probe",
+  "comment": "56-F2: a request naming a version beyond current (a client bug -- the engine is the sole source of truth on version) is clamped exactly like caught-up, never a new state; timeout_ms=0 probe on a fresh atom (current=0) with version=9 -> would_block, next_version=0 (NOT 9)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1", "version": { "version": "9" }, "timeout_ms": "0" } }
+  ]
+}

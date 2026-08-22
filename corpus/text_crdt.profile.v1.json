@@ -1,0 +1,499 @@
+{
+  "scenarios": [
+    {
+      "bootstrap": null,
+      "expect": {
+        "clock": {
+          "entries": [
+            {
+              "origin": "a",
+              "seq": "2"
+            }
+          ]
+        },
+        "diagnostics": [],
+        "ops": [
+          {
+            "deps": {
+              "entries": []
+            },
+            "origin": "a",
+            "payload": "eyJhZnRlciI6bnVsbCwiYXRvbV9pZCI6ImEiLCJraW5kIjoiaW5zZXJ0IiwidGV4dCI6IkEifQ==",
+            "seq": "1"
+          },
+          {
+            "deps": {
+              "entries": []
+            },
+            "origin": "a",
+            "payload": "eyJhZnRlciI6ImEiLCJhdG9tX2lkIjoiYiIsImtpbmQiOiJpbnNlcnQiLCJ0ZXh0IjoiQiJ9",
+            "seq": "2"
+          }
+        ],
+        "projection": {
+          "diagnostics": [],
+          "text": "AB"
+        }
+      },
+      "max_pending": 1024,
+      "name": "sequential_text",
+      "ops": [
+        {
+          "deps": {
+            "entries": []
+          },
+          "origin": "a",
+          "payload": "eyJhZnRlciI6bnVsbCwiYXRvbV9pZCI6ImEiLCJraW5kIjoiaW5zZXJ0IiwidGV4dCI6IkEifQ==",
+          "seq": "1"
+        },
+        {
+          "deps": {
+            "entries": []
+          },
+          "origin": "a",
+          "payload": "eyJhZnRlciI6ImEiLCJhdG9tX2lkIjoiYiIsImtpbmQiOiJpbnNlcnQiLCJ0ZXh0IjoiQiJ9",
+          "seq": "2"
+        }
+      ],
+      "replicas": [
+        {
+          "name": "online",
+          "order": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "reordered",
+          "order": [
+            1,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "bootstrap": null,
+      "expect": {
+        "clock": {
+          "entries": [
+            {
+              "origin": "a",
+              "seq": "1"
+            },
+            {
+              "origin": "b",
+              "seq": "1"
+            },
+            {
+              "origin": "c",
+              "seq": "1"
+            }
+          ]
+        },
+        "diagnostics": [],
+        "ops": [
+          {
+            "deps": {
+              "entries": []
+            },
+            "origin": "a",
+            "payload": "eyJhZnRlciI6bnVsbCwiYXRvbV9pZCI6ImEiLCJraW5kIjoiaW5zZXJ0IiwidGV4dCI6IkEifQ==",
+            "seq": "1"
+          },
+          {
+            "deps": {
+              "entries": [
+                {
+                  "origin": "a",
+                  "seq": "1"
+                }
+              ]
+            },
+            "origin": "b",
+            "payload": "eyJhZnRlciI6ImEiLCJhdG9tX2lkIjoiYiIsImtpbmQiOiJpbnNlcnQiLCJ0ZXh0IjoiQiJ9",
+            "seq": "1"
+          },
+          {
+            "deps": {
+              "entries": [
+                {
+                  "origin": "a",
+                  "seq": "1"
+                }
+              ]
+            },
+            "origin": "c",
+            "payload": "eyJhZnRlciI6ImEiLCJhdG9tX2lkIjoiYyIsImtpbmQiOiJpbnNlcnQiLCJ0ZXh0IjoiQyJ9",
+            "seq": "1"
+          }
+        ],
+        "projection": {
+          "diagnostics": [],
+          "text": "ABC"
+        }
+      },
+      "max_pending": 1024,
+      "name": "concurrent_siblings",
+      "ops": [
+        {
+          "deps": {
+            "entries": []
+          },
+          "origin": "a",
+          "payload": "eyJhZnRlciI6bnVsbCwiYXRvbV9pZCI6ImEiLCJraW5kIjoiaW5zZXJ0IiwidGV4dCI6IkEifQ==",
+          "seq": "1"
+        },
+        {
+          "deps": {
+            "entries": [
+              {
+                "origin": "a",
+                "seq": "1"
+              }
+            ]
+          },
+          "origin": "b",
+          "payload": "eyJhZnRlciI6ImEiLCJhdG9tX2lkIjoiYiIsImtpbmQiOiJpbnNlcnQiLCJ0ZXh0IjoiQiJ9",
+          "seq": "1"
+        },
+        {
+          "deps": {
+            "entries": [
+              {
+                "origin": "a",
+                "seq": "1"
+              }
+            ]
+          },
+          "origin": "c",
+          "payload": "eyJhZnRlciI6ImEiLCJhdG9tX2lkIjoiYyIsImtpbmQiOiJpbnNlcnQiLCJ0ZXh0IjoiQyJ9",
+          "seq": "1"
+        }
+      ],
+      "replicas": [
+        {
+          "name": "r1",
+          "order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "name": "r2",
+          "order": [
+            2,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "r3",
+          "order": [
+            1,
+            0,
+            2
+          ]
+        }
+      ]
+    },
+    {
+      "bootstrap": null,
+      "expect": {
+        "clock": {
+          "entries": [
+            {
+              "origin": "a",
+              "seq": "1"
+            },
+            {
+              "origin": "b",
+              "seq": "1"
+            }
+          ]
+        },
+        "diagnostics": [],
+        "ops": [
+          {
+            "deps": {
+              "entries": []
+            },
+            "origin": "a",
+            "payload": "eyJhZnRlciI6bnVsbCwiYXRvbV9pZCI6IngiLCJraW5kIjoiaW5zZXJ0IiwidGV4dCI6IlgifQ==",
+            "seq": "1"
+          },
+          {
+            "deps": {
+              "entries": []
+            },
+            "origin": "b",
+            "payload": "eyJhdG9tX2lkIjoieCIsImtpbmQiOiJkZWxldGUifQ==",
+            "seq": "1"
+          }
+        ],
+        "projection": {
+          "diagnostics": [],
+          "text": ""
+        }
+      },
+      "max_pending": 1024,
+      "name": "delete_before_insert",
+      "ops": [
+        {
+          "deps": {
+            "entries": []
+          },
+          "origin": "a",
+          "payload": "eyJhZnRlciI6bnVsbCwiYXRvbV9pZCI6IngiLCJraW5kIjoiaW5zZXJ0IiwidGV4dCI6IlgifQ==",
+          "seq": "1"
+        },
+        {
+          "deps": {
+            "entries": []
+          },
+          "origin": "b",
+          "payload": "eyJhdG9tX2lkIjoieCIsImtpbmQiOiJkZWxldGUifQ==",
+          "seq": "1"
+        }
+      ],
+      "replicas": [
+        {
+          "name": "insert_first",
+          "order": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "delete_first",
+          "order": [
+            1,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "bootstrap": {
+        "clock": {
+          "entries": [
+            {
+              "origin": "a",
+              "seq": "1"
+            }
+          ]
+        },
+        "state": "eyJhdG9tcyI6W3siYWZ0ZXIiOm51bGwsImF0b21faWQiOiJhIiwiZGVsZXRlZCI6ZmFsc2UsInRleHQiOiJBIn1dfQ=="
+      },
+      "expect": {
+        "clock": {
+          "entries": [
+            {
+              "origin": "a",
+              "seq": "1"
+            },
+            {
+              "origin": "b",
+              "seq": "1"
+            },
+            {
+              "origin": "c",
+              "seq": "1"
+            }
+          ]
+        },
+        "diagnostics": [],
+        "ops": [
+          {
+            "deps": {
+              "entries": [
+                {
+                  "origin": "a",
+                  "seq": "1"
+                }
+              ]
+            },
+            "origin": "b",
+            "payload": "eyJhZnRlciI6ImEiLCJhdG9tX2lkIjoiYiIsImtpbmQiOiJpbnNlcnQiLCJ0ZXh0IjoiQiJ9",
+            "seq": "1"
+          },
+          {
+            "deps": {
+              "entries": [
+                {
+                  "origin": "a",
+                  "seq": "1"
+                }
+              ]
+            },
+            "origin": "c",
+            "payload": "eyJhZnRlciI6ImEiLCJhdG9tX2lkIjoiYyIsImtpbmQiOiJpbnNlcnQiLCJ0ZXh0IjoiQyJ9",
+            "seq": "1"
+          }
+        ],
+        "projection": {
+          "diagnostics": [],
+          "text": "ABC"
+        }
+      },
+      "max_pending": 1024,
+      "name": "text_bootstrap_tail",
+      "ops": [
+        {
+          "deps": {
+            "entries": [
+              {
+                "origin": "a",
+                "seq": "1"
+              }
+            ]
+          },
+          "origin": "b",
+          "payload": "eyJhZnRlciI6ImEiLCJhdG9tX2lkIjoiYiIsImtpbmQiOiJpbnNlcnQiLCJ0ZXh0IjoiQiJ9",
+          "seq": "1"
+        },
+        {
+          "deps": {
+            "entries": [
+              {
+                "origin": "a",
+                "seq": "1"
+              }
+            ]
+          },
+          "origin": "c",
+          "payload": "eyJhZnRlciI6ImEiLCJhdG9tX2lkIjoiYyIsImtpbmQiOiJpbnNlcnQiLCJ0ZXh0IjoiQyJ9",
+          "seq": "1"
+        }
+      ],
+      "replicas": [
+        {
+          "name": "online",
+          "order": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "offline",
+          "order": [
+            1,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "bootstrap": null,
+      "expect": {
+        "clock": {
+          "entries": [
+            {
+              "origin": "a",
+              "seq": "1"
+            },
+            {
+              "origin": "b",
+              "seq": "1"
+            },
+            {
+              "origin": "c",
+              "seq": "1"
+            }
+          ]
+        },
+        "diagnostics": [],
+        "ops": [
+          {
+            "deps": {
+              "entries": []
+            },
+            "origin": "a",
+            "payload": "eyJhZnRlciI6bnVsbCwiYXRvbV9pZCI6InoiLCJraW5kIjoiaW5zZXJ0IiwidGV4dCI6IloifQ==",
+            "seq": "1"
+          },
+          {
+            "deps": {
+              "entries": []
+            },
+            "origin": "b",
+            "payload": "eyJhZnRlciI6bnVsbCwiYXRvbV9pZCI6InoiLCJraW5kIjoiaW5zZXJ0IiwidGV4dCI6IlkifQ==",
+            "seq": "1"
+          },
+          {
+            "deps": {
+              "entries": []
+            },
+            "origin": "c",
+            "payload": "eyJhZnRlciI6Im1pc3NpbmciLCJhdG9tX2lkIjoib3JwaGFuIiwia2luZCI6Imluc2VydCIsInRleHQiOiI/In0=",
+            "seq": "1"
+          }
+        ],
+        "projection": {
+          "diagnostics": [
+            "atom_equivocation:z",
+            "missing_parent:orphan:missing"
+          ],
+          "text": "Y"
+        }
+      },
+      "max_pending": 1024,
+      "name": "text_diagnostics_converge",
+      "ops": [
+        {
+          "deps": {
+            "entries": []
+          },
+          "origin": "a",
+          "payload": "eyJhZnRlciI6bnVsbCwiYXRvbV9pZCI6InoiLCJraW5kIjoiaW5zZXJ0IiwidGV4dCI6IloifQ==",
+          "seq": "1"
+        },
+        {
+          "deps": {
+            "entries": []
+          },
+          "origin": "b",
+          "payload": "eyJhZnRlciI6bnVsbCwiYXRvbV9pZCI6InoiLCJraW5kIjoiaW5zZXJ0IiwidGV4dCI6IlkifQ==",
+          "seq": "1"
+        },
+        {
+          "deps": {
+            "entries": []
+          },
+          "origin": "c",
+          "payload": "eyJhZnRlciI6Im1pc3NpbmciLCJhdG9tX2lkIjoib3JwaGFuIiwia2luZCI6Imluc2VydCIsInRleHQiOiI/In0=",
+          "seq": "1"
+        }
+      ],
+      "replicas": [
+        {
+          "name": "r1",
+          "order": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "name": "r2",
+          "order": [
+            2,
+            1,
+            0
+          ]
+        },
+        {
+          "name": "r3",
+          "order": [
+            1,
+            0,
+            2
+          ]
+        }
+      ]
+    }
+  ],
+  "shape": "text_crdt",
+  "version": "text_crdt.profile/v1"
+}

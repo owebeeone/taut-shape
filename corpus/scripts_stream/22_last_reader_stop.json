@@ -1,0 +1,1 @@
+{"name":"last_reader_stop","steps":[{"in":{"type":"read","stream_id":"s1","timeout_ms":"0"}},{"in":{"type":"read","stream_id":"s2","timeout_ms":"0"}},{"in":{"type":"end_stream","stream_id":"s1"}},{"in":{"type":"end_stream","stream_id":"s2"}}]}

@@ -1,0 +1,4 @@
+[
+  {"after_frames": 1, "inputs": [{"type": "snapshot_push", "writer_id": "writer-A", "payload": "b2xk"}]},
+  {"after_frames": 2, "inputs": [{"type": "reset", "writer_id": "writer-A", "reason": "producer_requested", "detail": "cXVlcnktZ2VuLTI="}]}
+]

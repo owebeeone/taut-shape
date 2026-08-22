@@ -1,0 +1,11 @@
+{
+  "name": "late_timer_ignored",
+  "comment": "timer_expired for an already-answered token is a no-op (emits nothing) -- token 1 is answered by the first timer_expired; the second is late (D14 analogue)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "cursor": { "epoch": "0", "seq": "0" }, "timeout_ms": "50" } },
+    { "in": { "type": "timer_expired", "token": "1" } },
+    { "in": { "type": "timer_expired", "token": "1" } }
+  ]
+}

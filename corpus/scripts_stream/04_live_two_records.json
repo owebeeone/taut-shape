@@ -1,0 +1,1 @@
+{"name":"live_two_records","steps":[{"in":{"type":"read","stream_id":"s1","timeout_ms":"0"}},{"in":{"type":"push","payload":"YQ=="}},{"in":{"type":"read","stream_id":"s1","timeout_ms":"0"}},{"in":{"type":"read","stream_id":"s1"}},{"in":{"type":"push","payload":"Yg=="}}]}

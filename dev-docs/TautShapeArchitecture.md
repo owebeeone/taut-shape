@@ -3,7 +3,7 @@
 Status: design (draft). Scope: design only, no phasing.
 
 Audience: **any Taut client that needs to implement protocol delivery shapes**
-(`log`, `stream`, …). This document defines the generic, reusable delivery
+(`value`, `log`, `stream`, …). This document defines the generic, reusable delivery
 contract for Taut's shapes — where it lives, how it is implemented per language,
 and how cross-language behavior is kept honest. It is not written for any one
 client.
@@ -25,11 +25,17 @@ the generic contract, never as a design constraint.
 Taut today gives a complete, corpus-proven story for **data parity**:
 
 - **IR** — message/enum/method defs in `*.taut.py`; `shape` is the sole delivery
-  discriminator (`unary/atom/log/stream/swmr/snapshot_delta/crdt`), validated
+  discriminator (`unary/value/atom/log/stream/swmr/snapshot_delta/crdt`), validated
   against the `SHAPES` registry, with `out` binding the shape's slots.
 - **Runtime** — per-language CBOR codec source (`gen/runtime/cbor.rs`,
   `cbor.ts`, …), vendored into consumers via `--with-runtime`.
 - **Oracle** — the golden corpus (byte-parity, reproduced by every language).
+
+Catalogue authority: [`../../dev-docs/TautShapeCatalogDecision.md`](../../dev-docs/TautShapeCatalogDecision.md)
+classifies `unary` as an interaction, the six engines as
+`value/atom/log/stream/swmr/crdt`, and `snapshot_delta` as a fixed SWMR profile.
+This architecture document's Log analysis remains normative for Log; older
+cross-shape sketches do not override that catalogue decision.
 
 But `shape` drives **no** codegen. The only thing generated from it is the
 `is_streaming(shape)` bit (unary call vs. stream subscribe). A `shape="log"`

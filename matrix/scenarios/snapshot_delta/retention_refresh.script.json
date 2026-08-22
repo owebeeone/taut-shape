@@ -1,0 +1,7 @@
+[
+  {"after_frames": 0, "inputs": [
+    {"type": "snapshot_push", "writer_id": "writer-A", "payload": "czE="},
+    {"type": "delta_push", "writer_id": "writer-A", "payload": "ZDE="},
+    {"type": "snapshot_push", "writer_id": "writer-A", "payload": "czI="}
+  ]}
+]

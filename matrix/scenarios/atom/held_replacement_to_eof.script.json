@@ -1,0 +1,5 @@
+[
+  {"after_frames": 1, "inputs": [{"type": "replace", "payload": "b25l"}]},
+  {"after_frames": 2, "inputs": [{"type": "replace", "payload": "dHdv"}]},
+  {"after_frames": 3, "inputs": [{"type": "seal"}]}
+]

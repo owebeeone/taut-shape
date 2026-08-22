@@ -1,0 +1,9 @@
+{
+  "name": "supersede",
+  "comment": "a second read on the same stream drops the held first (unanswered) and cancels its timer; the new hold gets a fresh monotonic token (D5, D16 analogues)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1", "timeout_ms": "50" } },
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1", "timeout_ms": "50" } }
+  ]
+}

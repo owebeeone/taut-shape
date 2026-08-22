@@ -1,0 +1,1 @@
+{"name":"causal_reorder","ops":[{"origin":"a","seq":"1","deps":{"entries":[]},"payload":"QQ=="},{"origin":"a","seq":"2","deps":{"entries":[{"origin":"b","seq":"1"}]},"payload":"Qw=="},{"origin":"b","seq":"1","deps":{"entries":[]},"payload":"Qg=="}],"replicas":[{"name":"ordered","order":[0,2,1]},{"name":"reverse","order":[1,2,0]},{"name":"mixed","order":[2,1,0]}]}

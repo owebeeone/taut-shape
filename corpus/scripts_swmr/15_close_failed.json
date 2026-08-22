@@ -1,0 +1,9 @@
+{
+  "name": "close_failed",
+  "comment": "close{error} answers held reads failed with the error attached and emits ProducerStop{failed}",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1" } },
+    { "in": { "type": "close", "error": { "code": "producer_error", "message": "boom" } } }
+  ]
+}

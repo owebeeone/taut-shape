@@ -1,0 +1,18 @@
+{
+  "node": {"capacity_records": 2},
+  "client": {"stream_ids": ["fast", "slow"], "pause_stream_ids": ["slow"], "resume_after_data": 5, "reconnect_dropped": true},
+  "responses": [
+    {"stream_id": "fast", "records": [{"seq": 1, "payload": "QQ=="}], "next_position": 1, "state": "data", "error": null},
+    {"stream_id": "slow", "records": [{"seq": 1, "payload": "QQ=="}], "next_position": 1, "state": "data", "error": null},
+    {"stream_id": "fast", "records": [{"seq": 2, "payload": "Qg=="}], "next_position": 2, "state": "data", "error": null},
+    {"stream_id": "fast", "records": [{"seq": 3, "payload": "Qw=="}], "next_position": 3, "state": "data", "error": null},
+    {"stream_id": "fast", "records": [{"seq": 4, "payload": "RA=="}], "next_position": 4, "state": "data", "error": null},
+    {"stream_id": "slow", "records": [], "next_position": 4, "state": "dropped", "error": {"code": "slow_consumer", "message": null}},
+    {"stream_id": "fast", "records": [{"seq": 5, "payload": "RQ=="}], "next_position": 5, "state": "data", "error": null},
+    {"stream_id": "slow", "records": [{"seq": 5, "payload": "RQ=="}], "next_position": 5, "state": "data", "error": null},
+    {"stream_id": "fast", "records": [], "next_position": 5, "state": "eof", "error": null},
+    {"stream_id": "slow", "records": [], "next_position": 5, "state": "eof", "error": null}
+  ],
+  "diagnostics": [],
+  "final": "done"
+}

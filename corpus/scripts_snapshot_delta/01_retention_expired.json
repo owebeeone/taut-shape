@@ -1,0 +1,10 @@
+{
+  "name": "retention_expired",
+  "comment": "A cursor below a compacted snapshot requires external refresh, never in-band repair.",
+  "steps": [
+    {"in": {"type": "snapshot_push", "writer_id": "w1", "payload": "czE="}},
+    {"in": {"type": "delta_push", "writer_id": "w1", "payload": "ZDE="}},
+    {"in": {"type": "snapshot_push", "writer_id": "w1", "payload": "czI="}},
+    {"in": {"type": "read", "swmr_id": "sd-A", "stream_id": "old", "cursor": {"seq": "0", "epoch": "0"}, "timeout_ms": "0"}}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "node": {"capacity_records": 4},
+  "client": {"stream_ids": ["s1"]},
+  "responses": [
+    {"stream_id": "s1", "records": [], "next_position": 0, "state": "failed", "error": {"code": "producer_error", "message": "boom"}}
+  ],
+  "diagnostics": [],
+  "final": "done"
+}

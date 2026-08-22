@@ -1,0 +1,8 @@
+[
+  {"after_frames": 2, "inputs": [{"type": "push", "payload": "QQ=="}]},
+  {"after_frames": 3, "inputs": [{"type": "push", "payload": "Qg=="}]},
+  {"after_frames": 4, "inputs": [{"type": "push", "payload": "Qw=="}]},
+  {"after_frames": 5, "inputs": [{"type": "push", "payload": "RA=="}]},
+  {"after_frames": 8, "inputs": [{"type": "push", "payload": "RQ=="}]},
+  {"after_frames": 10, "inputs": [{"type": "seal"}]}
+]

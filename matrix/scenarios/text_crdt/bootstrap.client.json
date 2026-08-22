@@ -1,0 +1,1 @@
+[{"type":"install_bootstrap","bootstrap":{"clock":{"entries":[{"origin":"a","seq":"1"}]},"state":"eyJhdG9tcyI6W3siYWZ0ZXIiOm51bGwsImF0b21faWQiOiJhIiwiZGVsZXRlZCI6ZmFsc2UsInRleHQiOiJBIn1dfQ=="}},{"type":"apply","op":{"origin":"b","seq":"1","deps":{"entries":[{"origin":"a","seq":"1"}]},"payload":"eyJhZnRlciI6ImEiLCJhdG9tX2lkIjoiYiIsImtpbmQiOiJpbnNlcnQiLCJ0ZXh0IjoiQiJ9"}}]

@@ -1,0 +1,8 @@
+{
+  "node": {"max_deltas": 64},
+  "client": {"swmr_id": "sd-A", "stream_id": "old", "cursor": {"seq": 0, "epoch": 0}},
+  "responses": [],
+  "refreshes": [{"type": "refresh_required", "swmr_id": "sd-A", "stream_id": "old", "reason": "retention_expired"}],
+  "diagnostics": [],
+  "final": "done"
+}

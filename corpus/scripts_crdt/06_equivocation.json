@@ -1,0 +1,1 @@
+{"name":"equivocation_canonical_variant","inputs":[{"type":"apply","op":{"origin":"a","seq":"1","deps":{"entries":[]},"payload":"Qg=="}},{"type":"apply","op":{"origin":"a","seq":"1","deps":{"entries":[]},"payload":"QQ=="}},{"type":"apply","op":{"origin":"a","seq":"1","deps":{"entries":[]},"payload":"Qw=="}},{"type":"read","crdt_id":"c","stream_id":"s","cursor":null}]}

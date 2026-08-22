@@ -1,0 +1,12 @@
+{
+  "name": "two_readers_different_cursors",
+  "comment": "two readers at different cursors: s1 resumes from seq=0 (the snapshot's own resume position -- PH0-D20; gets both retained deltas), s2 is a fresh subscribe (gets the snapshot plus both deltas) -- independent addressed responses, same underlying store",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } },
+    { "in": { "type": "delta_push", "writer_id": "w1", "payload": "ZDE=" } },
+    { "in": { "type": "delta_push", "writer_id": "w1", "payload": "ZDI=" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "cursor": { "epoch": "0", "seq": "0" }, "timeout_ms": "0" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s2", "timeout_ms": "0" } }
+  ]
+}

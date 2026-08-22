@@ -1,0 +1,15 @@
+{
+  "name": "reset_between_polls_epoch_overlap",
+  "comment": "durable reset regression: a reader previously reached epoch=0/seq=1, then is between polls while the producer resets to epoch=1 with detail=gen2 and rebuilds a snapshot+delta whose seq values overlap at 0..1. A later read with the old epoch=0/seq=1 must receive state=reset with the retained producer reason/detail and the fresh epoch=1 snapshot+tail; sequence equality must never hide the reset. Re-reading at the returned epoch=1/seq=1 is caught up and would_block.",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "b2xkLXNuYXA=" } },
+    { "in": { "type": "delta_push", "writer_id": "w1", "payload": "b2xkLWRlbHRh" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "timeout_ms": "0" } },
+    { "in": { "type": "reset", "writer_id": "w1", "reason": "producer_requested", "detail": "Z2VuMg==" } },
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "bmV3LXNuYXA=" } },
+    { "in": { "type": "delta_push", "writer_id": "w1", "payload": "bmV3LWRlbHRh" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "cursor": { "epoch": "0", "seq": "1" }, "timeout_ms": "0" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "cursor": { "epoch": "1", "seq": "1" }, "timeout_ms": "0" } }
+  ]
+}

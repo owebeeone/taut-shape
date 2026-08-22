@@ -1,0 +1,9 @@
+{
+  "name": "pre_snapshot_timed_cursor",
+  "comment": "56-F2 (swmr variant): a read with a SUPPLIED positioned cursor (epoch=0, seq=5, arbitrary -- no snapshot has ever been established, so no sequence position can be valid) and timeout_ms=50 still holds (there is nothing to resolve against, regardless of the claimed seq) and emits SetTimer{1,50}; timer_expired{1} answers would_block with next_cursor ABSENT -- via the canonical resolver (PH0-D19), never echoing the originally supplied seq=5",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "cursor": { "epoch": "0", "seq": "5" }, "timeout_ms": "50" } },
+    { "in": { "type": "timer_expired", "token": "1" } }
+  ]
+}

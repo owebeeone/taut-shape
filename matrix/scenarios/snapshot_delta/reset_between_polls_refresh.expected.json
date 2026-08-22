@@ -1,0 +1,10 @@
+{
+  "node": {"max_deltas": 64},
+  "client": {"swmr_id": "sd-A", "stream_id": "between", "cursor": null},
+  "responses": [
+    {"swmr_id": "sd-A", "stream_id": "between", "snapshot": {"seq": 0, "payload": "b2xk"}, "deltas": [], "next_cursor": {"seq": 0, "epoch": 0}, "state": "data", "reset_reason": null, "error": null, "reset_detail": null}
+  ],
+  "refreshes": [{"type": "refresh_required", "swmr_id": "sd-A", "stream_id": "between", "reason": "source_changed"}],
+  "diagnostics": [],
+  "final": "done"
+}

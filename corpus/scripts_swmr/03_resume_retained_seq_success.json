@@ -1,0 +1,12 @@
+{
+  "name": "resume_retained_seq_success",
+  "comment": "resume from a retained seq (success): a reader catches up to head=0 (a snapshot resumes at its pre-push base -- PH0-D20), holds; a new delta releases it with ONLY the incremental tail (no snapshot re-sent), no dup/no skip",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "snapshot_push", "writer_id": "w1", "payload": "c25hcDE=" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "cursor": { "epoch": "0", "seq": "0" } } },
+    { "in": { "type": "delta_push", "writer_id": "w1", "payload": "ZDE=" } },
+    { "in": { "type": "read", "swmr_id": "swmr-A", "stream_id": "s1", "cursor": { "epoch": "0", "seq": "1" } } },
+    { "in": { "type": "delta_push", "writer_id": "w1", "payload": "ZDI=" } }
+  ]
+}

@@ -1,0 +1,1 @@
+{"name":"bootstrap_then_offline_tail","bootstrap":{"clock":{"entries":[{"origin":"a","seq":"2"}]},"state":"U05BUA=="},"ops":[{"origin":"b","seq":"1","deps":{"entries":[{"origin":"a","seq":"2"}]},"payload":"Qg=="},{"origin":"a","seq":"3","deps":{"entries":[{"origin":"b","seq":"1"}]},"payload":"Qw=="}],"replicas":[{"name":"online","order":[0,1]},{"name":"offline","order":[1,0]}]}

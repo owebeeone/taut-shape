@@ -1,0 +1,2090 @@
+{
+  "shape": "swmr",
+  "vectors": [
+    {
+      "comment": "one snapshot_push then a fresh read (cursor absent): delivers the snapshot with an empty delta tail, state=data, next_cursor=0 (a snapshot consumes no delivery-sequence slot -- PH0-D20)",
+      "name": "initial_snapshot",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "0"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": {
+                "payload": "c25hcDE=",
+                "seq": "0"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "delta batches: snapshot then two deltas; a fresh read (cursor absent) delivers the snapshot plus both deltas as one contiguous tail, next_cursor=2 (snapshot resumes at 0 -- PH0-D20 -- so the two deltas land at 1 and 2)",
+      "name": "delta_batches",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "ZDE=",
+            "type": "delta_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "ZDI=",
+            "type": "delta_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "deltas": [
+                {
+                  "base_seq": "0",
+                  "payload": "ZDE=",
+                  "seq": "1"
+                },
+                {
+                  "base_seq": "1",
+                  "payload": "ZDI=",
+                  "seq": "2"
+                }
+              ],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "2"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": {
+                "payload": "c25hcDE=",
+                "seq": "0"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "resume from a retained seq (success): a reader catches up to head=0 (a snapshot resumes at its pre-push base -- PH0-D20), holds; a new delta releases it with ONLY the incremental tail (no snapshot re-sent), no dup/no skip",
+      "name": "resume_retained_seq_success",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "0"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "ZDE=",
+            "type": "delta_push",
+            "writer_id": "w1"
+          },
+          "out": [
+            {
+              "deltas": [
+                {
+                  "base_seq": "0",
+                  "payload": "ZDE=",
+                  "seq": "1"
+                }
+              ],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "1"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": null,
+              "state": "data",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "1"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "ZDI=",
+            "type": "delta_push",
+            "writer_id": "w1"
+          },
+          "out": [
+            {
+              "deltas": [
+                {
+                  "base_seq": "1",
+                  "payload": "ZDI=",
+                  "seq": "2"
+                }
+              ],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "2"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": null,
+              "state": "data",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "resume from an expired seq (typed reset): a reader is at seq=0 (caught up right after the initial snapshot -- PH0-D20 -- before consuming the pushed delta), which is below a NEW snapshot that later re-bases the store at seq=1 (the delta folded in, retiring the old delta window); its next read cannot be served from retained deltas -> state=reset, reset_reason=retention_exceeded, with a fresh snapshot+tail attached so the reader recovers in-band (roadmap Sec 3.2)",
+      "name": "resume_expired_seq_reset",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "ZDE=",
+            "type": "delta_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "c25hcDI=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "0"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "1"
+              },
+              "reset_detail": null,
+              "reset_reason": "retention_exceeded",
+              "snapshot": {
+                "payload": "c25hcDI=",
+                "seq": "1"
+              },
+              "state": "reset",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "generation-change reset: the producer explicitly declares SwmrReset (e.g. datascad's query generation changed -- opaque to taut-shape, carried in `detail`) while a reader is held caught-up at epoch=0/head=0 (PH0-D20); reset increments the node epoch to 1 and answers immediately with state=reset, reset_reason=producer_requested, reset_detail=gen2, no snapshot/deltas, next_cursor ABSENT (no snapshot survives a reset -- PH0-D19) -- a typed announcement, not silence. A subsequent probe read (cursor absent, timeout_ms=0) then sees would_block until the producer pushes a fresh snapshot.",
+      "name": "generation_change_reset",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "0"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "detail": "Z2VuMg==",
+            "reason": "producer_requested",
+            "type": "reset",
+            "writer_id": "w1"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": null,
+              "reset_detail": "Z2VuMg==",
+              "reset_reason": "producer_requested",
+              "snapshot": null,
+              "state": "reset",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": null,
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": null,
+              "state": "would_block",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "two readers at different cursors: s1 resumes from seq=0 (the snapshot's own resume position -- PH0-D20; gets both retained deltas), s2 is a fresh subscribe (gets the snapshot plus both deltas) -- independent addressed responses, same underlying store",
+      "name": "two_readers_different_cursors",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "ZDE=",
+            "type": "delta_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "ZDI=",
+            "type": "delta_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "0"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "deltas": [
+                {
+                  "base_seq": "0",
+                  "payload": "ZDE=",
+                  "seq": "1"
+                },
+                {
+                  "base_seq": "1",
+                  "payload": "ZDI=",
+                  "seq": "2"
+                }
+              ],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "2"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": null,
+              "state": "data",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s2",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "deltas": [
+                {
+                  "base_seq": "0",
+                  "payload": "ZDE=",
+                  "seq": "1"
+                },
+                {
+                  "base_seq": "1",
+                  "payload": "ZDI=",
+                  "seq": "2"
+                }
+              ],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "2"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": {
+                "payload": "c25hcDE=",
+                "seq": "0"
+              },
+              "state": "data",
+              "stream_id": "s2",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "backpressure/retention-bound behavior: node constructed with max_deltas=2; a snapshot then two deltas are accepted, but a third delta_push is rejected (dropped, nothing appended) with SwmrDiagnostic{error, retention_bound_exceeded} -- the producer must SnapshotPush to continue (see dev-docs/AtomSwmrNotes.md)",
+      "name": "backpressure_retention_bound",
+      "node": {
+        "max_deltas": 2,
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "ZDE=",
+            "type": "delta_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "ZDI=",
+            "type": "delta_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "ZDM=",
+            "type": "delta_push",
+            "writer_id": "w1"
+          },
+          "out": [
+            {
+              "code": "retention_bound_exceeded",
+              "severity": "error",
+              "type": "diagnostic"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "deltas": [
+                {
+                  "base_seq": "0",
+                  "payload": "ZDE=",
+                  "seq": "1"
+                },
+                {
+                  "base_seq": "1",
+                  "payload": "ZDI=",
+                  "seq": "2"
+                }
+              ],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "2"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": {
+                "payload": "c25hcDE=",
+                "seq": "0"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "writer-uniqueness violation: writer_id 'w1' binds on the first producer input; a delta_push from a DIFFERENT writer_id 'w2' is rejected (dropped, nothing appended) with SwmrDiagnostic{error, writer_conflict} -- the wire-level enforcement of writers=single (single-writer discipline). A subsequent read from w1's writer still shows only w1's content.",
+      "name": "writer_uniqueness_violation",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "ZDE=",
+            "type": "delta_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "ZDI=",
+            "type": "delta_push",
+            "writer_id": "w2"
+          },
+          "out": [
+            {
+              "code": "writer_conflict",
+              "severity": "error",
+              "type": "diagnostic"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "deltas": [
+                {
+                  "base_seq": "0",
+                  "payload": "ZDE=",
+                  "seq": "1"
+                }
+              ],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "1"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": {
+                "payload": "c25hcDE=",
+                "seq": "0"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "a read with no timeout_ms on a caught-up swmr (nothing pushed yet) emits nothing; a later snapshot_push releases it with the snapshot (D1/D14 analogues)",
+      "name": "held_read_released_by_delta",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "0"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": {
+                "payload": "c25hcDE=",
+                "seq": "0"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "read with timeout_ms=50 on a caught-up swmr (already at head=0, PH0-D20) emits SetTimer{1,50}; timer_expired{1} answers would_block with next_cursor recomputed via the canonical resolver, not echoed (PH0-D19) (D14/D16 analogues)",
+      "name": "held_read_timer",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "0"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "token": "1",
+            "type": "timer_expired"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "0"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": null,
+              "state": "would_block",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "timer_expired for an already-answered token is a no-op (emits nothing) -- token 1 is answered by the first timer_expired; the second is late (D14 analogue)",
+      "name": "late_timer_ignored",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "0"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "token": "1",
+            "type": "timer_expired"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "0"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": null,
+              "state": "would_block",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "token": "1",
+            "type": "timer_expired"
+          },
+          "out": []
+        }
+      ]
+    },
+    {
+      "comment": "a second read on the same stream drops the held first (unanswered) and cancels its timer; the new hold gets a fresh monotonic token (D5/D16 analogues)",
+      "name": "supersede",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "0"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "0"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "token": "1",
+              "type": "cancel_timer"
+            },
+            {
+              "ms": "50",
+              "token": "2",
+              "type": "set_timer"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "a snapshot then seal; a caught-up reader gets eof; held reads are answered eof by seal itself (D12 analogue)",
+      "name": "seal_then_drain_eof",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "0"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "0"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": null,
+              "state": "eof",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "close{} answers held reads closed and emits ProducerStop{closed}",
+      "name": "close_clean",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "close"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": null,
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": null,
+              "state": "closed",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            },
+            {
+              "reason": "closed",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "close{error} answers held reads failed with the error attached and emits ProducerStop{failed}",
+      "name": "close_failed",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "error": {
+              "code": "producer_error",
+              "message": "boom"
+            },
+            "type": "close"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": {
+                "code": "producer_error",
+                "message": "boom"
+              },
+              "next_cursor": null,
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": null,
+              "state": "failed",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            },
+            {
+              "reason": "failed",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "repeated seal/close emit nothing new (D6 analogue)",
+      "name": "idempotent_seal_close",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "close"
+          },
+          "out": [
+            {
+              "reason": "closed",
+              "type": "producer_stop"
+            }
+          ]
+        },
+        {
+          "in": {
+            "type": "close"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "error": {
+              "code": "internal"
+            },
+            "type": "close"
+          },
+          "out": []
+        }
+      ]
+    },
+    {
+      "comment": "end_stream{s1} drops s1's held read (no response), cancels its timer; s2 is untouched",
+      "name": "end_stream_mid_hold",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s2",
+            "swmr_id": "swmr-A",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "type": "end_stream"
+          },
+          "out": [
+            {
+              "token": "1",
+              "type": "cancel_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "0"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": {
+                "payload": "c25hcDE=",
+                "seq": "0"
+              },
+              "state": "data",
+              "stream_id": "s2",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "with stop_when=last_reader: s1 and s2 end -> ProducerStop{last_reader_gone} exactly on the >=1->0 transition (D6 analogue)",
+      "name": "last_stream_producer_stop",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s2",
+            "swmr_id": "swmr-A",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "type": "end_stream"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s2",
+            "swmr_id": "swmr-A",
+            "type": "end_stream"
+          },
+          "out": [
+            {
+              "reason": "last_reader_gone",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "same script as last_stream_producer_stop, knob off -> no ProducerStop on last-reader-gone (D6 analogue)",
+      "name": "stop_when_explicit_only",
+      "node": {
+        "stop_when": "explicit_only"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "type": "end_stream"
+          },
+          "out": []
+        }
+      ]
+    },
+    {
+      "comment": "seal, then a snapshot_push and a delta_push: both are dropped (nothing appended), each emits exactly one SwmrDiagnostic{warn, push_after_terminal}, and a subsequent read still sees the pre-seal state (D18/D19 analogue)",
+      "name": "push_after_seal_warns",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "c25hcDI=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": [
+            {
+              "code": "push_after_terminal",
+              "severity": "warn",
+              "type": "diagnostic"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "ZDE=",
+            "type": "delta_push",
+            "writer_id": "w1"
+          },
+          "out": [
+            {
+              "code": "push_after_terminal",
+              "severity": "warn",
+              "type": "diagnostic"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "0"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": {
+                "payload": "c25hcDE=",
+                "seq": "0"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "after seal, a fresh subscribe (cursor absent) still reads the retained snapshot+deltas as data before eof; only a reader already caught up at head sees eof (D12 analogue -- terminal describes the producer, not the retained state)",
+      "name": "terminal_still_readable",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "0"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": {
+                "payload": "c25hcDE=",
+                "seq": "0"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "0"
+            },
+            "stream_id": "s2",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "0"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": null,
+              "state": "eof",
+              "stream_id": "s2",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "a delta_push before any snapshot exists is rejected (dropped) with SwmrDiagnostic{error, delta_before_snapshot} -- a producer sequencing bug, not a benign race",
+      "name": "delta_before_snapshot",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "ZDE=",
+            "type": "delta_push",
+            "writer_id": "w1"
+          },
+          "out": [
+            {
+              "code": "delta_before_snapshot",
+              "severity": "error",
+              "type": "diagnostic"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": null,
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": null,
+              "state": "would_block",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "56-F2 (swmr variant): a read with a SUPPLIED positioned cursor (epoch=0, seq=5, arbitrary -- no snapshot has ever been established, so no sequence position can be valid) and timeout_ms=50 still holds (there is nothing to resolve against, regardless of the claimed seq) and emits SetTimer{1,50}; timer_expired{1} answers would_block with next_cursor ABSENT -- via the canonical resolver (PH0-D19), never echoing the originally supplied seq=5",
+      "name": "pre_snapshot_timed_cursor",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "5"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "token": "1",
+            "type": "timer_expired"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": null,
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": null,
+              "state": "would_block",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "review F5-06b: SwmrResetReason.invalid_resume_seq has schema and code but no prior vector reached it. A snapshot then a delta bring head=1; a probe read with a cursor past head (seq=99, a position that never existed -- always a client bug, the engine is authoritative on seq) -> state=reset, reset_reason=invalid_resume_seq, with a fresh snapshot+tail attached, next_cursor=head=1",
+      "name": "invalid_resume_seq_after_snapshot",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "ZDE=",
+            "type": "delta_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "99"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "deltas": [
+                {
+                  "base_seq": "0",
+                  "payload": "ZDE=",
+                  "seq": "1"
+                }
+              ],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "1"
+              },
+              "reset_detail": null,
+              "reset_reason": "invalid_resume_seq",
+              "snapshot": {
+                "payload": "c25hcDE=",
+                "seq": "0"
+              },
+              "state": "reset",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "review F5-02 (PH0-D19): a held read whose ORIGINAL request had an absent cursor holds (no snapshot yet, no timeout_ms); a producer SwmrReset must NOT force-answer it `state=reset` (there is nothing to have been reset FROM) -- this step emits NOTHING for s1, which stays held; a later snapshot_push then releases it normally with the fresh data (\"resolves with a fresh snapshot of the new state\")",
+      "name": "absent_cursor_hold_across_reset",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "detail": "Z2VuMg==",
+            "reason": "producer_requested",
+            "type": "reset",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": {
+                "epoch": "1",
+                "seq": "0"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": {
+                "payload": "c25hcDE=",
+                "seq": "0"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "review F5-03/PH0-D24: a reader caught up at head=0 right after the first snapshot holds (no timeout_ms); a SECOND snapshot_push (a redundant re-assertion / compaction, same writer) does NOT advance head (PH0-D20: a snapshot consumes no delivery-sequence slot) so the reader's stored cursor is still exactly caught up -- this step emits NOTHING (the hold is untouched, no spurious `reset`); a follow-up probe at the same cursor confirms would_block, not reset",
+      "name": "caught_up_survives_compaction_push",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "0"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "c25hcDI=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "0"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "0"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": null,
+              "state": "would_block",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "the never-read variant of #18 (log 20b parity, review F5-06c): a swmr with no streams ever created never spuriously stops its producer; end_stream on an unknown stream is a no-op (D6)",
+      "name": "never_read_no_stop",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "ghost",
+            "swmr_id": "swmr-A",
+            "type": "end_stream"
+          },
+          "out": []
+        }
+      ]
+    },
+    {
+      "comment": "review F5 Sec 8.9: close{} answers s1 closed and emits ProducerStop{closed}; a LATER end_stream{s1} still transitions reader-count >=1->0 (the stream entry is not removed by close) and emits a SECOND ProducerStop{last_reader_gone} -- ProducerStop is idempotent by design (D6), so this double-stop is intentional and cross-engine-consistent, previously unpinned",
+      "name": "post_close_end_stream_double_stop",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "type": "read"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "type": "close"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": null,
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": null,
+              "state": "closed",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            },
+            {
+              "reason": "closed",
+              "type": "producer_stop"
+            }
+          ]
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "type": "end_stream"
+          },
+          "out": [
+            {
+              "reason": "last_reader_gone",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "56-F4: a reader caught up at head=0 with timeout_ms=50 holds and emits SetTimer{1,50}; a delta_push releases it EARLY (before the timer fires) and must cancel the now-unneeded timer first -- SwmrCancelTimer{1} THEN the data SwmrReadResponse carrying the new delta",
+      "name": "timed_early_wake_delta",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "0"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "payload": "ZDE=",
+            "type": "delta_push",
+            "writer_id": "w1"
+          },
+          "out": [
+            {
+              "token": "1",
+              "type": "cancel_timer"
+            },
+            {
+              "deltas": [
+                {
+                  "base_seq": "0",
+                  "payload": "ZDE=",
+                  "seq": "1"
+                }
+              ],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "1"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": null,
+              "state": "data",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "56-F4: a reader caught up at head=0 with timeout_ms=50 holds and emits SetTimer{1,50}; seal releases it EARLY with eof and must cancel the timer first -- SwmrCancelTimer{1} THEN the eof SwmrReadResponse",
+      "name": "timed_seal_cancels_timer",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "0"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "type": "seal"
+          },
+          "out": [
+            {
+              "token": "1",
+              "type": "cancel_timer"
+            },
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "0"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": null,
+              "state": "eof",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "56-F4: a read with no snapshot yet and timeout_ms=50 holds and emits SetTimer{1,50}; close{} releases it EARLY with closed and must cancel the timer first -- SwmrCancelTimer{1} THEN the closed SwmrReadResponse THEN SwmrProducerStop{closed}",
+      "name": "timed_close_cancels_timer",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "type": "close"
+          },
+          "out": [
+            {
+              "token": "1",
+              "type": "cancel_timer"
+            },
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": null,
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": null,
+              "state": "closed",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            },
+            {
+              "reason": "closed",
+              "type": "producer_stop"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "56-F4: a reader caught up at epoch=0/head=0 (positioned cursor, not absent) with timeout_ms=50 holds and emits SetTimer{1,50}; a producer SwmrReset increments epoch to 1, releases it EARLY with state=reset, and must cancel the timer first -- SwmrCancelTimer{1} THEN the reset SwmrReadResponse (reset_reason=producer_requested, reset_detail=gen2, next_cursor ABSENT per PH0-D19)",
+      "name": "timed_reset_cancels_timer",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "c25hcDE=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "0"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "50",
+            "type": "read"
+          },
+          "out": [
+            {
+              "ms": "50",
+              "token": "1",
+              "type": "set_timer"
+            }
+          ]
+        },
+        {
+          "in": {
+            "detail": "Z2VuMg==",
+            "reason": "producer_requested",
+            "type": "reset",
+            "writer_id": "w1"
+          },
+          "out": [
+            {
+              "token": "1",
+              "type": "cancel_timer"
+            },
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": null,
+              "reset_detail": "Z2VuMg==",
+              "reset_reason": "producer_requested",
+              "snapshot": null,
+              "state": "reset",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "comment": "durable reset regression: a reader previously reached epoch=0/seq=1, then is between polls while the producer resets to epoch=1 with detail=gen2 and rebuilds a snapshot+delta whose seq values overlap at 0..1. A later read with the old epoch=0/seq=1 must receive state=reset with the retained producer reason/detail and the fresh epoch=1 snapshot+tail; sequence equality must never hide the reset. Re-reading at the returned epoch=1/seq=1 is caught up and would_block.",
+      "name": "reset_between_polls_epoch_overlap",
+      "node": {
+        "stop_when": "last_reader"
+      },
+      "steps": [
+        {
+          "in": {
+            "payload": "b2xkLXNuYXA=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "b2xkLWRlbHRh",
+            "type": "delta_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "deltas": [
+                {
+                  "base_seq": "0",
+                  "payload": "b2xkLWRlbHRh",
+                  "seq": "1"
+                }
+              ],
+              "error": null,
+              "next_cursor": {
+                "epoch": "0",
+                "seq": "1"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": {
+                "payload": "b2xkLXNuYXA=",
+                "seq": "0"
+              },
+              "state": "data",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "detail": "Z2VuMg==",
+            "reason": "producer_requested",
+            "type": "reset",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "bmV3LXNuYXA=",
+            "type": "snapshot_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "payload": "bmV3LWRlbHRh",
+            "type": "delta_push",
+            "writer_id": "w1"
+          },
+          "out": []
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "0",
+              "seq": "1"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "deltas": [
+                {
+                  "base_seq": "0",
+                  "payload": "bmV3LWRlbHRh",
+                  "seq": "1"
+                }
+              ],
+              "error": null,
+              "next_cursor": {
+                "epoch": "1",
+                "seq": "1"
+              },
+              "reset_detail": "Z2VuMg==",
+              "reset_reason": "producer_requested",
+              "snapshot": {
+                "payload": "bmV3LXNuYXA=",
+                "seq": "0"
+              },
+              "state": "reset",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        },
+        {
+          "in": {
+            "cursor": {
+              "epoch": "1",
+              "seq": "1"
+            },
+            "stream_id": "s1",
+            "swmr_id": "swmr-A",
+            "timeout_ms": "0",
+            "type": "read"
+          },
+          "out": [
+            {
+              "deltas": [],
+              "error": null,
+              "next_cursor": {
+                "epoch": "1",
+                "seq": "1"
+              },
+              "reset_detail": null,
+              "reset_reason": null,
+              "snapshot": null,
+              "state": "would_block",
+              "stream_id": "s1",
+              "swmr_id": "swmr-A",
+              "type": "read_response"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "version": "swmr.oracle/v1"
+}

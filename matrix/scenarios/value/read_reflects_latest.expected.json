@@ -1,0 +1,22 @@
+{
+  "client": {"stream_id": "s1", "value_id": "v-A", "reads": 2},
+  "messages": [
+    {
+      "type": "read_response",
+      "value_id": "v-A",
+      "stream_id": "s1",
+      "value": "QTE=",
+      "winner": {"origin": "a", "seq": "1", "lamport": "1"},
+      "state": "data"
+    },
+    {
+      "type": "read_response",
+      "value_id": "v-A",
+      "stream_id": "s1",
+      "value": "QjE=",
+      "winner": {"origin": "b", "seq": "1", "lamport": "2"},
+      "state": "data"
+    }
+  ],
+  "final": "done"
+}

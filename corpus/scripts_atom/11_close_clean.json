@@ -1,0 +1,9 @@
+{
+  "name": "close_clean",
+  "comment": "close{} answers held reads closed and emits ProducerStop{closed}",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1" } },
+    { "in": { "type": "close" } }
+  ]
+}

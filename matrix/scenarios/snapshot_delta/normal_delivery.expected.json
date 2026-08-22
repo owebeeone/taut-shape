@@ -1,0 +1,12 @@
+{
+  "node": {"max_deltas": 64},
+  "client": {"swmr_id": "sd-A", "stream_id": "fresh", "cursor": null},
+  "responses": [
+    {"swmr_id": "sd-A", "stream_id": "fresh", "snapshot": {"seq": 0, "payload": "YmFzZQ=="}, "deltas": [], "next_cursor": {"seq": 0, "epoch": 0}, "state": "data", "reset_reason": null, "error": null, "reset_detail": null},
+    {"swmr_id": "sd-A", "stream_id": "fresh", "snapshot": null, "deltas": [{"base_seq": 0, "seq": 1, "payload": "ZDE="}], "next_cursor": {"seq": 1, "epoch": 0}, "state": "data", "reset_reason": null, "error": null, "reset_detail": null},
+    {"swmr_id": "sd-A", "stream_id": "fresh", "snapshot": null, "deltas": [], "next_cursor": {"seq": 1, "epoch": 0}, "state": "eof", "reset_reason": null, "error": null, "reset_detail": null}
+  ],
+  "refreshes": [],
+  "diagnostics": [],
+  "final": "done"
+}

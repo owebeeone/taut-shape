@@ -1,0 +1,10 @@
+{
+  "name": "seal_then_drain_eof",
+  "comment": "a value then seal; a caught-up reader gets eof; held reads are answered eof by seal itself (D12 analogue)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "replace", "payload": "aGVsbG8=" } },
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1", "version": { "version": "1" } } },
+    { "in": { "type": "seal" } }
+  ]
+}

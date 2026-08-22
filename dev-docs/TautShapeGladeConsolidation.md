@@ -31,13 +31,13 @@ staying lockstep with the corpus, not by being the corpus.
 Delivered: `ir/shape_value.taut.py` + exported `ir/shape_value.ir.json`
 (`ir/regen.py` now gates both shapes), the authored input scripts
 `corpus/scripts_value/*.json`, the committed oracle `corpus/value.v0.json`
-(11 vectors), and its self-contained lockstep gate `corpus/value_gen.py`
+(13 vectors), and its self-contained lockstep gate `corpus/value_gen.py`
 (`--check`). Decisions taken (smallest reasonable calls):
 
 - **Reference engine is Python, not Rust.** `shape_log`'s `gen.py` shells to the
   external `taut-shape-tool` (Rust). The `value` fold is small and its canonical
   reference already exists in the taut runtime — `taut.crdt.glade_fold.fold_value`
-  (winner = `max (lamport, origin)`; dedup by `(origin, seq)`; forked chain =
+  (winner = `max (lamport, origin, seq)`; dedup by `(origin, seq)`; forked chain =
   equivocation). `value_gen.py` imports it, so value corpus gen/gate is
   self-contained in the workspace (no per-language build). taut-shape still holds
   no engine of its own — `fold_value` is the authority; the register-shell glue
@@ -84,7 +84,7 @@ live A-vs-B, which requires the language tools to exist.
 ### P2.S1 build notes (fold oracle merged 2026-07-10)
 
 Delivered the merge (S1). glade's frozen M-LIMP fold oracle
-(`taut/corpus/glade_folds.json`, 12 vectors, generated from
+(`taut/corpus/glade_folds.json`, 13 vectors, generated from
 `taut.crdt.glade_fold`) is re-homed into taut-shape as `corpus/fold.v0.json`
 (`version "fold.oracle/v0"`) following the established scripts/gen/`--check`
 pattern: `corpus/scripts_fold/*.json` (authored raw-op inputs) → `corpus/fold_gen.py`
@@ -127,7 +127,7 @@ here; out of scope** (this task is the taut-shape-side merge only; those edit
 `glade/`, which was read-only). Exit condition (delete glade's private oracle,
 lose nothing) is now *reachable*: glade's `client-ts/test/oracle.test.ts` can
 repoint from `taut/corpus/glade_folds.json` to `taut-shape/corpus/fold.v0.json`
-(the same 12 vectors, now taut-shape-owned + conflict-gated), a one-line glade
+(the same 13 vectors, now taut-shape-owned + conflict-gated), a one-line glade
 change left for glade's P2.S3.
 
 ### Value interop-matrix (P1.S3) — assessment 2026-07-10 (repos now present, still deferred)
@@ -155,7 +155,7 @@ not a ~500 LOC build; it stays deferred, with the shape estimated here.
    crate/package (both are currently single-shape, so this is new module + tag-map
    plumbing, not a drop-in).
 2. A value engine mirroring `value_gen.py`'s `Register` (accumulate `ValueSet`,
-   answer `ValueReadRequest` by folding — winner = max `(lamport, origin)`, dedup
+   answer `ValueReadRequest` by folding — winner = max `(lamport, origin, seq)`, dedup
    `(origin, seq)`, equivocation → `ValueDiagnostic`): rs `value/node.rs` ~120,
    ts `value/node.ts` ~110.
 3. A value CLI mode (`node`/`client` for value) + value framing tag-map: ~80–120

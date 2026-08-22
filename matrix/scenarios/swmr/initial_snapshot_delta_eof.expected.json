@@ -1,0 +1,11 @@
+{
+  "node": {"max_deltas": null},
+  "client": {"swmr_id": "swmr-A", "stream_ids": ["s1"], "cursor": null, "timeout_ms": null},
+  "responses": [
+    {"swmr_id": "swmr-A", "stream_id": "s1", "snapshot": {"seq": 0, "payload": "YmFzZQ=="}, "deltas": [], "next_cursor": {"seq": 0, "epoch": 0}, "state": "data", "reset_reason": null, "error": null, "reset_detail": null},
+    {"swmr_id": "swmr-A", "stream_id": "s1", "snapshot": null, "deltas": [{"base_seq": 0, "seq": 1, "payload": "ZDE="}], "next_cursor": {"seq": 1, "epoch": 0}, "state": "data", "reset_reason": null, "error": null, "reset_detail": null},
+    {"swmr_id": "swmr-A", "stream_id": "s1", "snapshot": null, "deltas": [], "next_cursor": {"seq": 1, "epoch": 0}, "state": "eof", "reset_reason": null, "error": null, "reset_detail": null}
+  ],
+  "diagnostics": [],
+  "final": "done"
+}

@@ -1,0 +1,8 @@
+{
+  "name": "read_empty_probe",
+  "comment": "timeout_ms=0 probe on an atom with no value yet -> would_block, next_version=0 (D8/D14 analogue)",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1", "timeout_ms": "0" } }
+  ]
+}

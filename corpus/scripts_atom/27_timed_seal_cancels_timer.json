@@ -1,0 +1,9 @@
+{
+  "name": "timed_seal_cancels_timer",
+  "comment": "56-F4: read timeout_ms=50 holds and emits SetTimer{1,50}; seal releases it EARLY with eof and must cancel the timer first -- AtomCancelTimer{1} THEN the eof AtomReadResponse",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1", "timeout_ms": "50" } },
+    { "in": { "type": "seal" } }
+  ]
+}

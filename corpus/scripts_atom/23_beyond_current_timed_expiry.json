@@ -1,0 +1,9 @@
+{
+  "name": "beyond_current_timed_expiry",
+  "comment": "56-F2 (the timed-expiry variant of #22, the defect this pins): version=9 with timeout_ms=50 holds and emits SetTimer{1,50}; timer_expired{1} answers would_block with next_version=0 (clamped, via the canonical resolver in probe mode -- PH0-D19), NOT next_version=9 echoed from the original request",
+  "node": { "stop_when": "last_reader" },
+  "steps": [
+    { "in": { "type": "read", "atom_id": "atom-A", "stream_id": "s1", "version": { "version": "9" }, "timeout_ms": "50" } },
+    { "in": { "type": "timer_expired", "token": "1" } }
+  ]
+}

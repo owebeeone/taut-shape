@@ -7,7 +7,7 @@ that sits *beneath* the message-level shape corpora. Three folds, all pure
 functions of the attributed op-set (so convergence is guaranteed when every
 replica folds the same set):
 
-  - `value` (lww register): winner = max by `(lamport, origin)`.
+  - `value` (lww register): winner = max by `(lamport, origin, seq)`.
   - `log`   (append):       payloads in `(lamport, origin, seq)` order.
   - `equiv`:                a forked `(origin, seq)` (same key, different
     payload/prev) is equivocation — detected, never folded.

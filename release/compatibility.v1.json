@@ -1,0 +1,146 @@
+{
+  "schema": "taut-shape.release-compatibility/v1",
+  "status": "development",
+  "catalog_ir": "ir/shape_value.ir.json",
+  "packages": {
+    "rust": {
+      "repo": "taut-shape-rs",
+      "version": "0.0.0",
+      "version_source": "cargo-workspace"
+    },
+    "typescript": {
+      "repo": "taut-shape-ts",
+      "version": "0.0.0",
+      "version_source": "package-json"
+    },
+    "python": {
+      "repo": "taut-shape-py",
+      "version": "0.0.0",
+      "version_source": "setuptools-scm-fallback"
+    }
+  },
+  "contracts": [
+    {
+      "shape": "value",
+      "contract_version": "v0",
+      "ir": "ir/shape_value.ir.json",
+      "corpora": [
+        { "file": "corpus/value.v0.json", "version": "value.oracle/v0" }
+      ],
+      "packages": ["rust", "typescript", "python"]
+    },
+    {
+      "shape": "atom",
+      "contract_version": "v1",
+      "ir": "ir/shape_atom.ir.json",
+      "corpora": [
+        { "file": "corpus/atom.v1.json", "version": "atom.oracle/v1" }
+      ],
+      "packages": ["rust", "typescript", "python"]
+    },
+    {
+      "shape": "log",
+      "contract_version": "v1",
+      "ir": "ir/shape_log.ir.json",
+      "corpora": [
+        { "file": "corpus/log.v0.json", "version": "log.oracle/v0" }
+      ],
+      "packages": ["rust", "typescript", "python"]
+    },
+    {
+      "shape": "stream",
+      "contract_version": "v1",
+      "ir": "ir/shape_stream.ir.json",
+      "corpora": [
+        { "file": "corpus/stream.v1.json", "version": "stream.oracle/v1" }
+      ],
+      "packages": ["rust", "typescript", "python"]
+    },
+    {
+      "shape": "swmr",
+      "contract_version": "v1",
+      "ir": "ir/shape_swmr.ir.json",
+      "corpora": [
+        { "file": "corpus/swmr.v1.json", "version": "swmr.oracle/v1" }
+      ],
+      "packages": ["rust", "typescript", "python"]
+    },
+    {
+      "shape": "snapshot_delta",
+      "contract_version": "v1",
+      "ir": "ir/shape_swmr.ir.json",
+      "corpora": [
+        {
+          "file": "corpus/snapshot_delta.profile.v1.json",
+          "version": "snapshot_delta.profile/v1"
+        }
+      ],
+      "packages": ["rust", "typescript", "python"]
+    },
+    {
+      "shape": "crdt",
+      "contract_version": "v1",
+      "ir": "ir/shape_crdt.ir.json",
+      "corpora": [
+        { "file": "corpus/crdt.v1.json", "version": "crdt.oracle/v1" },
+        {
+          "file": "corpus/crdt.convergence.v1.json",
+          "version": "crdt.convergence/v1"
+        }
+      ],
+      "packages": ["rust", "typescript", "python"]
+    },
+    {
+      "shape": "text_crdt",
+      "contract_version": "v1",
+      "ir": "ir/shape_crdt.ir.json",
+      "corpora": [
+        {
+          "file": "corpus/text_crdt.profile.v1.json",
+          "version": "text_crdt.profile/v1"
+        }
+      ],
+      "packages": ["rust", "typescript", "python"]
+    }
+  ],
+  "consumers": [
+    {
+      "name": "Glial",
+      "repo": "glial",
+      "status": "development",
+      "required_in_contract_ci": true,
+      "shapes": ["value", "log", "atom", "stream", "crdt", "text_crdt"],
+      "pin": {
+        "kind": "development-file",
+        "package": "@owebeeone/taut-shape",
+        "specifier": "file:../taut-shape-ts"
+      },
+      "workflow": ".github/workflows/taut-shape-consumer.yml"
+    },
+    {
+      "name": "Gryth",
+      "repo": "gryth-ui",
+      "status": "development",
+      "required_in_contract_ci": false,
+      "shapes": ["value"],
+      "pin": {
+        "kind": "development-workspace",
+        "package": "@owebeeone/glial-runtime",
+        "specifier": "workspace:*"
+      },
+      "workflow": ".github/workflows/taut-shape-consumer.yml"
+    },
+    {
+      "name": "Datascad",
+      "repo": "datascad",
+      "status": "prototype",
+      "required_in_contract_ci": false,
+      "shapes": ["atom", "swmr", "snapshot_delta"],
+      "pin": {
+        "kind": "development-content-hash",
+        "file": "rl/harness/TAUT_PIN.json"
+      }
+    }
+  ],
+  "contract_workflow": ".github/workflows/contract-and-interop.yml"
+}

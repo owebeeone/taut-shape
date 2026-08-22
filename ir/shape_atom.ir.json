@@ -1,0 +1,708 @@
+{
+  "version": 1,
+  "shapes": {
+    "unary": {
+      "name": "unary",
+      "class": "interaction",
+      "core": null,
+      "contract_version": "v1",
+      "fixed_profile": {},
+      "delivery": "once",
+      "events": [
+        "value"
+      ],
+      "operations": [
+        "call"
+      ],
+      "payload": "whole",
+      "history": "none",
+      "initiation": "pull",
+      "writers": "single",
+      "ordering": "none",
+      "retention": "none",
+      "position": "none",
+      "recovery": "not_applicable",
+      "merge": "none",
+      "lifecycle": "request_response"
+    },
+    "value": {
+      "name": "value",
+      "class": "engine",
+      "core": "value",
+      "contract_version": "v0",
+      "fixed_profile": {},
+      "delivery": "once",
+      "events": [
+        "value"
+      ],
+      "operations": [
+        "read",
+        "set"
+      ],
+      "payload": "whole-state",
+      "history": "materialized",
+      "initiation": "pull|push",
+      "writers": "multi-attributed",
+      "ordering": "lww_lamport_origin",
+      "retention": "materialized_winner",
+      "position": "op_identity",
+      "recovery": "materialized_read",
+      "merge": "attributed_lww",
+      "lifecycle": "persistent_register"
+    },
+    "atom": {
+      "name": "atom",
+      "class": "engine",
+      "core": "atom",
+      "contract_version": "v1",
+      "fixed_profile": {},
+      "delivery": "stream",
+      "events": [
+        "replace"
+      ],
+      "operations": [
+        "read",
+        "replace",
+        "subscribe"
+      ],
+      "payload": "whole-state",
+      "history": "latest",
+      "initiation": "pull|push",
+      "writers": "single",
+      "ordering": "scalar_version",
+      "retention": "latest",
+      "position": "version",
+      "recovery": "latest_refresh",
+      "merge": "sequential_overwrite",
+      "lifecycle": "mailbox_terminal"
+    },
+    "log": {
+      "name": "log",
+      "class": "engine",
+      "core": "log",
+      "contract_version": "v1",
+      "fixed_profile": {},
+      "delivery": "stream",
+      "events": [
+        "append"
+      ],
+      "operations": [
+        "append",
+        "read",
+        "subscribe"
+      ],
+      "payload": "whole",
+      "history": "append-only",
+      "initiation": "pull|push",
+      "writers": "source",
+      "ordering": "scalar_sequence",
+      "retention": "bounded_records",
+      "position": "cursor",
+      "recovery": "expire_below_floor",
+      "merge": "none",
+      "lifecycle": "mailbox_terminal"
+    },
+    "stream": {
+      "name": "stream",
+      "class": "engine",
+      "core": "stream",
+      "contract_version": "v1",
+      "fixed_profile": {},
+      "delivery": "stream",
+      "events": [
+        "event"
+      ],
+      "operations": [
+        "publish",
+        "subscribe"
+      ],
+      "payload": "whole-or-delta",
+      "history": "none",
+      "initiation": "push",
+      "writers": "source",
+      "ordering": "live_session",
+      "retention": "none",
+      "position": "none",
+      "recovery": "none",
+      "merge": "none",
+      "lifecycle": "live_terminal"
+    },
+    "swmr": {
+      "name": "swmr",
+      "class": "engine",
+      "core": "swmr",
+      "contract_version": "v1",
+      "fixed_profile": {},
+      "delivery": "stream",
+      "events": [
+        "delta",
+        "reset",
+        "snapshot"
+      ],
+      "operations": [
+        "publish_delta",
+        "publish_snapshot",
+        "read",
+        "reset",
+        "subscribe"
+      ],
+      "payload": "delta",
+      "history": "reconstructible",
+      "initiation": "push",
+      "writers": "single",
+      "ordering": "scalar_epoch_sequence",
+      "retention": "snapshot_bounded_deltas",
+      "position": "epoch_cursor",
+      "recovery": "in_band_reset_repair",
+      "merge": "sequential_single_writer",
+      "lifecycle": "mailbox_terminal"
+    },
+    "snapshot_delta": {
+      "name": "snapshot_delta",
+      "class": "profile",
+      "core": "swmr",
+      "contract_version": "v1",
+      "fixed_profile": {
+        "recovery": "expire"
+      },
+      "delivery": "stream",
+      "events": [
+        "delta",
+        "snapshot"
+      ],
+      "operations": [
+        "publish_delta",
+        "publish_snapshot",
+        "read",
+        "subscribe"
+      ],
+      "payload": "delta",
+      "history": "reconstructible",
+      "initiation": "push",
+      "writers": "single",
+      "ordering": "scalar_epoch_sequence",
+      "retention": "snapshot_bounded_deltas",
+      "position": "epoch_cursor",
+      "recovery": "expire",
+      "merge": "sequential_single_writer",
+      "lifecycle": "mailbox_terminal"
+    },
+    "crdt": {
+      "name": "crdt",
+      "class": "engine",
+      "core": "crdt",
+      "contract_version": "v1",
+      "fixed_profile": {},
+      "delivery": "stream",
+      "events": [
+        "op",
+        "sync"
+      ],
+      "operations": [
+        "apply",
+        "bootstrap",
+        "read",
+        "sync"
+      ],
+      "payload": "opaque-ops",
+      "history": "reconstructible",
+      "initiation": "push-bidi",
+      "writers": "multi-merge",
+      "ordering": "causal_per_origin",
+      "retention": "convergence_safe",
+      "position": "causal_vector",
+      "recovery": "anti_entropy",
+      "merge": "profile_defined_convergent",
+      "lifecycle": "replica_sync"
+    },
+    "text_crdt": {
+      "name": "text_crdt",
+      "class": "profile",
+      "core": "crdt",
+      "contract_version": "v1",
+      "fixed_profile": {
+        "payload": "text_crdt.profile/v1"
+      },
+      "delivery": "stream",
+      "events": [
+        "op",
+        "sync"
+      ],
+      "operations": [
+        "bootstrap",
+        "delete",
+        "insert",
+        "read",
+        "sync"
+      ],
+      "payload": "text-ops",
+      "history": "reconstructible",
+      "initiation": "push-bidi",
+      "writers": "multi-merge",
+      "ordering": "causal_per_origin",
+      "retention": "convergence_safe",
+      "position": "causal_vector",
+      "recovery": "anti_entropy",
+      "merge": "stable_item_text",
+      "lifecycle": "replica_sync"
+    }
+  },
+  "enums": [
+    {
+      "name": "AtomMsgType",
+      "members": {
+        "replace": 0,
+        "seal": 1,
+        "close": 2,
+        "read": 3,
+        "end_stream": 4,
+        "timer_expired": 5,
+        "read_response": 6,
+        "set_timer": 7,
+        "cancel_timer": 8,
+        "producer_stop": 9,
+        "diagnostic": 10
+      }
+    },
+    {
+      "name": "AtomState",
+      "members": {
+        "data": 0,
+        "would_block": 1,
+        "eof": 2,
+        "closed": 3,
+        "failed": 4
+      }
+    },
+    {
+      "name": "AtomErrorCode",
+      "members": {
+        "unknown_atom": 0,
+        "producer_error": 1,
+        "internal": 2
+      }
+    },
+    {
+      "name": "AtomStopReason",
+      "members": {
+        "last_reader_gone": 0,
+        "closed": 1,
+        "failed": 2
+      }
+    },
+    {
+      "name": "AtomSeverity",
+      "members": {
+        "warn": 0,
+        "error": 1
+      }
+    },
+    {
+      "name": "AtomDiagCode",
+      "members": {
+        "replace_after_terminal": 0
+      }
+    }
+  ],
+  "messages": [
+    {
+      "name": "AtomVersion",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "version",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "AtomValue",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "version",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "payload",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "bytes"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "AtomError",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "code",
+          "tag": 1,
+          "type": {
+            "k": "enum",
+            "name": "AtomErrorCode"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "message",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "AtomReplace",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "payload",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "bytes"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "AtomSeal",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": []
+    },
+    {
+      "name": "AtomClose",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "error",
+          "tag": 1,
+          "type": {
+            "k": "msg",
+            "name": "AtomError"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "AtomReadRequest",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "atom_id",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "stream_id",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "version",
+          "tag": 3,
+          "type": {
+            "k": "msg",
+            "name": "AtomVersion"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "timeout_ms",
+          "tag": 4,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "AtomEndStream",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "atom_id",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "stream_id",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "AtomTimerExpired",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "token",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "AtomReadResponse",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "atom_id",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "stream_id",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "str"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "value",
+          "tag": 3,
+          "type": {
+            "k": "msg",
+            "name": "AtomValue"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "next_version",
+          "tag": 4,
+          "type": {
+            "k": "msg",
+            "name": "AtomVersion"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "state",
+          "tag": 5,
+          "type": {
+            "k": "enum",
+            "name": "AtomState"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "error",
+          "tag": 6,
+          "type": {
+            "k": "msg",
+            "name": "AtomError"
+          },
+          "optional": true,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "AtomSetTimer",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "token",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "ms",
+          "tag": 2,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "AtomCancelTimer",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "token",
+          "tag": 1,
+          "type": {
+            "k": "scalar",
+            "scalar": "int"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "AtomProducerStop",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "reason",
+          "tag": 1,
+          "type": {
+            "k": "enum",
+            "name": "AtomStopReason"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    },
+    {
+      "name": "AtomDiagnostic",
+      "reserved_tags": [],
+      "reserved_names": [],
+      "next_id": null,
+      "fields": [
+        {
+          "name": "severity",
+          "tag": 1,
+          "type": {
+            "k": "enum",
+            "name": "AtomSeverity"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        },
+        {
+          "name": "code",
+          "tag": 2,
+          "type": {
+            "k": "enum",
+            "name": "AtomDiagCode"
+          },
+          "optional": false,
+          "transient": false,
+          "merge": null
+        }
+      ]
+    }
+  ],
+  "services": [],
+  "extensions": []
+}
