@@ -8,7 +8,7 @@
     "protocol_package": {
       "repo": "taut",
       "name": "taut-proto",
-      "version": "0.9.0",
+      "version": "0.9.1",
       "version_source": "setuptools-scm-fallback"
     }
   },
@@ -29,7 +29,7 @@
       "version": "0.9.0",
       "version_source": "setuptools-scm-fallback",
       "dependencies": {
-        "taut-proto": ">=0.9.0,<0.10"
+        "taut-proto": ">=0.9.1,<0.10"
       }
     }
   },

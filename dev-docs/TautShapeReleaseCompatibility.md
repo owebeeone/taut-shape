@@ -1,6 +1,6 @@
 # Taut Shape Release Compatibility
 
-Status: `0.9.0` release candidate; no package release has occurred
+Status: `0.9.*` release in progress; shape packages remain release candidates
 
 Date: 2026-08-25
 
@@ -12,7 +12,7 @@ Machine-readable source and gate:
 Every active engine/profile row is implemented by all three language packages.
 The coordinated Taut train fixes major/minor at `0.9` while allowing patch
 versions to advance independently. The initial coordinates are `taut-proto
-0.9.0`, contract tag `v0.9.0`, and `taut-shape 0.9.0` in Rust, TypeScript, and
+0.9.1`, contract tag `v0.9.0`, and `taut-shape 0.9.0` in Rust, TypeScript, and
 Python. These coordinates are prepared but not yet tagged or published.
 
 | Public shape/profile | Catalogue contract | Oracle corpus | Rust package | TypeScript package | Python package |
@@ -54,7 +54,7 @@ python3 release/check_compatibility.py
 It fails on catalogue/manifest disagreement, missing IR, corpus-version drift,
 protocol/shape release-train drift, language-package version drift, consumer
 dependency drift, or missing CI workflows. It also verifies the Python shape
-package's `taut-proto>=0.9.0,<0.10` dependency. Contract CI regenerates every
+package's `taut-proto>=0.9.1,<0.10` dependency. Contract CI regenerates every
 IR/corpus, tests all three engines, and runs both the full and
 dependency-isolated live matrices. Glial and Gryth own selected consumer
 workflows in their repositories.
