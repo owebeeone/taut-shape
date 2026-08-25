@@ -1,8 +1,8 @@
 # Taut Shape Release Compatibility
 
-Status: development compatibility table; no package release has occurred
+Status: `0.9.0` release candidate; no package release has occurred
 
-Date: 2026-08-22
+Date: 2026-08-25
 
 Machine-readable source and gate:
 `release/compatibility.v1.json` and `release/check_compatibility.py`
@@ -10,15 +10,14 @@ Machine-readable source and gate:
 ## Contract and language packages
 
 Every active engine/profile row is implemented by all three language packages.
-Rust and TypeScript declare `0.0.0`; Python derives an untagged development
-version from SCM with a `0.0.0` fallback. These are deliberately development
-coordinates while this workspace is uncommitted and unreleased. They MUST be
-replaced by matching non-development versions before the manifest status becomes
-`released`.
+The coordinated Taut train fixes major/minor at `0.9` while allowing patch
+versions to advance independently. The initial coordinates are `taut-proto
+0.9.0`, contract tag `v0.9.0`, and `taut-shape 0.9.0` in Rust, TypeScript, and
+Python. These coordinates are prepared but not yet tagged or published.
 
 | Public shape/profile | Catalogue contract | Oracle corpus | Rust package | TypeScript package | Python package |
 | --- | --- | --- | --- | --- | --- |
-| `value` | `v0` | `value.oracle/v0` | `taut-shape 0.0.0` | `@owebeeone/taut-shape 0.0.0` | `taut-shape` SCM development (`0.0.0` fallback) |
+| `value` | `v0` | `value.oracle/v0` | `taut-shape 0.9.0` | `@owebeeone/taut-shape 0.9.0` | `taut-shape 0.9.0` SCM release coordinate |
 | `atom` | `v1` | `atom.oracle/v1` | same | same | same |
 | `log` | `v1` | `log.oracle/v0` | same | same | same |
 | `stream` | `v1` | `stream.oracle/v1` | same | same | same |
@@ -53,10 +52,12 @@ python3 release/check_compatibility.py
 ```
 
 It fails on catalogue/manifest disagreement, missing IR, corpus-version drift,
-language-package version drift, consumer dependency drift, or missing CI
-workflows. Contract CI also regenerates every IR/corpus, tests all three engines,
-and runs both the full and dependency-isolated live matrices. Glial and Gryth own
-selected consumer workflows in their repositories.
+protocol/shape release-train drift, language-package version drift, consumer
+dependency drift, or missing CI workflows. It also verifies the Python shape
+package's `taut-proto>=0.9.0,<0.10` dependency. Contract CI regenerates every
+IR/corpus, tests all three engines, and runs both the full and
+dependency-isolated live matrices. Glial and Gryth own selected consumer
+workflows in their repositories.
 
 Every version tag additionally runs:
 
@@ -67,11 +68,13 @@ python3 release/check_compatibility.py --release
 Release mode MUST fail unless:
 
 1. the compatibility manifest says `released`;
-2. all three language package versions are non-development versions;
+2. `taut-proto`, the contract coordinate, and all three language packages are
+   non-development versions in the `0.9.*` release train;
 3. every participating consumer uses a nonzero semver package pin rather than
    `file:`, `link:`, `workspace:`, a Git hash, or an artifact-content hash; and
 4. the contract, language, and required consumer Git trees are clean.
 
 This ordering makes schema/corpus and pin drift fail before any consumer release.
-Committing, tagging, publishing packages, and converting the development pins
-are release operations outside this uncommitted implementation pass.
+The implementation checkpoint has been committed and pushed. Registry
+authentication, tagging, publishing, and converting consumer development pins
+remain outstanding release operations.

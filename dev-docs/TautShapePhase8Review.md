@@ -70,7 +70,7 @@ require explicit commit/publish authority and are not performed here.
 | Python package | sdist + wheel build; 183 tests passed |
 | TypeScript package | typecheck; 169 tests passed |
 | Rust package | 71 core + 22 tool + 2 interop + 5 CLI tests; clippy and `no_std` passed |
-| Live interop | 315/315 cells plus 3 harness tests; 4 compatibility tests pass; isolated 315/315 |
+| Live interop | 315/315 cells plus 3 harness tests; 5 compatibility tests pass; isolated 315/315 |
 | Glial | typecheck; 78 tests passed |
 | Gryth | 74 tests, production build, no-React-state scan, and ESLint passed |
 | Datascad | refreshed decision-document pin; all 15 adapter checks and SQLite generation-reset runtime passed |
@@ -78,3 +78,11 @@ require explicit commit/publish authority and are not performed here.
 The Datascad gate caught a stale hash for `AtomSwmrNotes.md` after the completed
 snapshot-delta evidence was appended. Its schemas and corpora had not drifted;
 the development pin now records the new document hash and why it changed.
+
+## Release-train update — 2026-08-25
+
+The implementation checkpoint and CI repair were subsequently committed and
+pushed. The initial coordinated release line is `0.9.*`: `taut-proto`, the
+contract tag, and all three language shape packages start at `0.9.0`, with patch
+versions allowed to vary independently. Publication and consumer semver re-pins
+remain gated on registry authentication.

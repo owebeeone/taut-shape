@@ -16,11 +16,19 @@ DEVELOPMENT_VERSION = re.compile(r"(?:^0\.0\.0$|dev|snapshot)", re.IGNORECASE)
 RELEASE_PIN = re.compile(
     r"^(?:\^|~)?(\d+\.\d+\.\d+)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$"
 )
+SEMVER = re.compile(r"^(\d+)\.(\d+)\.(\d+)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$")
 
 
 def is_release_pin(specifier: str) -> bool:
     match = RELEASE_PIN.fullmatch(specifier)
     return match is not None and match.group(1) != "0.0.0"
+
+
+def _major_minor(version: str) -> tuple[int, int] | None:
+    match = SEMVER.fullmatch(version)
+    if match is None:
+        return None
+    return int(match.group(1)), int(match.group(2))
 
 
 def _read_json(path: Path) -> Any:
@@ -56,6 +64,22 @@ def _dependency_spec(repo: Path, package: str) -> str | None:
     return None
 
 
+def _python_dependency_spec(repo: Path, package: str) -> str | None:
+    text = (repo / "pyproject.toml").read_text()
+    project = re.search(r"(?ms)^\[project\]\s*(.*?)(?=^\[|\Z)", text)
+    dependencies = re.search(
+        r"(?ms)^dependencies\s*=\s*\[(.*?)\]",
+        project.group(1) if project else "",
+    )
+    if dependencies is None:
+        return None
+    for single, double in re.findall(r"'([^']*)'|\"([^\"]*)\"", dependencies.group(1)):
+        requirement = single or double
+        if requirement == package or re.match(rf"^{re.escape(package)}\s*[<>=!~]", requirement):
+            return requirement.removeprefix(package)
+    return None
+
+
 def _git_is_clean(repo: Path) -> bool:
     result = subprocess.run(
         ["git", "status", "--porcelain"],
@@ -80,6 +104,45 @@ def check_compatibility(
     errors: list[str] = []
     if manifest.get("schema") != SCHEMA:
         errors.append(f"manifest schema must be {SCHEMA!r}")
+
+    train = dict(manifest.get("release_train", {}))
+    train_pair = (train.get("major"), train.get("minor"))
+    if not all(isinstance(part, int) and part >= 0 for part in train_pair):
+        errors.append("release train major/minor must be non-negative integers")
+        train_pair = None
+    contract_release = str(train.get("contract_version", ""))
+    if train_pair is not None and _major_minor(contract_release) != train_pair:
+        errors.append(
+            f"contract release version {contract_release!r} is outside "
+            f"the {train_pair[0]}.{train_pair[1]} release train"
+        )
+
+    protocol = dict(train.get("protocol_package", {}))
+    protocol_repo_id = str(protocol.get("repo", ""))
+    protocol_repo = repos.get(protocol_repo_id)
+    protocol_version = str(protocol.get("version", ""))
+    if train_pair is not None and _major_minor(protocol_version) != train_pair:
+        errors.append(
+            f"protocol package version {protocol_version!r} is outside "
+            f"the {train_pair[0]}.{train_pair[1]} release train"
+        )
+    if protocol_repo is None or not protocol_repo.is_dir():
+        errors.append(f"protocol package repository {protocol_repo_id!r} is missing")
+    else:
+        try:
+            actual_protocol = _version_from_source(
+                protocol_repo, str(protocol.get("version_source", ""))
+            )
+        except (OSError, KeyError, ValueError, json.JSONDecodeError) as error:
+            errors.append(f"protocol package: cannot read version: {error}")
+        else:
+            if actual_protocol != protocol_version:
+                errors.append(
+                    f"protocol package: version {actual_protocol!r} != "
+                    f"manifest {protocol_version!r}"
+                )
+        if release and DEVELOPMENT_VERSION.search(protocol_version):
+            errors.append(f"protocol package: development package version {protocol_version!r}")
 
     catalog_path = contract_root / str(manifest.get("catalog_ir", ""))
     try:
@@ -117,6 +180,22 @@ def check_compatibility(
             continue
         if actual != expected:
             errors.append(f"package {package_id}: version {actual!r} != manifest {expected!r}")
+        if train_pair is not None and _major_minor(expected) != train_pair:
+            errors.append(
+                f"package {package_id}: version {expected!r} is outside "
+                f"the {train_pair[0]}.{train_pair[1]} release train"
+            )
+        for dependency, expected_spec in dict(row.get("dependencies", {})).items():
+            try:
+                actual_spec = _python_dependency_spec(repo, str(dependency))
+            except OSError as error:
+                errors.append(f"package {package_id}: cannot read dependencies: {error}")
+                continue
+            if actual_spec != expected_spec:
+                errors.append(
+                    f"package {package_id}: dependency {dependency} specifier "
+                    f"{actual_spec!r} != manifest {expected_spec!r}"
+                )
         if release and DEVELOPMENT_VERSION.search(expected):
             errors.append(f"package {package_id}: development package version {expected!r}")
 
@@ -224,6 +303,9 @@ def main(argv: list[str] | None = None) -> int:
         str(row["repo"]): workspace / str(row["repo"])
         for row in manifest.get("packages", {}).values()
     }
+    protocol = dict(manifest.get("release_train", {}).get("protocol_package", {}))
+    if protocol.get("repo"):
+        repos.setdefault(str(protocol["repo"]), workspace / str(protocol["repo"]))
     for consumer in manifest.get("consumers", []):
         repo_id = str(consumer.get("repo", ""))
         repos.setdefault(repo_id, workspace / repo_id)
@@ -234,7 +316,7 @@ def main(argv: list[str] | None = None) -> int:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)
         return 1
-    mode = "release" if args.release else "development"
+    mode = "release" if args.release else "normal"
     print(f"compatibility gate OK ({mode}; {len(manifest['contracts'])} contracts)")
     return 0
 

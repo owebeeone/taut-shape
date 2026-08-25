@@ -19,11 +19,12 @@ def workspace_repos() -> dict[str, Path]:
         "taut-shape-rs": workspace / "taut-shape-rs",
         "taut-shape-ts": workspace / "taut-shape-ts",
         "taut-shape-py": workspace / "taut-shape-py",
+        "taut": workspace / "taut",
         "glial": workspace / "glial",
     }
 
 
-def test_current_development_manifest_is_in_lockstep() -> None:
+def test_current_release_candidate_manifest_is_in_lockstep() -> None:
     assert check_compatibility(load_manifest(), ROOT, workspace_repos()) == []
 
 
@@ -34,7 +35,7 @@ def test_corpus_version_drift_is_rejected() -> None:
     assert any("corpus version" in error for error in errors)
 
 
-def test_release_mode_rejects_development_versions_and_pins() -> None:
+def test_release_mode_rejects_candidate_status_and_development_pins() -> None:
     errors = check_compatibility(
         load_manifest(),
         ROOT,
@@ -43,8 +44,17 @@ def test_release_mode_rejects_development_versions_and_pins() -> None:
         check_cleanliness=False,
     )
     assert any("manifest status" in error for error in errors)
-    assert any("development package version" in error for error in errors)
     assert any("development-only pin" in error for error in errors)
+    assert not any("development package version" in error for error in errors)
+
+
+def test_release_train_and_protocol_dependency_drift_are_rejected() -> None:
+    manifest = deepcopy(load_manifest())
+    manifest["packages"]["rust"]["version"] = "0.10.0"
+    manifest["packages"]["python"]["dependencies"]["taut-proto"] = ">=0.9.1,<0.10"
+    errors = check_compatibility(manifest, ROOT, workspace_repos())
+    assert any("outside the 0.9 release train" in error for error in errors)
+    assert any("dependency taut-proto specifier" in error for error in errors)
 
 
 def test_release_pin_accepts_initial_semver_but_not_zero_or_paths() -> None:

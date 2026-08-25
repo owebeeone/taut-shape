@@ -1,22 +1,36 @@
 {
   "schema": "taut-shape.release-compatibility/v1",
-  "status": "development",
+  "status": "release-candidate",
+  "release_train": {
+    "major": 0,
+    "minor": 9,
+    "contract_version": "0.9.0",
+    "protocol_package": {
+      "repo": "taut",
+      "name": "taut-proto",
+      "version": "0.9.0",
+      "version_source": "setuptools-scm-fallback"
+    }
+  },
   "catalog_ir": "ir/shape_value.ir.json",
   "packages": {
     "rust": {
       "repo": "taut-shape-rs",
-      "version": "0.0.0",
+      "version": "0.9.0",
       "version_source": "cargo-workspace"
     },
     "typescript": {
       "repo": "taut-shape-ts",
-      "version": "0.0.0",
+      "version": "0.9.0",
       "version_source": "package-json"
     },
     "python": {
       "repo": "taut-shape-py",
-      "version": "0.0.0",
-      "version_source": "setuptools-scm-fallback"
+      "version": "0.9.0",
+      "version_source": "setuptools-scm-fallback",
+      "dependencies": {
+        "taut-proto": ">=0.9.0,<0.10"
+      }
     }
   },
   "contracts": [
