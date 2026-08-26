@@ -45,6 +45,13 @@ def _version_from_source(repo: Path, source: str) -> str:
         if not match:
             raise ValueError("Cargo.toml has no [workspace.package] version")
         return match.group(1)
+    if source == "cargo-package":
+        text = (repo / "crates" / "taut-shape" / "Cargo.toml").read_text()
+        section = re.search(r"(?ms)^\[package\]\s*(.*?)(?=^\[|\Z)", text)
+        match = re.search(r'^version\s*=\s*"([^"]+)"', section.group(1) if section else "", re.MULTILINE)
+        if not match:
+            raise ValueError("crates/taut-shape/Cargo.toml has no [package] version")
+        return match.group(1)
     if source == "setuptools-scm-fallback":
         text = (repo / "pyproject.toml").read_text()
         section = re.search(r"(?ms)^\[tool\.setuptools_scm\]\s*(.*?)(?=^\[|\Z)", text)
