@@ -1,6 +1,6 @@
 {
   "schema": "taut-shape.release-compatibility/v1",
-  "status": "release-candidate",
+  "status": "released",
   "release_train": {
     "major": 0,
     "minor": 9,

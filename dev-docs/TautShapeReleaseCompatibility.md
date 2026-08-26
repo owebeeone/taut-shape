@@ -1,8 +1,8 @@
 # Taut Shape Release Compatibility
 
-Status: `0.9.*` package publication complete; required consumer and contract finalization in progress
+Status: `0.9.*` released
 
-Date: 2026-08-25
+Date: 2026-08-26
 
 Machine-readable source and gate:
 `release/compatibility.v1.json` and `release/check_compatibility.py`
@@ -83,6 +83,6 @@ published. TypeScript 0.9.0 was bootstrap-published but its raw `.ts` exports
 could not load from `node_modules`; its immutable tag is retained and 0.9.1
 ships compiled JavaScript, declarations, and a packed-consumer gate. Publishing
 that correction is published and its packed-consumer workflow is green. Glial
-now resolves the released 0.9.1 package and passes its consumer gate. Finalizing
-the contract remains the outstanding required release operation; optional
-prototype consumers retain their explicitly non-release development pins.
+now resolves the released 0.9.1 package and passes its consumer gate. The
+contract `v0.9.0` tag completes the required release train; optional prototype
+consumers retain their explicitly non-release development pins.
