@@ -1,6 +1,6 @@
 # Taut Shape Release Compatibility
 
-Status: `0.9.*` release in progress; Rust is published, TypeScript and Python remain in progress
+Status: `0.9.*` release in progress; Rust and Python are published, TypeScript remains in progress
 
 Date: 2026-08-25
 
@@ -13,8 +13,8 @@ Every active engine/profile row is implemented by all three language packages.
 The coordinated Taut train fixes major/minor at `0.9` while allowing patch
 versions to advance independently. The release coordinates are `taut-proto
 0.9.1`, contract tag `v0.9.0`, `taut-shape 0.9.0` in Rust and TypeScript, and
-`taut-shape 0.9.1` in Python. Rust 0.9.0 and the protocol are published;
-TypeScript 0.9.0 is tagged; Python 0.9.1 is the corrected publication candidate.
+`taut-shape 0.9.1` in Python. Rust 0.9.0, Python 0.9.1, and the protocol are
+published; TypeScript 0.9.0 is tagged but not yet published.
 
 | Public shape/profile | Catalogue contract | Oracle corpus | Rust package | TypeScript package | Python package |
 | --- | --- | --- | --- | --- | --- |
@@ -78,6 +78,6 @@ Release mode MUST fail unless:
 This ordering makes schema/corpus and pin drift fail before any consumer release.
 The Python `v0.9.0` workflow stopped before publication because its wheel relied
 on sibling contract files. That immutable tag is retained for auditability;
-0.9.1 bundles the canonical schemas and adds an isolated-wheel gate. Publishing
-TypeScript and Python, converting consumer development pins, and finalizing the
-contract remain outstanding release operations.
+0.9.1 bundles the canonical schemas, adds an isolated-wheel gate, and is now
+published. Publishing TypeScript, converting consumer development pins, and
+finalizing the contract remain outstanding release operations.
