@@ -125,9 +125,9 @@
       "required_in_contract_ci": true,
       "shapes": ["value", "log", "atom", "stream", "crdt", "text_crdt"],
       "pin": {
-        "kind": "development-file",
+        "kind": "semver",
         "package": "@owebeeone/taut-shape",
-        "specifier": "file:../taut-shape-ts"
+        "specifier": "^0.9.1"
       },
       "workflow": ".github/workflows/taut-shape-consumer.yml"
     },

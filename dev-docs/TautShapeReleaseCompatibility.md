@@ -1,6 +1,6 @@
 # Taut Shape Release Compatibility
 
-Status: `0.9.*` release in progress; Rust and Python are published, TypeScript remains in progress
+Status: `0.9.*` package publication complete; required consumer and contract finalization in progress
 
 Date: 2026-08-25
 
@@ -14,7 +14,7 @@ The coordinated Taut train fixes major/minor at `0.9` while allowing patch
 versions to advance independently. The release coordinates are `taut-proto
 0.9.1`, contract tag `v0.9.0`, Rust `taut-shape 0.9.0`, and `taut-shape 0.9.1`
 in TypeScript and Python. Rust 0.9.0, Python 0.9.1, and the protocol are
-published; TypeScript 0.9.1 is the corrected publication candidate.
+published, including the corrected TypeScript 0.9.1 package.
 
 | Public shape/profile | Catalogue contract | Oracle corpus | Rust package | TypeScript package | Python package |
 | --- | --- | --- | --- | --- | --- |
@@ -36,7 +36,7 @@ The compatibility manifest pins both independently.
 
 | Consumer | Current status | Shapes crossed | Development pin | Continuous gate | Release disposition |
 | --- | --- | --- | --- | --- | --- |
-| Glial | private `0.0.0` | `value`, `log`, `atom`, `stream`, `crdt`, `text_crdt` | local `file:../taut-shape-ts` | typecheck + full Glial suite; full log applicability gate | MUST move to a released TypeScript semver before Glial release |
+| Glial | private `0.0.0` | `value`, `log`, `atom`, `stream`, `crdt`, `text_crdt` | released `@owebeeone/taut-shape@^0.9.1` | typecheck + full Glial suite; full log applicability gate | release boundary satisfied; package remains private |
 | Gryth | private `0.0.0` | first cutover: workspace-name `value` | `workspace:*` Glial member; GWZ lock records clean Glial commit `b3ee6658…` | full Gryth test/build/lint workflow | MUST move to a released Glial semver before Gryth release |
 | Datascad | prototype workspace with no release commit | `atom`, `swmr`, `snapshot_delta` | exact development content pin in `TAUT_PIN.json` | adapter + SQLite SWMR runtime selftests | explicitly not a release input; MUST re-pin to released packages/contracts first |
 
@@ -82,5 +82,7 @@ on sibling contract files. That immutable tag is retained for auditability;
 published. TypeScript 0.9.0 was bootstrap-published but its raw `.ts` exports
 could not load from `node_modules`; its immutable tag is retained and 0.9.1
 ships compiled JavaScript, declarations, and a packed-consumer gate. Publishing
-that correction, converting consumer development pins, and finalizing the
-contract remain outstanding release operations.
+that correction is published and its packed-consumer workflow is green. Glial
+now resolves the released 0.9.1 package and passes its consumer gate. Finalizing
+the contract remains the outstanding required release operation; optional
+prototype consumers retain their explicitly non-release development pins.
