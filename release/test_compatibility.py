@@ -24,7 +24,7 @@ def workspace_repos() -> dict[str, Path]:
     }
 
 
-def test_current_release_candidate_manifest_is_in_lockstep() -> None:
+def test_current_release_manifest_is_in_lockstep() -> None:
     assert check_compatibility(load_manifest(), ROOT, workspace_repos()) == []
 
 
@@ -36,8 +36,13 @@ def test_corpus_version_drift_is_rejected() -> None:
 
 
 def test_release_mode_rejects_candidate_status_and_development_pins() -> None:
+    manifest = deepcopy(load_manifest())
+    manifest["status"] = "candidate"
+    manifest["consumers"][0]["pin"].update(
+        {"kind": "development-workspace", "specifier": "workspace:*"}
+    )
     errors = check_compatibility(
-        load_manifest(),
+        manifest,
         ROOT,
         workspace_repos(),
         release=True,
