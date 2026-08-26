@@ -12,13 +12,13 @@ Machine-readable source and gate:
 Every active engine/profile row is implemented by all three language packages.
 The coordinated Taut train fixes major/minor at `0.9` while allowing patch
 versions to advance independently. The release coordinates are `taut-proto
-0.9.1`, contract tag `v0.9.0`, `taut-shape 0.9.0` in Rust and TypeScript, and
-`taut-shape 0.9.1` in Python. Rust 0.9.0, Python 0.9.1, and the protocol are
-published; TypeScript 0.9.0 is tagged but not yet published.
+0.9.1`, contract tag `v0.9.0`, Rust `taut-shape 0.9.0`, and `taut-shape 0.9.1`
+in TypeScript and Python. Rust 0.9.0, Python 0.9.1, and the protocol are
+published; TypeScript 0.9.1 is the corrected publication candidate.
 
 | Public shape/profile | Catalogue contract | Oracle corpus | Rust package | TypeScript package | Python package |
 | --- | --- | --- | --- | --- | --- |
-| `value` | `v0` | `value.oracle/v0` | `taut-shape 0.9.0` | `@owebeeone/taut-shape 0.9.0` | `taut-shape 0.9.1` SCM release coordinate |
+| `value` | `v0` | `value.oracle/v0` | `taut-shape 0.9.0` | `@owebeeone/taut-shape 0.9.1` | `taut-shape 0.9.1` SCM release coordinate |
 | `atom` | `v1` | `atom.oracle/v1` | same | same | same |
 | `log` | `v1` | `log.oracle/v0` | same | same | same |
 | `stream` | `v1` | `stream.oracle/v1` | same | same | same |
@@ -79,5 +79,8 @@ This ordering makes schema/corpus and pin drift fail before any consumer release
 The Python `v0.9.0` workflow stopped before publication because its wheel relied
 on sibling contract files. That immutable tag is retained for auditability;
 0.9.1 bundles the canonical schemas, adds an isolated-wheel gate, and is now
-published. Publishing TypeScript, converting consumer development pins, and
-finalizing the contract remain outstanding release operations.
+published. TypeScript 0.9.0 was bootstrap-published but its raw `.ts` exports
+could not load from `node_modules`; its immutable tag is retained and 0.9.1
+ships compiled JavaScript, declarations, and a packed-consumer gate. Publishing
+that correction, converting consumer development pins, and finalizing the
+contract remain outstanding release operations.

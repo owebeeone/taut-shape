@@ -21,7 +21,7 @@
     },
     "typescript": {
       "repo": "taut-shape-ts",
-      "version": "0.9.0",
+      "version": "0.9.1",
       "version_source": "package-json"
     },
     "python": {
