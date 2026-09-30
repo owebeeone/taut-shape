@@ -1,5 +1,10 @@
 {
-  "version": 1,
+  "version": 2,
+  "options": {},
+  "effective": {
+    "max_depth": 32,
+    "max_encoded_len": null
+  },
   "shapes": {
     "unary": {
       "name": "unary",
@@ -250,37 +255,63 @@
   "enums": [
     {
       "name": "ValueMsgType",
+      "options": {},
       "members": {
         "set": 0,
         "read": 1,
         "read_response": 2,
         "diagnostic": 3
+      },
+      "member_options": {
+        "set": {},
+        "read": {},
+        "read_response": {},
+        "diagnostic": {}
       }
     },
     {
       "name": "ValueState",
+      "options": {},
       "members": {
         "data": 0,
         "empty": 1
+      },
+      "member_options": {
+        "data": {},
+        "empty": {}
       }
     },
     {
       "name": "ValueSeverity",
+      "options": {},
       "members": {
         "warn": 0,
         "error": 1
+      },
+      "member_options": {
+        "warn": {},
+        "error": {}
       }
     },
     {
       "name": "ValueDiagCode",
+      "options": {},
       "members": {
         "equivocation": 0
+      },
+      "member_options": {
+        "equivocation": {}
       }
     }
   ],
   "messages": [
     {
       "name": "ValueStamp",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -288,6 +319,7 @@
         {
           "name": "origin",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -299,6 +331,7 @@
         {
           "name": "seq",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -310,6 +343,7 @@
         {
           "name": "lamport",
           "tag": 3,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -322,6 +356,11 @@
     },
     {
       "name": "ValueSet",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -329,6 +368,7 @@
         {
           "name": "origin",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -340,6 +380,7 @@
         {
           "name": "seq",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -351,6 +392,7 @@
         {
           "name": "lamport",
           "tag": 3,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -362,6 +404,7 @@
         {
           "name": "prev",
           "tag": 4,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "bytes"
@@ -373,6 +416,7 @@
         {
           "name": "payload",
           "tag": 5,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "bytes"
@@ -385,6 +429,11 @@
     },
     {
       "name": "ValueReadRequest",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -392,6 +441,7 @@
         {
           "name": "value_id",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -403,6 +453,7 @@
         {
           "name": "stream_id",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -415,6 +466,11 @@
     },
     {
       "name": "ValueReadResponse",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -422,6 +478,7 @@
         {
           "name": "value_id",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -433,6 +490,7 @@
         {
           "name": "stream_id",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -444,6 +502,7 @@
         {
           "name": "value",
           "tag": 3,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "bytes"
@@ -455,6 +514,7 @@
         {
           "name": "winner",
           "tag": 4,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "ValueStamp"
@@ -466,6 +526,7 @@
         {
           "name": "state",
           "tag": 5,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "ValueState"
@@ -478,6 +539,11 @@
     },
     {
       "name": "ValueDiagnostic",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -485,6 +551,7 @@
         {
           "name": "severity",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "ValueSeverity"
@@ -496,6 +563,7 @@
         {
           "name": "code",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "ValueDiagCode"

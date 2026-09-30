@@ -1,5 +1,10 @@
 {
-  "version": 1,
+  "version": 2,
+  "options": {},
+  "effective": {
+    "max_depth": 32,
+    "max_encoded_len": null
+  },
   "shapes": {
     "unary": {
       "name": "unary",
@@ -250,6 +255,7 @@
   "enums": [
     {
       "name": "AtomMsgType",
+      "options": {},
       "members": {
         "replace": 0,
         "seal": 1,
@@ -262,51 +268,98 @@
         "cancel_timer": 8,
         "producer_stop": 9,
         "diagnostic": 10
+      },
+      "member_options": {
+        "replace": {},
+        "seal": {},
+        "close": {},
+        "read": {},
+        "end_stream": {},
+        "timer_expired": {},
+        "read_response": {},
+        "set_timer": {},
+        "cancel_timer": {},
+        "producer_stop": {},
+        "diagnostic": {}
       }
     },
     {
       "name": "AtomState",
+      "options": {},
       "members": {
         "data": 0,
         "would_block": 1,
         "eof": 2,
         "closed": 3,
         "failed": 4
+      },
+      "member_options": {
+        "data": {},
+        "would_block": {},
+        "eof": {},
+        "closed": {},
+        "failed": {}
       }
     },
     {
       "name": "AtomErrorCode",
+      "options": {},
       "members": {
         "unknown_atom": 0,
         "producer_error": 1,
         "internal": 2
+      },
+      "member_options": {
+        "unknown_atom": {},
+        "producer_error": {},
+        "internal": {}
       }
     },
     {
       "name": "AtomStopReason",
+      "options": {},
       "members": {
         "last_reader_gone": 0,
         "closed": 1,
         "failed": 2
+      },
+      "member_options": {
+        "last_reader_gone": {},
+        "closed": {},
+        "failed": {}
       }
     },
     {
       "name": "AtomSeverity",
+      "options": {},
       "members": {
         "warn": 0,
         "error": 1
+      },
+      "member_options": {
+        "warn": {},
+        "error": {}
       }
     },
     {
       "name": "AtomDiagCode",
+      "options": {},
       "members": {
         "replace_after_terminal": 0
+      },
+      "member_options": {
+        "replace_after_terminal": {}
       }
     }
   ],
   "messages": [
     {
       "name": "AtomVersion",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -314,6 +367,7 @@
         {
           "name": "version",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -326,6 +380,11 @@
     },
     {
       "name": "AtomValue",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -333,6 +392,7 @@
         {
           "name": "version",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -344,6 +404,7 @@
         {
           "name": "payload",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "bytes"
@@ -356,6 +417,11 @@
     },
     {
       "name": "AtomError",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -363,6 +429,7 @@
         {
           "name": "code",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "AtomErrorCode"
@@ -374,6 +441,7 @@
         {
           "name": "message",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -386,6 +454,11 @@
     },
     {
       "name": "AtomReplace",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -393,6 +466,7 @@
         {
           "name": "payload",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "bytes"
@@ -405,6 +479,11 @@
     },
     {
       "name": "AtomSeal",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -412,6 +491,11 @@
     },
     {
       "name": "AtomClose",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -419,6 +503,7 @@
         {
           "name": "error",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "AtomError"
@@ -431,6 +516,11 @@
     },
     {
       "name": "AtomReadRequest",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -438,6 +528,7 @@
         {
           "name": "atom_id",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -449,6 +540,7 @@
         {
           "name": "stream_id",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -460,6 +552,7 @@
         {
           "name": "version",
           "tag": 3,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "AtomVersion"
@@ -471,6 +564,7 @@
         {
           "name": "timeout_ms",
           "tag": 4,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -483,6 +577,11 @@
     },
     {
       "name": "AtomEndStream",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -490,6 +589,7 @@
         {
           "name": "atom_id",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -501,6 +601,7 @@
         {
           "name": "stream_id",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -513,6 +614,11 @@
     },
     {
       "name": "AtomTimerExpired",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -520,6 +626,7 @@
         {
           "name": "token",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -532,6 +639,11 @@
     },
     {
       "name": "AtomReadResponse",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -539,6 +651,7 @@
         {
           "name": "atom_id",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -550,6 +663,7 @@
         {
           "name": "stream_id",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -561,6 +675,7 @@
         {
           "name": "value",
           "tag": 3,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "AtomValue"
@@ -572,6 +687,7 @@
         {
           "name": "next_version",
           "tag": 4,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "AtomVersion"
@@ -583,6 +699,7 @@
         {
           "name": "state",
           "tag": 5,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "AtomState"
@@ -594,6 +711,7 @@
         {
           "name": "error",
           "tag": 6,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "AtomError"
@@ -606,6 +724,11 @@
     },
     {
       "name": "AtomSetTimer",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -613,6 +736,7 @@
         {
           "name": "token",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -624,6 +748,7 @@
         {
           "name": "ms",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -636,6 +761,11 @@
     },
     {
       "name": "AtomCancelTimer",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -643,6 +773,7 @@
         {
           "name": "token",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -655,6 +786,11 @@
     },
     {
       "name": "AtomProducerStop",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -662,6 +798,7 @@
         {
           "name": "reason",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "AtomStopReason"
@@ -674,6 +811,11 @@
     },
     {
       "name": "AtomDiagnostic",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -681,6 +823,7 @@
         {
           "name": "severity",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "AtomSeverity"
@@ -692,6 +835,7 @@
         {
           "name": "code",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "AtomDiagCode"

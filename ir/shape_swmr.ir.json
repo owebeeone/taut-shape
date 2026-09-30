@@ -1,5 +1,10 @@
 {
-  "version": 1,
+  "version": 2,
+  "options": {},
+  "effective": {
+    "max_depth": 32,
+    "max_encoded_len": null
+  },
   "shapes": {
     "unary": {
       "name": "unary",
@@ -250,6 +255,7 @@
   "enums": [
     {
       "name": "SwmrMsgType",
+      "options": {},
       "members": {
         "snapshot_push": 0,
         "delta_push": 1,
@@ -264,10 +270,26 @@
         "cancel_timer": 10,
         "producer_stop": 11,
         "diagnostic": 12
+      },
+      "member_options": {
+        "snapshot_push": {},
+        "delta_push": {},
+        "reset": {},
+        "seal": {},
+        "close": {},
+        "read": {},
+        "end_stream": {},
+        "timer_expired": {},
+        "read_response": {},
+        "set_timer": {},
+        "cancel_timer": {},
+        "producer_stop": {},
+        "diagnostic": {}
       }
     },
     {
       "name": "SwmrState",
+      "options": {},
       "members": {
         "data": 0,
         "would_block": 1,
@@ -275,52 +297,95 @@
         "closed": 3,
         "failed": 4,
         "reset": 5
+      },
+      "member_options": {
+        "data": {},
+        "would_block": {},
+        "eof": {},
+        "closed": {},
+        "failed": {},
+        "reset": {}
       }
     },
     {
       "name": "SwmrErrorCode",
+      "options": {},
       "members": {
         "unknown_swmr": 0,
         "producer_error": 1,
         "internal": 2
+      },
+      "member_options": {
+        "unknown_swmr": {},
+        "producer_error": {},
+        "internal": {}
       }
     },
     {
       "name": "SwmrStopReason",
+      "options": {},
       "members": {
         "last_reader_gone": 0,
         "closed": 1,
         "failed": 2
+      },
+      "member_options": {
+        "last_reader_gone": {},
+        "closed": {},
+        "failed": {}
       }
     },
     {
       "name": "SwmrResetReason",
+      "options": {},
       "members": {
         "producer_requested": 0,
         "retention_exceeded": 1,
         "invalid_resume_seq": 2
+      },
+      "member_options": {
+        "producer_requested": {},
+        "retention_exceeded": {},
+        "invalid_resume_seq": {}
       }
     },
     {
       "name": "SwmrSeverity",
+      "options": {},
       "members": {
         "warn": 0,
         "error": 1
+      },
+      "member_options": {
+        "warn": {},
+        "error": {}
       }
     },
     {
       "name": "SwmrDiagCode",
+      "options": {},
       "members": {
         "push_after_terminal": 0,
         "delta_before_snapshot": 1,
         "writer_conflict": 2,
         "retention_bound_exceeded": 3
+      },
+      "member_options": {
+        "push_after_terminal": {},
+        "delta_before_snapshot": {},
+        "writer_conflict": {},
+        "retention_bound_exceeded": {}
       }
     }
   ],
   "messages": [
     {
       "name": "SwmrCursor",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -328,6 +393,7 @@
         {
           "name": "seq",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -339,6 +405,7 @@
         {
           "name": "epoch",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -351,6 +418,11 @@
     },
     {
       "name": "SwmrSnapshot",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -358,6 +430,7 @@
         {
           "name": "seq",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -369,6 +442,7 @@
         {
           "name": "payload",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "bytes"
@@ -381,6 +455,11 @@
     },
     {
       "name": "SwmrDelta",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -388,6 +467,7 @@
         {
           "name": "base_seq",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -399,6 +479,7 @@
         {
           "name": "seq",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -410,6 +491,7 @@
         {
           "name": "payload",
           "tag": 3,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "bytes"
@@ -422,6 +504,11 @@
     },
     {
       "name": "SwmrError",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -429,6 +516,7 @@
         {
           "name": "code",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "SwmrErrorCode"
@@ -440,6 +528,7 @@
         {
           "name": "message",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -452,6 +541,11 @@
     },
     {
       "name": "SwmrSnapshotPush",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -459,6 +553,7 @@
         {
           "name": "writer_id",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -470,6 +565,7 @@
         {
           "name": "payload",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "bytes"
@@ -482,6 +578,11 @@
     },
     {
       "name": "SwmrDeltaPush",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -489,6 +590,7 @@
         {
           "name": "writer_id",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -500,6 +602,7 @@
         {
           "name": "payload",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "bytes"
@@ -512,6 +615,11 @@
     },
     {
       "name": "SwmrReset",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -519,6 +627,7 @@
         {
           "name": "writer_id",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -530,6 +639,7 @@
         {
           "name": "reason",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "SwmrResetReason"
@@ -541,6 +651,7 @@
         {
           "name": "detail",
           "tag": 3,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "bytes"
@@ -553,6 +664,11 @@
     },
     {
       "name": "SwmrSeal",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -560,6 +676,11 @@
     },
     {
       "name": "SwmrClose",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -567,6 +688,7 @@
         {
           "name": "error",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "SwmrError"
@@ -579,6 +701,11 @@
     },
     {
       "name": "SwmrReadRequest",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -586,6 +713,7 @@
         {
           "name": "swmr_id",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -597,6 +725,7 @@
         {
           "name": "stream_id",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -608,6 +737,7 @@
         {
           "name": "cursor",
           "tag": 3,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "SwmrCursor"
@@ -619,6 +749,7 @@
         {
           "name": "timeout_ms",
           "tag": 4,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -631,6 +762,11 @@
     },
     {
       "name": "SwmrEndStream",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -638,6 +774,7 @@
         {
           "name": "swmr_id",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -649,6 +786,7 @@
         {
           "name": "stream_id",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -661,6 +799,11 @@
     },
     {
       "name": "SwmrTimerExpired",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -668,6 +811,7 @@
         {
           "name": "token",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -680,6 +824,11 @@
     },
     {
       "name": "SwmrReadResponse",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -687,6 +836,7 @@
         {
           "name": "swmr_id",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -698,6 +848,7 @@
         {
           "name": "stream_id",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -709,6 +860,7 @@
         {
           "name": "snapshot",
           "tag": 3,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "SwmrSnapshot"
@@ -720,6 +872,7 @@
         {
           "name": "deltas",
           "tag": 4,
+          "options": {},
           "type": {
             "k": "list",
             "elem": {
@@ -734,6 +887,7 @@
         {
           "name": "next_cursor",
           "tag": 5,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "SwmrCursor"
@@ -745,6 +899,7 @@
         {
           "name": "state",
           "tag": 6,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "SwmrState"
@@ -756,6 +911,7 @@
         {
           "name": "reset_reason",
           "tag": 7,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "SwmrResetReason"
@@ -767,6 +923,7 @@
         {
           "name": "error",
           "tag": 8,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "SwmrError"
@@ -778,6 +935,7 @@
         {
           "name": "reset_detail",
           "tag": 9,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "bytes"
@@ -790,6 +948,11 @@
     },
     {
       "name": "SwmrSetTimer",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -797,6 +960,7 @@
         {
           "name": "token",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -808,6 +972,7 @@
         {
           "name": "ms",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -820,6 +985,11 @@
     },
     {
       "name": "SwmrCancelTimer",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -827,6 +997,7 @@
         {
           "name": "token",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -839,6 +1010,11 @@
     },
     {
       "name": "SwmrProducerStop",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -846,6 +1022,7 @@
         {
           "name": "reason",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "SwmrStopReason"
@@ -858,6 +1035,11 @@
     },
     {
       "name": "SwmrDiagnostic",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -865,6 +1047,7 @@
         {
           "name": "severity",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "SwmrSeverity"
@@ -876,6 +1059,7 @@
         {
           "name": "code",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "SwmrDiagCode"

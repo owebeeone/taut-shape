@@ -55,10 +55,13 @@ def test_release_mode_rejects_candidate_status_and_development_pins() -> None:
 
 def test_release_train_and_protocol_dependency_drift_are_rejected() -> None:
     manifest = deepcopy(load_manifest())
-    manifest["packages"]["rust"]["version"] = "0.10.0"
-    manifest["packages"]["python"]["dependencies"]["taut-proto"] = ">=0.9.0,<0.10"
+    major, minor = manifest["release_train"]["major"], manifest["release_train"]["minor"]
+    # A version from the next train, and the previous train's protocol pin: whatever train the
+    # manifest records, both drift from it.
+    manifest["packages"]["rust"]["version"] = f"{major}.{minor + 1}.0"
+    manifest["packages"]["python"]["dependencies"]["taut-proto"] = f">={major}.{minor - 1}.0,<{major}.{minor}"
     errors = check_compatibility(manifest, ROOT, workspace_repos())
-    assert any("outside the 0.9 release train" in error for error in errors)
+    assert any(f"outside the {major}.{minor} release train" in error for error in errors)
     assert any("dependency taut-proto specifier" in error for error in errors)
 
 

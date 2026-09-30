@@ -1,5 +1,10 @@
 {
-  "version": 1,
+  "version": 2,
+  "options": {},
+  "effective": {
+    "max_depth": 32,
+    "max_encoded_len": null
+  },
   "shapes": {
     "unary": {
       "name": "unary",
@@ -250,6 +255,7 @@
   "enums": [
     {
       "name": "CrdtMsgType",
+      "options": {},
       "members": {
         "apply": 0,
         "install_bootstrap": 1,
@@ -258,10 +264,20 @@
         "read": 4,
         "read_response": 5,
         "diagnostic": 6
+      },
+      "member_options": {
+        "apply": {},
+        "install_bootstrap": {},
+        "seal": {},
+        "close": {},
+        "read": {},
+        "read_response": {},
+        "diagnostic": {}
       }
     },
     {
       "name": "CrdtState",
+      "options": {},
       "members": {
         "data": 0,
         "empty": 1,
@@ -270,37 +286,70 @@
         "failed": 4,
         "bootstrap_required": 5,
         "invalid_cursor": 6
+      },
+      "member_options": {
+        "data": {},
+        "empty": {},
+        "eof": {},
+        "closed": {},
+        "failed": {},
+        "bootstrap_required": {},
+        "invalid_cursor": {}
       }
     },
     {
       "name": "CrdtErrorCode",
+      "options": {},
       "members": {
         "unknown_crdt": 0,
         "producer_error": 1,
         "internal": 2
+      },
+      "member_options": {
+        "unknown_crdt": {},
+        "producer_error": {},
+        "internal": {}
       }
     },
     {
       "name": "CrdtSeverity",
+      "options": {},
       "members": {
         "warn": 0,
         "error": 1
+      },
+      "member_options": {
+        "warn": {},
+        "error": {}
       }
     },
     {
       "name": "CrdtDiagCode",
+      "options": {},
       "members": {
         "apply_after_terminal": 0,
         "invalid_operation": 1,
         "equivocation": 2,
         "bootstrap_conflict": 3,
         "pending_bound_exceeded": 4
+      },
+      "member_options": {
+        "apply_after_terminal": {},
+        "invalid_operation": {},
+        "equivocation": {},
+        "bootstrap_conflict": {},
+        "pending_bound_exceeded": {}
       }
     }
   ],
   "messages": [
     {
       "name": "CrdtClockEntry",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -308,6 +357,7 @@
         {
           "name": "origin",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -319,6 +369,7 @@
         {
           "name": "seq",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -331,6 +382,11 @@
     },
     {
       "name": "CrdtClock",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -338,6 +394,7 @@
         {
           "name": "entries",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "list",
             "elem": {
@@ -353,6 +410,11 @@
     },
     {
       "name": "CrdtOp",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -360,6 +422,7 @@
         {
           "name": "origin",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -371,6 +434,7 @@
         {
           "name": "seq",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -382,6 +446,7 @@
         {
           "name": "deps",
           "tag": 3,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "CrdtClock"
@@ -393,6 +458,7 @@
         {
           "name": "payload",
           "tag": 4,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "bytes"
@@ -405,6 +471,11 @@
     },
     {
       "name": "CrdtBootstrap",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -412,6 +483,7 @@
         {
           "name": "clock",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "CrdtClock"
@@ -423,6 +495,7 @@
         {
           "name": "state",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "bytes"
@@ -435,6 +508,11 @@
     },
     {
       "name": "CrdtError",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -442,6 +520,7 @@
         {
           "name": "code",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "CrdtErrorCode"
@@ -453,6 +532,7 @@
         {
           "name": "message",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -465,6 +545,11 @@
     },
     {
       "name": "CrdtApply",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -472,6 +557,7 @@
         {
           "name": "op",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "CrdtOp"
@@ -484,6 +570,11 @@
     },
     {
       "name": "CrdtInstallBootstrap",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -491,6 +582,7 @@
         {
           "name": "bootstrap",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "CrdtBootstrap"
@@ -503,6 +595,11 @@
     },
     {
       "name": "CrdtSeal",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -510,6 +607,11 @@
     },
     {
       "name": "CrdtClose",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -517,6 +619,7 @@
         {
           "name": "error",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "CrdtError"
@@ -529,6 +632,11 @@
     },
     {
       "name": "CrdtReadRequest",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -536,6 +644,7 @@
         {
           "name": "crdt_id",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -547,6 +656,7 @@
         {
           "name": "stream_id",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -558,6 +668,7 @@
         {
           "name": "cursor",
           "tag": 3,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "CrdtClock"
@@ -570,6 +681,11 @@
     },
     {
       "name": "CrdtReadResponse",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -577,6 +693,7 @@
         {
           "name": "crdt_id",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -588,6 +705,7 @@
         {
           "name": "stream_id",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -599,6 +717,7 @@
         {
           "name": "bootstrap",
           "tag": 3,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "CrdtBootstrap"
@@ -610,6 +729,7 @@
         {
           "name": "ops",
           "tag": 4,
+          "options": {},
           "type": {
             "k": "list",
             "elem": {
@@ -624,6 +744,7 @@
         {
           "name": "next_cursor",
           "tag": 5,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "CrdtClock"
@@ -635,6 +756,7 @@
         {
           "name": "state",
           "tag": 6,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "CrdtState"
@@ -646,6 +768,7 @@
         {
           "name": "error",
           "tag": 7,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "CrdtError"
@@ -658,6 +781,11 @@
     },
     {
       "name": "CrdtDiagnostic",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -665,6 +793,7 @@
         {
           "name": "severity",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "CrdtSeverity"
@@ -676,6 +805,7 @@
         {
           "name": "code",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "CrdtDiagCode"
@@ -687,6 +817,7 @@
         {
           "name": "origin",
           "tag": 3,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -698,6 +829,7 @@
         {
           "name": "seq",
           "tag": 4,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"

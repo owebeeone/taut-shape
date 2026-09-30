@@ -1,5 +1,10 @@
 {
-  "version": 1,
+  "version": 2,
+  "options": {},
+  "effective": {
+    "max_depth": 32,
+    "max_encoded_len": null
+  },
   "shapes": {
     "unary": {
       "name": "unary",
@@ -250,6 +255,7 @@
   "enums": [
     {
       "name": "StreamMsgType",
+      "options": {},
       "members": {
         "push": 0,
         "seal": 1,
@@ -262,10 +268,24 @@
         "cancel_timer": 8,
         "producer_stop": 9,
         "diagnostic": 10
+      },
+      "member_options": {
+        "push": {},
+        "seal": {},
+        "close": {},
+        "read": {},
+        "end_stream": {},
+        "timer_expired": {},
+        "read_response": {},
+        "set_timer": {},
+        "cancel_timer": {},
+        "producer_stop": {},
+        "diagnostic": {}
       }
     },
     {
       "name": "StreamState",
+      "options": {},
       "members": {
         "data": 0,
         "would_block": 1,
@@ -273,42 +293,77 @@
         "closed": 3,
         "failed": 4,
         "dropped": 5
+      },
+      "member_options": {
+        "data": {},
+        "would_block": {},
+        "eof": {},
+        "closed": {},
+        "failed": {},
+        "dropped": {}
       }
     },
     {
       "name": "StreamErrorCode",
+      "options": {},
       "members": {
         "unknown_stream": 0,
         "producer_error": 1,
         "internal": 2,
         "slow_consumer": 3
+      },
+      "member_options": {
+        "unknown_stream": {},
+        "producer_error": {},
+        "internal": {},
+        "slow_consumer": {}
       }
     },
     {
       "name": "StreamStopReason",
+      "options": {},
       "members": {
         "last_reader_gone": 0,
         "closed": 1,
         "failed": 2
+      },
+      "member_options": {
+        "last_reader_gone": {},
+        "closed": {},
+        "failed": {}
       }
     },
     {
       "name": "StreamSeverity",
+      "options": {},
       "members": {
         "warn": 0,
         "error": 1
+      },
+      "member_options": {
+        "warn": {},
+        "error": {}
       }
     },
     {
       "name": "StreamDiagCode",
+      "options": {},
       "members": {
         "push_after_terminal": 0
+      },
+      "member_options": {
+        "push_after_terminal": {}
       }
     }
   ],
   "messages": [
     {
       "name": "StreamPosition",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -316,6 +371,7 @@
         {
           "name": "seq",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -328,6 +384,11 @@
     },
     {
       "name": "StreamRecord",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -335,6 +396,7 @@
         {
           "name": "seq",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -346,6 +408,7 @@
         {
           "name": "payload",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "bytes"
@@ -358,6 +421,11 @@
     },
     {
       "name": "StreamError",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -365,6 +433,7 @@
         {
           "name": "code",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "StreamErrorCode"
@@ -376,6 +445,7 @@
         {
           "name": "message",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -388,6 +458,11 @@
     },
     {
       "name": "StreamPush",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -395,6 +470,7 @@
         {
           "name": "payload",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "bytes"
@@ -407,6 +483,11 @@
     },
     {
       "name": "StreamSeal",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -414,6 +495,11 @@
     },
     {
       "name": "StreamClose",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -421,6 +507,7 @@
         {
           "name": "error",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "StreamError"
@@ -433,6 +520,11 @@
     },
     {
       "name": "StreamReadRequest",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -440,6 +532,7 @@
         {
           "name": "stream_id",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -451,6 +544,7 @@
         {
           "name": "max_records",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -462,6 +556,7 @@
         {
           "name": "max_bytes",
           "tag": 3,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -473,6 +568,7 @@
         {
           "name": "timeout_ms",
           "tag": 4,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -485,6 +581,11 @@
     },
     {
       "name": "StreamEndStream",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -492,6 +593,7 @@
         {
           "name": "stream_id",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -504,6 +606,11 @@
     },
     {
       "name": "StreamTimerExpired",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -511,6 +618,7 @@
         {
           "name": "token",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -523,6 +631,11 @@
     },
     {
       "name": "StreamReadResponse",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -530,6 +643,7 @@
         {
           "name": "stream_id",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "str"
@@ -541,6 +655,7 @@
         {
           "name": "records",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "list",
             "elem": {
@@ -555,6 +670,7 @@
         {
           "name": "next_position",
           "tag": 3,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "StreamPosition"
@@ -566,6 +682,7 @@
         {
           "name": "state",
           "tag": 4,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "StreamState"
@@ -577,6 +694,7 @@
         {
           "name": "error",
           "tag": 5,
+          "options": {},
           "type": {
             "k": "msg",
             "name": "StreamError"
@@ -589,6 +707,11 @@
     },
     {
       "name": "StreamSetTimer",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -596,6 +719,7 @@
         {
           "name": "token",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -607,6 +731,7 @@
         {
           "name": "ms",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -619,6 +744,11 @@
     },
     {
       "name": "StreamCancelTimer",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -626,6 +756,7 @@
         {
           "name": "token",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "scalar",
             "scalar": "int"
@@ -638,6 +769,11 @@
     },
     {
       "name": "StreamProducerStop",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -645,6 +781,7 @@
         {
           "name": "reason",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "StreamStopReason"
@@ -657,6 +794,11 @@
     },
     {
       "name": "StreamDiagnostic",
+      "options": {},
+      "effective": {
+        "max_depth": 32,
+        "max_encoded_len": null
+      },
       "reserved_tags": [],
       "reserved_names": [],
       "next_id": null,
@@ -664,6 +806,7 @@
         {
           "name": "severity",
           "tag": 1,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "StreamSeverity"
@@ -675,6 +818,7 @@
         {
           "name": "code",
           "tag": 2,
+          "options": {},
           "type": {
             "k": "enum",
             "name": "StreamDiagCode"
