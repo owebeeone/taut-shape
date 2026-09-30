@@ -1,0 +1,27 @@
+# The contract's releases (RELEASE.md). A release is a tag and a GitHub Release, and publishes
+# nothing: gearu checks the tree, tags it, pushes the tag and creates the release.
+[project]
+name = "taut-shape"
+branch = "main"
+remote = "origin"
+tag_prefix = "v"
+github_repo = "owebeeone/taut-shape"
+
+[python]
+manifest = "pyproject.toml"
+version = "scm"
+
+[release]
+# The train's release gate, as taut-dev's scripts/release.py finalize runs it: every package and
+# consumer pin released, every release input clean, and the version released the manifest's
+# contract_version. It reads the release inputs from the workspace holding this checkout.
+checks = [
+    ["uv", "run", "--no-project", "--python", "3.13", "python", "release/check_compatibility.py",
+     "--release", "--workspace", "{repo}/..", "--contract-version", "{version}"],
+]
+# A tag-derived version needs no release commit, so gearu tags its candidate: the gate again.
+exact_checks = [
+    ["uv", "run", "--no-project", "--python", "3.13", "python", "release/check_compatibility.py",
+     "--release", "--workspace", "{repo}/..", "--contract-version", "{version}"],
+]
+github_notes = "The Taut shape contract, {tag}: the IR, the oracle corpus, the interop matrix and the release manifest every taut-shape package conforms to. It publishes nothing."

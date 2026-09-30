@@ -105,8 +105,12 @@ def check_compatibility(
     *,
     release: bool = False,
     check_cleanliness: bool = True,
+    expected_contract_version: str | None = None,
 ) -> list[str]:
-    """Return every drift/release violation without stopping at the first."""
+    """Return every drift/release violation without stopping at the first.
+
+    `expected_contract_version` is the version being released, which the manifest's
+    contract_version must be (gearu passes the tag's)."""
 
     errors: list[str] = []
     if manifest.get("schema") != SCHEMA:
@@ -118,6 +122,11 @@ def check_compatibility(
         errors.append("release train major/minor must be non-negative integers")
         train_pair = None
     contract_release = str(train.get("contract_version", ""))
+    if expected_contract_version is not None and contract_release != expected_contract_version:
+        errors.append(
+            f"releasing {expected_contract_version}, but the manifest's contract_version is "
+            f"{contract_release!r}"
+        )
     if train_pair is not None and _major_minor(contract_release) != train_pair:
         errors.append(
             f"contract release version {contract_release!r} is outside "
@@ -300,12 +309,22 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--manifest", type=Path)
     parser.add_argument("--repo", action="append", default=[], type=_parse_repo)
     parser.add_argument("--release", action="store_true")
+    parser.add_argument(
+        "--workspace",
+        type=Path,
+        help="the directory holding the release inputs' checkouts (default: the one holding "
+        "this contract checkout); gearu checks a temporary copy, beside none of them",
+    )
+    parser.add_argument(
+        "--contract-version",
+        help="fail unless the manifest's contract_version is this, the version being released",
+    )
     args = parser.parse_args(argv)
 
     contract_root = Path(__file__).resolve().parents[1]
     manifest_path = args.manifest or contract_root / "release" / "compatibility.v1.json"
     manifest = _read_json(manifest_path)
-    workspace = contract_root.parent
+    workspace = (args.workspace or contract_root.parent).resolve()
     repos: dict[str, Path] = {
         str(row["repo"]): workspace / str(row["repo"])
         for row in manifest.get("packages", {}).values()
@@ -318,7 +337,13 @@ def main(argv: list[str] | None = None) -> int:
         repos.setdefault(repo_id, workspace / repo_id)
     repos.update(dict(args.repo))
 
-    errors = check_compatibility(manifest, contract_root, repos, release=args.release)
+    errors = check_compatibility(
+        manifest,
+        contract_root,
+        repos,
+        release=args.release,
+        expected_contract_version=args.contract_version,
+    )
     if errors:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)

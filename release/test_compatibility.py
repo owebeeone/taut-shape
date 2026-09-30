@@ -4,7 +4,7 @@ import json
 from copy import deepcopy
 from pathlib import Path
 
-from release.check_compatibility import check_compatibility, is_release_pin
+from release.check_compatibility import check_compatibility, is_release_pin, main
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -68,3 +68,20 @@ def test_release_pin_accepts_initial_semver_but_not_zero_or_paths() -> None:
     assert not is_release_pin("0.0.0")
     assert not is_release_pin("workspace:*")
     assert not is_release_pin("file:../taut-shape-ts")
+
+
+def test_the_released_version_must_be_the_manifest_contract_version() -> None:
+    manifest = load_manifest()
+    recorded = manifest["release_train"]["contract_version"]
+    repos = workspace_repos()
+    assert check_compatibility(manifest, ROOT, repos, expected_contract_version=recorded) == []
+    assert check_compatibility(manifest, ROOT, repos, expected_contract_version="9.9.9") == [
+        f"releasing 9.9.9, but the manifest's contract_version is {recorded!r}"
+    ]
+
+
+def test_the_workspace_holding_the_release_inputs_can_be_named(tmp_path) -> None:
+    """gearu checks a temporary copy of this repository, beside none of the release inputs, so
+    it names the workspace that holds them."""
+    assert main(["--workspace", str(ROOT.parent)]) == 0
+    assert main(["--workspace", str(tmp_path)]) == 1

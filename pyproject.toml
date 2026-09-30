@@ -1,0 +1,10 @@
+# The contract's Python project. It builds and ships no package: its generators, interop matrix and
+# release checks run from source, and gearu releases the contract through this file (gearu.toml).
+# A contract release is a tag and a GitHub Release. Its version is the tag, which
+# release/compatibility.v1.json's contract_version must equal.
+[project]
+name = "taut-shape-contract"
+dynamic = ["version"]
+description = "The contract for Taut delivery shapes: the IR, the oracle corpus, the interop matrix and the release manifest"
+requires-python = ">=3.10"
+classifiers = ["Private :: Do Not Upload"]
