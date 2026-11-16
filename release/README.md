@@ -1,10 +1,10 @@
 # Release compatibility manifest
 
 The `0.12.0` compiler, foundation and three shape-library artifacts are published
-and verified. The compatibility manifest remains `candidate` while Glial's
-separate unpublished Glade assistance dependency is resolved. The contract tag
-has not been created. See the [publication and finalization record](0.12.0.md)
-for exact evidence, checks and the remaining hold.
+and verified. Glial's separate Glade assistance dependency is now released as
+`@owebeeone/glade-decl 0.2.0`, its consumer checks pass, and the compatibility
+manifest is `released`. See the [publication and finalization record](0.12.0.md)
+for exact evidence and checks.
 
 Protocol and shape artifacts share major/minor coordinates; patch releases can
 advance independently. The manifest records the canonical Rust foundation
@@ -19,7 +19,8 @@ pytest release/test_compatibility.py -q
 ```
 
 The separate `--release` check requires completed release status and clean
-release inputs. It intentionally rejects the current candidate status.
+release inputs. Gearu runs it before tagging the contract release and again
+on the exact release candidate.
 
 ## Publication-dependent lockfiles
 
