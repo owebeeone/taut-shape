@@ -6,6 +6,14 @@ on:
     branches: [main]
     tags: ["v*"]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing immutable contract release tag to requalify
+        required: false
+        type: string
+
+env:
+  RELEASE_TAG: ${{ inputs.tag || (startsWith(github.ref, 'refs/tags/') && github.ref_name) || '' }}
 
 permissions:
   contents: read
@@ -14,11 +22,14 @@ jobs:
   contract-engines-interop:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      RUSTUP_TOOLCHAIN: "1.95.0"
     steps:
       - name: Check out contract
         uses: actions/checkout@v4
         with:
           path: workspace/taut-shape
+          ref: ${{ inputs.tag || github.ref }}
       - name: Check out Taut runtime
         uses: actions/checkout@v4
         with:
@@ -55,11 +66,11 @@ jobs:
         run: |
           npm install --global pnpm@10.24.0
           python -m pip install build pytest
-      - name: Select stable Rust
+      - name: Select the qualified Rust release toolchain
         run: |
-          rustup toolchain install stable --profile minimal
-          rustup default stable
-          rustup component add clippy
+          rustup toolchain install 1.95.0 --profile minimal --component clippy
+          rustc --version
+          cargo clippy --version
 
       - name: Install TypeScript dependencies
         working-directory: workspace/taut-shape-ts
@@ -106,6 +117,6 @@ jobs:
           python -m pytest -q matrix/driver.py matrix/test_harness.py release/test_compatibility.py
           python -S matrix/driver.py
       - name: Require released versions, semver consumer pins, and a clean tree
-        if: startsWith(github.ref, 'refs/tags/')
+        if: env.RELEASE_TAG != ''
         working-directory: workspace/taut-shape
-        run: python release/check_compatibility.py --release
+        run: python release/check_compatibility.py --release --contract-version "${RELEASE_TAG#v}"
