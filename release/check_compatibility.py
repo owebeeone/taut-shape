@@ -45,12 +45,14 @@ def _version_from_source(repo: Path, source: str) -> str:
         if not match:
             raise ValueError("Cargo.toml has no [workspace.package] version")
         return match.group(1)
-    if source == "cargo-package":
-        text = (repo / "crates" / "taut-shape" / "Cargo.toml").read_text()
+    if source in ("cargo-package", "cargo-foundation"):
+        manifest = (repo / "rust" / "taut-foundation" / "Cargo.toml" if source == "cargo-foundation"
+                    else repo / "crates" / "taut-shape" / "Cargo.toml")
+        text = manifest.read_text()
         section = re.search(r"(?ms)^\[package\]\s*(.*?)(?=^\[|\Z)", text)
         match = re.search(r'^version\s*=\s*"([^"]+)"', section.group(1) if section else "", re.MULTILINE)
         if not match:
-            raise ValueError("crates/taut-shape/Cargo.toml has no [package] version")
+            raise ValueError(f"{manifest}: no [package] version")
         return match.group(1)
     if source == "setuptools-scm-fallback":
         text = (repo / "pyproject.toml").read_text()
@@ -69,6 +71,14 @@ def _dependency_spec(repo: Path, package: str) -> str | None:
         if value is not None:
             return str(value)
     return None
+
+
+def _cargo_dependency_spec(repo: Path, package: str) -> str | None:
+    text = (repo / "crates" / "taut-shape" / "Cargo.toml").read_text()
+    section = re.search(r"(?ms)^\[dependencies\]\s*(.*?)(?=^\[|\Z)", text)
+    match = re.search(r'^' + re.escape(package) + r'\s*=\s*(?:"([^"]+)"|\{[^\n]*?\bversion\s*=\s*"([^"]+)")',
+                      section.group(1) if section else "", re.MULTILINE)
+    return next((v for v in match.groups() if v is not None), None) if match else None
 
 
 def _python_dependency_spec(repo: Path, package: str) -> str | None:
@@ -160,6 +170,25 @@ def check_compatibility(
         if release and DEVELOPMENT_VERSION.search(protocol_version):
             errors.append(f"protocol package: development package version {protocol_version!r}")
 
+    foundation = train.get("foundation_package")
+    if foundation is not None:
+        repo = repos.get(str(foundation.get("repo", "")))
+        version = str(foundation.get("version", ""))
+        if train_pair is not None and _major_minor(version) != train_pair:
+            errors.append(f"foundation package: version {version!r} is outside the release train")
+        if repo is None or not repo.is_dir():
+            errors.append("foundation package: repository is missing")
+        else:
+            try:
+                actual = _version_from_source(repo, str(foundation.get("version_source", "")))
+            except (OSError, ValueError) as error:
+                errors.append(f"foundation package: cannot read version: {error}")
+            else:
+                if actual != version:
+                    errors.append(f"foundation package: version {actual!r} != manifest {version!r}")
+        if release and DEVELOPMENT_VERSION.search(version):
+            errors.append(f"foundation package: development package version {version!r}")
+
     catalog_path = contract_root / str(manifest.get("catalog_ir", ""))
     try:
         catalog = _read_json(catalog_path)["shapes"]
@@ -203,7 +232,9 @@ def check_compatibility(
             )
         for dependency, expected_spec in dict(row.get("dependencies", {})).items():
             try:
-                actual_spec = _python_dependency_spec(repo, str(dependency))
+                actual_spec = (_cargo_dependency_spec(repo, str(dependency))
+                               if row.get("version_source") == "cargo-package"
+                               else _python_dependency_spec(repo, str(dependency)))
             except OSError as error:
                 errors.append(f"package {package_id}: cannot read dependencies: {error}")
                 continue

@@ -88,3 +88,27 @@ def test_the_workspace_holding_the_release_inputs_can_be_named(tmp_path) -> None
     it names the workspace that holds them."""
     assert main(["--workspace", str(ROOT.parent)]) == 0
     assert main(["--workspace", str(tmp_path)]) == 1
+
+
+def test_foundation_is_a_release_train_input() -> None:
+    manifest = load_manifest()
+    train = manifest["release_train"]
+    assert train["foundation_package"]["version"].split(".")[:2] == [str(train["major"]), str(train["minor"])]
+    manifest["release_train"]["foundation_package"]["version"] = f'{train["major"]}.{train["minor"] - 1}.0'
+    errors = check_compatibility(manifest, ROOT, workspace_repos())
+    assert any("foundation package" in e and "outside" in e for e in errors)
+    assert any("foundation package" in e and "!= manifest" in e for e in errors)
+
+
+def test_rust_foundation_dependency_drift_is_rejected() -> None:
+    manifest = load_manifest()
+    manifest["packages"]["rust"]["dependencies"]["taut-foundation"] = "0.11.0"
+    errors = check_compatibility(manifest, ROOT, workspace_repos())
+    assert any("dependency taut-foundation specifier" in e for e in errors)
+
+
+def test_candidate_status_blocks_release_mode() -> None:
+    manifest = load_manifest()
+    manifest["status"] = "candidate"
+    errors = check_compatibility(manifest, ROOT, workspace_repos(), release=True, check_cleanliness=False)
+    assert errors == ["manifest status is 'candidate', not 'released'"]
